@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>使用Live CD修复Grub引导</title>
+        <meta name="viewport" content="width=device-width">
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" href="/css/syntax.css">
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="/css/main.css">
+
+    </head>
+    <body>
+
+        <div class="site">
+          <div class="header">
+            <h1 class="title"><a href="/">tuhaihe</a></h1>
+          </div>
+
+          <h2>使用Live CD修复Grub引导</h2>
+<p class="meta">24 Nov 2013</p>
+
+<div class="post">
+<p>本文以 Ubuntu Live CD 修复 Grub 引导为例，已在 /dev/sda3 安装 Fedora。</p>
+
+<ol>
+<li>制作 Ubuntu 启动 USB</li>
+</ol>
+
+<div class="highlight"><pre><code class="bash">sudo dd <span class="k">if</span><span class="o">=</span>ubuntu-13.10-desktop-amd64.iso <span class="nv">of</span><span class="o">=</span>/dev/sdb <span class="c">#/dev/sdb 为 USB 盘符</span>
+</code></pre>
+</div>
+
+<ol>
+<li><p>使用启动 USB 进入 Ubuntu 试用环境</p></li>
+<li><p>查看硬盘分区状况，获取 Linux 系统安装分区编号</p>
+
+<pre class="prettyprint">
+<code>
+sudo fdisk -l
+</code>
+</pre>
+
+<p>查看输出结果，然后根据文件类型和分区大小来判定 Linux 系统安装在哪块硬盘和安装的分区。我的电脑是在 /dev/sda3 安装了 Fedora。</p>
+
+<p>或者，打开 <em>Gparted</em> 图形化工具来查看分区信息也可以。</p></li>
+<li><p>挂载 Fedora 安装分区</p>
+
+<p>已知 Fedora 安装在了 /dev/sda3 上，所以我们可以用下面命令来挂载 Fedora 安装分区。你需要将 /dev/sda3 换成自己的 Linux 安装分区。</p>
+
+<pre class="prettyprint">
+<code>
+sudo mount /dev/sda3 /mnt
+</code>
+</pre>  </li>
+<li><p>挂载其他所需的目录（使用 --bind）</p>
+
+<pre class="prettyprint">
+<code>
+sudo mount --bind /dev /mnt/dev
+sudo mount --bind /proc /mnt/proc
+sudo mount --bind /sys /mnt/sys
+</code>
+</pre></li>
+<li><p>Chroot 到硬盘上的 Linux 系统</p>
+
+<pre class="prettyprint">
+<code>
+sudo chroot /mnt
+</code>
+</pre></li>
+<li><p>安装&amp;更新 Grub</p>
+
+<pre class="prettyprint">
+<code>
+grub2-install /dev/sda
+grub2-mkconfig -o /boot/grub2/grub.cfg
+</code>
+</pre></li>
+<li><p>Grub 已经修复成功，我们还需要退出 chroot 环境、卸载已经挂载的设备与目录：</p>
+
+<pre class="prettyprint">
+<code>
+exit #退出 chroot 环境
+sudo umount /mnt/dev
+sudo umount /mnt/proc
+sudo umount /mnt/sys
+sudo umount /mnt
+</code>
+</pre></li>
+<li><p>重启！</p></li>
+</ol>
+
+</div>
+
+
+          <div class="footer">
+            <div class="contact">
+              <p>
+                Github：<br />
+                新浪微博：<br />
+              </p>
+            </div>
+            <div class="contact">
+              <p>
+                <a href="https://github.com/tuhaihe">github.com/tuhaihe</a><br />
+                <a href="http://weibo.com/ibentutu">@我爱笨兔兔ibentutu</a><br />
+              </p>
+            </div>
+          </div>
+        </div>
+
+    </body>
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>GNU Nano简介</title>
+        <meta name="viewport" content="width=device-width">
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" href="/css/syntax.css">
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="/css/main.css">
+
+    </head>
+    <body>
+
+        <div class="site">
+          <div class="header">
+            <h1 class="title"><a href="/">tuhaihe</a></h1>
+          </div>
+
+          <h2>GNU Nano简介</h2>
+<p class="meta">21 Apr 2013</p>
+
+<div class="post">
+<h2>简介</h2>
+
+<p>Nano 在 Debian 等系统中直接默认安装。它体积小、操作方便、上手快，在编辑文件时快捷灵活，在工作中给我带来了极大便利。希望没有用过 nano 的人们能够尝试这款文本编辑器。</p>
+
+<p><a href="http://www.nano-editor.org/">GNU Nano</a> 是一款小巧友好的文本编辑器。nano 是 Pico 编辑器的自由克隆版本，也是 Pico 的功能增强版本。</p>
+
+<p>功能列表：</p>
+
+<ul>
+<li>基本文本编辑</li>
+<li>搜索</li>
+<li>拼写检查</li>
+<li>国际化支持</li>
+<li>自动缩进</li>
+</ul>
+
+<p>当然，作为一款编辑器，具有上面的特点也不足为奇。如果连基本的编辑功能都处理不了，nano 也就不能成其为编辑器。</p>
+
+<h2>常用快捷键</h2>
+
+<p>nano 的许多操作快捷键与 Emacs 通用。其实，Emacs 里面的部分操作按键组合也适用在终端。</p>
+
+<pre><code>^G：^ 代表 Control 键
+M-G：M 一般为 Alt 键
+</code></pre>
+
+<table>
+    <tr>
+        <td>^X</td><td>退出 nano</td>
+    </tr>
+   <tr>
+        <td>^O</td><td>保存文件</td>
+    </tr>
+    <tr>
+        <td>^R</td><td>插入其他文件内容至光标位置</td>
+    </tr>
+    <tr>
+        <td>^W</td><td>查找字符串</td>
+    </tr>
+    <tr>
+        <td>^Y</td><td>向上翻页</td>
+    </tr>
+    <tr>
+        <td>^V</td><td>向下翻页</td>
+    </tr>
+    <tr>
+        <td>^K</td><td>剪切光标所在行并保存到剪贴板，或剪切选中内容</td>
+    </tr>
+    <tr>
+        <td>^U</td><td>将剪贴板内容粘贴至当前行</td>
+    </tr>
+    <tr>
+        <td>^C</td><td>显示光标位置</td>
+    </tr>
+    <tr>
+        <td>M-/ (M-?)</td><td>跳至文件最后一行</td>
+    </tr>
+    <tr>
+        <td>M-G</td><td>跳至指定行与列位置</td>
+    </tr>
+    <tr>
+        <td>M-R</td><td>替换字符串</td>
+    </tr>
+    <tr>
+        <td>M-A</td><td>标记游标所在文字</td>
+    </tr>
+    <tr>
+        <td>M-W</td><td>重复上次搜索</td>
+    </tr>
+    <tr>
+        <td>M-^ (M-6)</td><td>拷贝当前行至剪贴板</td>
+    </tr>
+    <tr>
+        <td>M-}</td><td>缩进当前行</td>
+    </tr>
+    <tr>
+        <td>M-{</td><td>取消缩进当前行</td>
+    </tr>
+    <tr>
+        <td>^F</td><td>向前移动一个字符</td>
+    </tr>
+    <tr>
+        <td>^B</td><td>向后移动一个字符</td>
+    </tr>
+    <tr>
+        <td>^Space</td><td>向前移动一个词</td>
+    </tr>
+    <tr>
+        <td>M-Space</td><td>向后跳一个词</td>
+    </tr>
+    <tr>
+        <td>^P</td><td>鼠标转到上一行</td>
+    </tr>
+    <tr>
+        <td>^N</td><td>鼠标转到下一行</td>
+    </tr>
+    <tr>
+        <td>^A</td><td>跳至当前行首</td>
+    </tr>
+    <tr>
+        <td>^E</td><td>跳至当前行尾</td>
+    </tr>
+    <tr>
+        <td>M-( (M-9)</td><td>跳至当前段落开头，如已在段落开头，则调至上一段落起始处</td>
+    </tr>
+    <tr>
+        <td>M-) (M-0)</td><td>跳至当前段落结尾，如已在段落结尾，则调至下一段落结尾</td>
+    </tr>
+    <tr>
+        <td>^M</td><td>插入新行</td>
+    </tr>
+    <tr>
+        <td>^D</td><td>删除游标之下的字符</td>
+    </tr>
+    <tr>
+        <td>^H</td><td>删除游标左侧的字符</td>
+    </tr>
+    <tr>
+        <td>M-T</td><td>从游标位置剪切至文件结尾</td>
+    </tr>
+    <tr>
+        <td>M-D</td><td>计算字数、行数与字符数</td> 
+    </tr>
+</table>
+
+<h2>nano 辅助功能说明</h2>
+
+<p><em>提示</em>： </p>
+
+<ol>
+<li><p>^Space 按键可能与中文输入法调出按键冲突，如冲突，则该按键组合在 nano 编辑器内失效。 </p></li>
+<li><p>如果使用 nano 打开文本文件时，出现“/home/用户名/.nano_history 出错：权限问题”报告，可使用下面步骤解决：</p></li>
+</ol>
+
+<ul>
+<li><p>打开 /etc/nanorc 文件，将 set historylog 一行注释：</p>
+
+<pre><code>$sudo nano /etc/nanorc #注释 set historylog，保存退出 
+</code></pre></li>
+<li><p>删除 ~/.nano_history</p>
+
+<pre><code>sudo rm ~/.nano_history
+</code></pre></li>
+</ul>
+
+</div>
+
+
+          <div class="footer">
+            <div class="contact">
+              <p>
+                Github：<br />
+                新浪微博：<br />
+              </p>
+            </div>
+            <div class="contact">
+              <p>
+                <a href="https://github.com/tuhaihe">github.com/tuhaihe</a><br />
+                <a href="http://weibo.com/ibentutu">@我爱笨兔兔ibentutu</a><br />
+              </p>
+            </div>
+          </div>
+        </div>
+
+    </body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Ubuntu 13.04安装Linux Deepin特色软件</title>
+        <meta name="viewport" content="width=device-width">
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" href="/css/syntax.css">
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="/css/main.css">
+
+    </head>
+    <body>
+
+        <div class="site">
+          <div class="header">
+            <h1 class="title"><a href="/">tuhaihe</a></h1>
+          </div>
+
+          <h2>Ubuntu 13.04安装Linux Deepin特色软件</h2>
+<p class="meta">08 Jun 2013</p>
+
+<div class="post">
+<p>最新版本的 Linux Deepin 12.12 RC 已经将基础仓库升级到了 Ubuntu Raring，Linux Deepin 开发的特色软件，简单易用，其他发行版本的开发者应该尽量移植。因为 Linux Deepin 使用了 Ubuntu 的基础仓库，所以，Ubuntu 用户安装 Linux Deepin 软件相对容易一些。</p>
+
+<p>下面以 Ubuntu 13.04 安装 Linux Deepin 特色软件为例。</p>
+
+<ol>
+<li><p>添加 Linux Deepin 升级源</p>
+
+<pre class="prettyprint">
+<code>
+sudo gedit /etc/apt/sources.list #编辑升级列表
+</code>
+</pre>
+
+<p>将下面两行内容添加到该文件末尾：</p>
+
+<pre class="prettyprint">
+<code>
+deb http://packages.linuxdeepin.com/deepin raring main non-free universe
+deb-src http://packages.linuxdeepin.com/deepin raring main non-free universe
+</code>
+</pre></li>
+<li><p>添加 Linux Deepin 密钥文件</p></li>
+</ol>
+
+<ul>
+<li><p>导入密钥</p>
+
+<pre class="prettyprint">
+<code>
+wget http://packages.linuxdeepin.com/deepin/project/deepin-keyring.gpg
+gpg --import deepin-keyring.gpg
+</code>
+</pre></li>
+<li><p>列出密钥</p>
+
+<pre class="prettyprint">
+<code>
+gpg --list-keys
+</code>
+</pre>
+
+<p>你会看到输出的结果如下：</p>
+
+<pre class="prettyprint">
+<code>
+/home/test/.gnupg/pubring.gpg
+\-----------------------------
+pub   2048R/209088E7 2010-10-06
+uid                  Leng Ganghua (Hiweed) <hiweed@gmail.com>
+sub   2048R/4B46F33F 2010-10-06
+</code>
+</pre>
+
+<ul>
+<li>将密钥导出到 apt-key</li>
+</ul>
+
+<pre class="prettyprint">
+<code>
+sudo gpg --export --armor 209088E7 | sudo apt-key add -
+</code>
+</pre></li>
+</ul>
+
+<ol>
+<li><p>更新软件源列表</p>
+
+<pre class="prettyprint">
+<code>
+sudo apt-get update
+</code>
+</pre></li>
+<li><p>更多</p></li>
+</ol>
+
+<ul>
+<li>深度音乐：<code>sudo apt-get install python-deepin-gsettings deepin-music-player</code></li>
+<li>深度软件中心：<code>sudo apt-get install deepin-software-center</code></li>
+<li>深度桌面环境：<code>sudo apt-get install dde-meta-core#注销，选择从Deepin登录即可</code></li>
+<li>小企鹅输入法与搜狗拼音：<code>sudo apt-get install ibus- fcitx fcitx-sogoupinyin #同时卸载 Ibus</code></li>
+</ul>
+
+<p>你可以通过这种方式来更多的安装 Linux Deepin 仓库里面的软件。当然，进入深度桌面环境后，你可能会发现系统设置里面的部分模块表现不如原生的表现良好。同理，Linux Mint 等类似系列发行版本也可以使用该方法。</p>
+
+<h2>参考</h2>
+
+<ul>
+<li><a href="http://www.linuxdeepin.com/forum/6/7996">Linux Deepin论坛：设置源时出现公钥问题的解决</a></li>
+</ul>
+
+</div>
+
+
+          <div class="footer">
+            <div class="contact">
+              <p>
+                Github：<br />
+                新浪微博：<br />
+              </p>
+            </div>
+            <div class="contact">
+              <p>
+                <a href="https://github.com/tuhaihe">github.com/tuhaihe</a><br />
+                <a href="http://weibo.com/ibentutu">@我爱笨兔兔ibentutu</a><br />
+              </p>
+            </div>
+          </div>
+        </div>
+
+    </body>
+</html>

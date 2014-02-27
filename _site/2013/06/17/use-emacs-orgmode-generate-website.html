@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>使用 Emacs Org 制作静态网站</title>
+        <meta name="viewport" content="width=device-width">
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" href="/css/syntax.css">
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="/css/main.css">
+
+    </head>
+    <body>
+
+        <div class="site">
+          <div class="header">
+            <h1 class="title"><a href="/">tuhaihe</a></h1>
+          </div>
+
+          <h2>使用 Emacs Org 制作静态网站</h2>
+<p class="meta">17 Jun 2013</p>
+
+<div class="post">
+<h2>关于 Org</h2>
+
+<p>Org 模式可用来做笔记，用作 GTD 工具（记录 TODO 列表）等，它也是一个优秀的编辑、排版系统。这里主要介绍如何使用 Emacs Org Mode 来制作静态网页、组织静态站点。其实，这也就是本站点的生成方法。</p>
+
+<p>Emacs 已经默认安装 Org，不过，我们也可以通过下面方式来安装最新的 Org(推荐)。</p>
+
+<ul>
+<li><p><a href="http://orgmode.org/">官方站点</a>下载 Org 最新版本的归档文件，在配置文件 ~/.emacs 进行配置：</p>
+
+<pre class="prettyprint">
+<code>
+;;~/path/to/orgdir 换成 org 文件夹实际路径
+(add-to-list 'load-path "~/path/to/orgdir/lisp")
+</code>
+</pre></li>
+</ul>
+
+<p>更多安装方法，可参考<a href="http://orgmode.org/org.html#Installation">官方文档</a>。</p>
+
+<h2>配置 Org</h2>
+
+<p>Emacs 22.2 版本以来，支持默认使用 Org 模式打开 .org 文件，如果使用早期的 Emacs 版本，我们需要将下面一句加入到 ~/.emacs 文件：</p>
+
+<pre class="prettycode">
+<code>
+(add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
+</code>
+</pre>
+
+<p>同时，也将下面内容添加到 ~/.emacs 中：</p>
+
+<p><pre class="prettycode">
+<code>
+;;使用 Org 的其他功能, 全局按键设置
+(global-set-key &quot;\C-cl&quot; &#39;org-store-link)
+(global-set-key &quot;\C-cc&quot; &#39;org-capture)
+(global-set-key &quot;\C-ca&quot; &#39;org-agenda)
+(global-set-key &quot;\C-cb&quot; &#39;org-iswitchb)</p>
+
+<p>;;设置 Org 文件自动换行
+(add-hook &#39;org-mode-hook
+      (lambda () (setq truncate-lines nil)))
+</code>
+</pre></p>
+
+<h2>站点设置</h2>
+
+<ol>
+<li><p>文件目录结构：做好规划</p>
+
+<p>我们把 .org 格式源文件与导出的 html 文件分开，方便管理。</p>
+
+<p>以本博客为例： .org 文件存放在 ~/blog/www/ 文件夹中，导出的 html 文件存放在 ~/blog/public_html/ 文件夹中。同时， ~/blog/www/ 下还有 css 文件夹（本博客<a href="https://github.com/tuhaihe/blog/tree/master/www/css">css文件</a>，用于存在样式表和脚本。如果你的站点需要图片，则可以新建一个 img 文件夹。</p>
+
+<p>你可以根据站点的情况来设计自己站点的文件目录结构。</p></li>
+<li><p>配置 org-publish-project</p>
+
+<p>将下面内容添加到 ~/.emacs 中：</p>
+
+<pre class="prettyprint">
+<code>
+(require 'org-publish)
+(setq org-publish-project-alist
+;notes组件
+'((
+     "org-notes"
+     :base-directory "~/blog/www/" ;设置存放.org文件位置 
+     :base-extension "org" ;仅处理 .org 格式文件
+     :publishing-directory "~/blog/public_html/" ;导出html文件位置
+     :recursive t
+ :publishing-function org-publish-org-to-html
+     :headline-levels 4 ;Just the default for this project.
+ :auto-preamble t
+     :auto-sitemap t                  ;自动生成 sitemap.org
+     :sitemap-filename "sitemap.org"  ;默认名称
+     :sitemap-title "Sitemap"         
+     :export-creator-info nil    ;禁止在 postamble 显示"Created by Org"
+     :export-author-info nil     ;禁止在 postamble 显示 "Author: Your Name"
+     :auto-postamble nil         
+     :table-of-contents nil      ;禁止生成文章目录，如果要生成，将 nil 改为 t
+     :section-numbers nil        ;禁止在段落标题前使用数字，如果使用，将 nil 改为 t
+     :html-postamble "<p class=\"postamble\">Update time: %d.</p> " ;自定义 postamble 显示字样
+     :style-include-default nil  ;禁用默认 css 样式,使用自定义css
+    )
+;;static 组件
+    ("org-static"
+     :base-directory "~/blog/www/"
+     :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
+     :publishing-directory "~/blog/public_html/"
+     :recursive t
+     :publishing-function org-publish-attachment
+     )
+;;publish 组件
+    ("org" :components ("org-notes" "org-static"))
+))
+</code>
+</pre></li>
+<li><p>设置：css 样式&amp;其他信息</p>
+
+<p>我们在第一步已经设置好 CSS 样式文件，它们会控制导出的 HTML 文件外观。除了控制外观之外，还有一些信息也需要我们进行设置。为了方便每次 .org 文件设置，我们在 ~/blog/www/css/ 文件夹下新建一个文件，名为 level-0.orgcss（可自定义），将下面内容复制到该文件中(根据你的个人情况进行修改)：</p>
+
+<pre>
+ #+AUTHOR: tuhaihe
+ #+EMAIL: 1132321739qq AT gmail DOT com
+ #+LINK_HOME: index.html
+ #+LINK_UP: index.html
+ #+STYLE: <link href="css/org.css" rel="stylesheet" type="text/css">
+ #+STYLE: <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+ #+STYLE: <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
+</pre></li>
+<li><p>发布</p></li>
+</ol>
+
+<ul>
+<li><p>首先，在 ~/blog/www/ 文件夹下新建 index.org 文件，并在其开始添加下面头信息：</p>
+
+<pre>
+   #+SETUPFILE: css/level-0.orgcss
+   #+TITLE: 随便写个标题
+
+   Hello, world!
+</pre></li>
+<li><p>导出 HTML 文件</p>
+
+<p>输入 <code>M-x org-publish-project</code>，接着输入<code>org</code> 回车，OK。Org 已经将 index.org 导出为 index.html 文件了。用浏览器打开该文件，查看下效果吧。趁着热情，新建一个 hello.org ，同样先添加上面的文件头信息，然后洋洋洒洒抒发激动心情吧。此时，可以输入 <code>M-x org-publish-current-file</code>，将其导出为 hello.html 文件。</p></li>
+</ul>
+
+<h2>相关链接</h2>
+
+<ul>
+<li><a href="http://orgmode.org">Org Mode 官网</a></li>
+<li><a href="http://orgmode.org/worg/org-tutorials/org-publish-html-tutorial.html">Publishing Org-mode files to HTML</a>：比本篇文章更详细的教程 </li>
+<li><a href="http://orgmode.org/guide/">The compact Org-mode Guide</a>：Org-mode 语法文档</li>
+</ul>
+
+</div>
+
+
+          <div class="footer">
+            <div class="contact">
+              <p>
+                Github：<br />
+                新浪微博：<br />
+              </p>
+            </div>
+            <div class="contact">
+              <p>
+                <a href="https://github.com/tuhaihe">github.com/tuhaihe</a><br />
+                <a href="http://weibo.com/ibentutu">@我爱笨兔兔ibentutu</a><br />
+              </p>
+            </div>
+          </div>
+        </div>
+
+    </body>
+</html>

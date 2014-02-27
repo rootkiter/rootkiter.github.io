@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Debian Wheezy(Xfce)启用触摸板点击功能</title>
+        <meta name="viewport" content="width=device-width">
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" href="/css/syntax.css">
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="/css/main.css">
+
+    </head>
+    <body>
+
+        <div class="site">
+          <div class="header">
+            <h1 class="title"><a href="/">tuhaihe</a></h1>
+          </div>
+
+          <h2>Debian Wheezy(Xfce)启用触摸板点击功能</h2>
+<p class="meta">09 May 2013</p>
+
+<div class="post">
+<h2>问题描述</h2>
+
+<ul>
+<li><p>系统：Debian Wheezy Xfce。</p></li>
+<li><p>具体情况：虽然安装了 Xorg 触摸板输入的驱动(synaptics)，但是“点击”触摸板中间部分，仍然无法启用其相当于鼠标的“单击”功能。</p></li>
+</ul>
+
+<h2>解决方法</h2>
+
+<ol>
+<li><p>首先，保证安装了 synaptics 驱动：</p>
+
+<pre class="prettyprint">
+<code>
+$ sudo apt-get install xserver-xorg-input-synaptics
+</code>
+</pre></li>
+<li><p>复制 /usr/share/X11/xorg.conf.d 到 /etc/X11：</p>
+
+<pre class="prettyprint">
+<code>
+$ sudo cp -R /usr/share/X11/xorg.conf.d/ /etc/X11
+</code>
+</pre></li>
+<li><p>将原 /etc/X11/xorg.conf.d/50-synaptics.conf 配置文件下面同一部分内容改为：</p>
+
+<pre class="prettyprint">
+ Section "InputClass"
+        Identifier "touchpad catchall"
+    Driver "synaptics"
+        MatchIsTouchpad "on"
+        MatchDevicePath "/dev/input/event*"
+    Option "TapButton1" "1"
+    Option "TapButton2" "2"
+    Option "TapButton3" "3"
+    Option "VertEdgeScroll" "1"
+ EndSection
+</pre>
+
+<p>关于上面文件中 <code>TapButton</code> 的使用，man 手册里面的解释为：</p></li>
+</ol>
+
+<blockquote>
+<p>Option &quot;TapButton1&quot; &quot;integer&quot;
+   Which mouse button is reported on a non-corner one-finger tap.  Set  to
+   0 to disable. Property: &quot;Synaptics Tap Action&quot;</p>
+
+<p>Option &quot;TapButton2&quot; &quot;integer&quot;
+   Which  mouse button is reported on a non-corner two-finger tap.  Set to
+   0 to disable. Property: &quot;Synaptics Tap Action&quot;</p>
+
+<p>Option &quot;TapButton3&quot; &quot;integer&quot;
+   Which mouse button is reported on a non-corner three-finger  tap.   Set
+   to 0 to disable. Property: &quot;Synaptics Tap Action&quot;</p>
+</blockquote>
+
+<ol>
+<li>重启系统</li>
+</ol>
+
+<h2>关于 synaptics</h2>
+
+<p>synaptics 是触摸板的 Xorg 输入驱动。即使触摸板也可以由 evdev 或鼠标驱动处理，但该驱动能够允许触摸板实现更多的功能。synaptics 这个名称属历史沿袭，在 Linux 下，特定硬件有内核处理，但该驱动适用于任何触摸板。如果设备为“PS/2 Mouse”或更古老，内核驱动可能不会支持这样的设备，该驱动也会提供有限支持的功能。不过，适用于任何设备，不管功能多少，都是非常不错了。</p>
+
+<p><em>synaptics 部分功能列表</em> ：</p>
+
+<ul>
+<li>非线性加速触摸运动</li>
+<li>通过短暂触摸，实现单击/双击事件</li>
+<li>多指触摸：需要硬件支持</li>
+</ul>
+
+<p>关于 synaptics 的更多内容，可以在终端运行 <code>man synaptics</code> 进行查看。</p>
+
+<h3>synclient</h3>
+
+<p>除了运用上面方法进行设置之外，我们还可以使用命令 <em>synclient</em> 进行设置。synclient 就是查询、更改 Synaptics 驱动选项的一个命令行工具。不过该命令的设置只能在当前登录的会话中有效，如果注销或重启系统，则配置失效。可用参数有：</p>
+
+<ul>
+<li>-l，列出当前用户设置</li>
+</ul>
+
+<p>我们可以使用下面命令在当前会话实现上述设置：</p>
+
+<pre class="prettyprint">
+<code>
+$ synclient TapButton1=1
+$ synclient TapButton2=2
+$ synclient TapButton3=3
+</code>
+</pre>
+
+</div>
+
+
+          <div class="footer">
+            <div class="contact">
+              <p>
+                Github：<br />
+                新浪微博：<br />
+              </p>
+            </div>
+            <div class="contact">
+              <p>
+                <a href="https://github.com/tuhaihe">github.com/tuhaihe</a><br />
+                <a href="http://weibo.com/ibentutu">@我爱笨兔兔ibentutu</a><br />
+              </p>
+            </div>
+          </div>
+        </div>
+
+    </body>
+</html>
