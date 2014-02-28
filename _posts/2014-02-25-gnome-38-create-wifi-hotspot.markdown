@@ -15,8 +15,10 @@ time:   20:35:00
 这是本博客的第一篇正文，
 用于检测当前的工作状态。
 
--这是列表项1 
--这是列表项2
+<ul>
+<li>这是列表项1</li> 
+<li>这是列表项2</li>
+</ul>
 
 <img src="http://rootkiter.github.io/image/test.jpg" title="图片测试" align="center">
 
