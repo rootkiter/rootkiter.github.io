@@ -8,9 +8,15 @@ time:   20:35:00
   <source src="{{ site.defmusic }}">
 </audio>
 
-*这里可以使用大字体*
+*这里是普通的斜体字*
+## 这里可以使用 H2 的字体
 
-这是本博客的第一篇，用于检测当前的工作状态。
+
+这是本博客的第一篇正文，
+用于检测当前的工作状态。
+
+-这是列表项1 
+-这是列表项2
 
 <img src="http://rootkiter.github.io/image/test.jpg" title="图片测试" align="center">
 
