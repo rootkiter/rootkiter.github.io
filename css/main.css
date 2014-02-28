@@ -12,6 +12,9 @@ body {
     width: 50%;
     line-height: 150%;
     /*border: 10px solid LightGrey;*/
+    filter:alpha(Opacity=50);
+    -moz-opacity:0.5;
+    opacity:0.5;
 }
 
 
