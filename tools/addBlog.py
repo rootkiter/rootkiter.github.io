@@ -3,21 +3,13 @@ import os
 
 def addhead():
 	layout  = 'post'
-	mytitle = raw_input("Please input the title now :")
-	while(len(mytitle)<=0):
-		mytitle = raw_input("The title con't be null,you need input it:")
+	mytitle = "\"******\""
 	nowdate = time.strftime("%Y-%m-%d")
 	nowtime = time.strftime("%H:%M:%S")
-	mymusic = raw_input("Input a music name ( 'name' / 0 / nil ):")
-	if (len(mymusic)<=0):
-		mymusic = "nil"
-	elif (mymusic == '0'):
-		mymusic = "backmusic.mp3"
-	mytags  = raw_input("Input tags (nil) :")
-	if(len(mytags)<=0):
-		mytags='nil'
-	filename = 'new_'+nowdate+'-'+mytitle
+	mymusic = "backmusic.mp3"
+	mytags  = "nil"
 
+	filename = 'new_'+nowdate+'-'+mytitle
 	newfile = open(filename ,'w')
 	newfile.write('---')
 	newfile.write("\nlayout: " + layout)
@@ -29,7 +21,6 @@ def addhead():
 	newfile.write("\nmusic:  " + mymusic)
 	newfile.write("\n---")
 	newfile.close()
-	print "The file name is ["+ filename
 	return filename
 
 def vimedit(filename):
@@ -85,5 +76,5 @@ def replaceCmd(filename):
 #newfilename = "new_2014_02_28_test"
 newfilename = addhead()
 vimedit(newfilename)
-print "::::::::" + replaceCmd(newfilename)
+print "The file is created. [" + replaceCmd(newfilename) + " ]"
 
