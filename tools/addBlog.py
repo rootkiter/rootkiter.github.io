@@ -9,7 +9,7 @@ def addhead():
 	mymusic = "backmusic.mp3"
 	mytags  = "nil"
 
-	filename = 'new_'+nowdate+'-'+mytitle
+	filename = 'new_'+nowdate+'-'
 	newfile = open(filename ,'w')
 	newfile.write('---')
 	newfile.write("\nlayout: " + layout)
@@ -26,10 +26,22 @@ def addhead():
 def vimedit(filename):
 	os.system("vim "+ filename)
 
+def gettitle(filename):
+	oldfile = open(filename,"r")
+	for i in oldfile:
+		if "title" in i:
+			buf = i.replace("title","")
+			buf = buf.replace(" ","")
+			buf = buf.replace(":","")
+			buf = buf.replace("\n","")
+			oldfile.close()
+			return buf
+
 def replaceCmd(filename):
+	mtitle = gettitle(filename)
 	oldfile = open(filename,"r")
 	newfilename = filename.replace('new_','')
-	newfile = open("../_posts/"+newfilename+".markdown","w")
+	newfile = open("../_posts/"+newfilename+mtitle+".markdown","w")
 	line = oldfile.readline()
 	i = 0
 	while line:
@@ -38,7 +50,8 @@ def replaceCmd(filename):
 			imgname = line.replace("add_img:","")
 			imgname = imgname.replace(" ","")
 			imgname = imgname.replace("\n","")
-			newfile.write("<img \nsrc=\"http://rootkiter.{{ site.domain }}/image/"+ imgname+"\" title=\""+imgname+"\" align=\"center\">\n")
+			newfile.write("<img \nsrc=\"http://rootkiter.{{ site.domain }}/image/"
+					+ imgname+"\" title=\""+imgname+"\" align=\"center\">\n")
 		elif line.startswith("add_liebiao:"):
 			resu = "<ul>\n"
 			line = oldfile.readline()
@@ -67,14 +80,14 @@ def replaceCmd(filename):
 			newfile.write( line )
 		line = oldfile.readline()
 		i += 1
-		print "Translating line: "+ i
+		print "Translating line: "+str(i)
 	oldfile.close()
 	newfile.close()
 	return newfilename
 
 #addhead()
-#newfilename = "new_2014_02_28_test"
-newfilename = addhead()
-vimedit(newfilename)
+newfilename = "new_2014-02-28-"
+#newfilename = addhead()
+#vimedit(newfilename)
 print "The file is created. [" + replaceCmd(newfilename) + " ]"
 
