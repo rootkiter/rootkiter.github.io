@@ -20,6 +20,17 @@ time:   20:35:00
 <li>这是列表项2</li>
 </ul>
 
+<table>
+	<tr>
+		<th>1*1</th>
+		<th> =1</th>
+	</tr>
+	<tr>
+		<th>2*2</th>
+		<th> =4</th>
+	</tr>
+</table>
+
 <img src="http://rootkiter.github.io/image/test.jpg" title="图片测试" align="center">
 
 ##参考
