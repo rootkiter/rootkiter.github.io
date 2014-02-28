@@ -38,7 +38,7 @@ def replaceCmd(filename):
 			imgname = line.replace("add_img:","")
 			imgname = imgname.replace(" ","")
 			imgname = imgname.replace("\n","")
-			newfile.write("<img \nsrc=\"http://rootkiter.{{ site.domain }}/music/"+ imgname+"\" title=\""+imgname+"\" align=\"center\">\n")
+			newfile.write("<img \nsrc=\"http://rootkiter.{{ site.domain }}/image/"+ imgname+"\" title=\""+imgname+"\" align=\"center\">\n")
 		elif line.startswith("add_liebiao:"):
 			resu = "<ul>\n"
 			line = oldfile.readline()

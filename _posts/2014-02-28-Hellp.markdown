@@ -12,7 +12,7 @@ music:  backmusic.mp3
 ## This is a H2 String_test
 
 <img 
-src="http://rootkiter.{{ site.domain }}/music/test.jpg" title="test.jpg" align="center">
+src="http://rootkiter.{{ site.domain }}/image/test.jpg" title="test.jpg" align="center">
 
 <ul>
 <li>liebiao1</li>
