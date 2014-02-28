@@ -3,7 +3,7 @@ layout: post
 title:  "第一篇 博客"
 date:   2014-02-27
 time:   20:35:00
-music:  backmusic.mp3
+music:  nil
 ---
 
 *这里是普通的斜体字*
