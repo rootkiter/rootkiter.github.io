@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  ROP Introduce
+title:  "ROP Introduce"
 date:   2014-02-28
 time:   20:56:17
 tags:   
@@ -17,10 +17,11 @@ DEP 保护是缓冲区溢出攻击出现后，出现的一种防护机制，
 
 下面的两幅图分别表示了数据区域内“不可执行”和“
 可执行”的状态：
+<img 
+src="http://rootkiter.{{ site.domain }}/image/ropimage/ROP1-1.png" title="ropimage/ROP1-3.png" align="center">
 
-add_image: ropimage/ROP1-1.png
-
-add_image: ropimage/ROP1-2.png
+<img 
+src="http://rootkiter.{{ site.domain }}/image/ropimage/ROP1-2.png" title="ropimage/ROP1-3.png" align="center">
 
 DEP的实现分为两种，一种为软件实现，是由各个操作系统
 编译过程中引入的，在微软中叫SafeSEH。 另一种为硬件
@@ -51,10 +52,10 @@ Hacker中此时出现了一位天才，他开始教育大家，既然数据区
 </ul>
 汇编语言中有一系列非常有用的指令，我管它们叫做“RETN系列指
 令”，这些指令的原始功能是当函数调用完成时，回退到上一层调
-用函数，并继续下面的执行，示意图如下：
-<img 
+用<img 
 src="http://rootkiter.{{ site.domain }}/image/ropimage/ROP1-3.png" title="ropimage/ROP1-3.png" align="center">
 
+函数，并继续下面的执行，示意图如下：
 这种DEP的保护机制，虽然安全，却令操作系统在做某些操作时受
 到限制，所以操作系统中又提供了一些解除DEP保护的API供软件
 开发人员调用，当攻击者在内存中定位到这些API并调用时，DEP
