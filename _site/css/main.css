@@ -1,0 +1,147 @@
+/*sourced from Jing.py*/
+body {
+    font-family: "SimSun", "Palatino Linotype", "Book Antiqua", Palatino, serif;
+    font-size: 16px;
+    margin: 5% 20% 5% 20%;
+    padding: 6% 5% 0% 5%;
+    background:transparent url("http://rootkiter.github.io/image/background.jpeg") repeat fixed;
+    -webkit-box-shadow: 0 1px 10px #A8B1B9;
+    -moz-box-shadow: 0 1px 10px #A8B1B9;
+    box-shadow: 0 1px 10px #696969;
+    text-shadow: 0 1px 1px white;
+    width: 50%;
+    line-height: 150%;
+    /*border: 10px solid LightGrey;*/
+    /*filter:alpha(Opacity=50);
+    -moz-opacity:0.5;
+    opacity:0.5;*/
+}
+
+
+title {
+    text-transform: uppercase;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    letter-spacing: -0.5px;
+}
+
+.post-info {
+    color: #999;
+    margin-top: 0px;
+    font-size: 10px;
+    font-family: "Ubuntu Mono", monospace;
+}
+
+H2 {
+    font-family: "Abel", "Helvetica Neue", Helvetica, Arial, Sans-serif;
+    margin-bottom: 4px;
+    padding: 5px;
+    width: 80%;
+    border-bottom: 2px LightGrey solid;
+    line-height: 150%;
+    color: Dark;
+}
+
+
+H3 {
+    font-family: "Abel", "Helvetica Neue", Helvetica, Arial, Sans-serif;
+    margin-top: 40px;
+    margin-bottom: 30px;
+    border-bottom: 1px LightGrey solid;
+    width: 80%;
+    line-height: 150%;
+    color: Gray;
+}
+
+
+li {
+    margin-left: 10px;
+}
+
+
+blockquote {
+    border-left: 4px lightgrey solid;
+    padding-left: 5px;
+    margin-left: 20px;
+}
+
+pre {
+    font-family: "Ubuntu Mono", monospace;
+    background-color: #002B36;
+    border: 1px solid #05232B;
+    border-radius: 0.4em 0.4em 0.4em 0.4em;
+    color: #93A1A1;
+    font-size: 90%px;
+    line-height: 1.45em;
+    margin-bottom: 2.1em;
+    padding: 0.8em 1em;
+    text-shadow: none;
+    overflow: auto;
+}
+
+code {
+    font-style: "Ubuntu Mone", monospace;
+    font-size: 90%;
+    color: Blue/*#FFFFFF*/;
+}
+
+a {
+    color: #A0410D;
+    text-decoration: none;
+}
+
+
+a:hover {
+    background-color: LightGrey;
+}
+
+
+hr {
+    color: LightGrey;
+}
+
+.content {
+    padding: 0% 0% 20% 0%;
+}
+
+.footer {
+    text-align: center;
+    font-size: 100%;
+    color: red;
+    border-top: 4px solid #eee;
+    margin-top: 2em;
+  overflow: hidden;
+}
+
+.footer .contact {
+  float: left;
+  margin-right: 3em;
+}
+
+.footer .contact a {
+  color: #8085C1;
+}
+
+.footer .rss {
+  margin-top: 1.1em;
+  margin-right: -.2em;
+  float: right;
+}
+
+.footer .rss img {
+  border: 0;
+}
+
+::selection {
+    background: #9EA1A5;
+    color: #fff;
+    text-shadow: none;
+}
+
+@media (max-width: 979px) {
+  body {
+  padding: 100px;
+  margin-left: 0px;
+  margin-right: 0px;
+  width: 60%;
+  }
+}
