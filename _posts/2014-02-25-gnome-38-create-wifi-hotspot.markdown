@@ -3,10 +3,8 @@ layout: post
 title:  "第一篇 博客"
 date:   2014-02-27
 time:   20:35:00
+music:  backmusic.mp3
 ---
-<audio controls=true autoplay="true">
-  <source src="{{ site.defmusic }}">
-</audio>
 
 *这里是普通的斜体字*
 ## 这里可以使用 H2 的字体
