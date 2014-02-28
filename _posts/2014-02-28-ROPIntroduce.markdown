@@ -59,10 +59,13 @@ Hacker中此时出现了一位天才，他开始教育大家，既然数据区
 
 汇编语言中有一系列非常有用的指令，我管它们叫做“RETN系列指
 令”，这些指令的原始功能是当函数调用完成时，回退到上一层调
-用<img 
+用函数，并继续下面的执行，示意图如下：
+
+<img 
 src="http://rootkiter.{{ site.domain }}/image/ropimage/ROP1-3.png" title="ropimage/ROP1-3.png" align="center">
 
-函数，并继续下面的执行，示意图如下：
+*另一方面*
+
 这种DEP的保护机制，虽然安全，却令操作系统在做某些操作时受
 到限制，所以操作系统中又提供了一些解除DEP保护的API供软件
 开发人员调用，当攻击者在内存中定位到这些API并调用时，DEP
@@ -71,6 +74,7 @@ src="http://rootkiter.{{ site.domain }}/image/ropimage/ROP1-3.png" title="ropima
 
 当RETN指令同这些API联系在一起时，就会产生一些奇妙的化学反
 应，首先看一下原本缓冲区溢出的攻击模式：
+
 <img 
 src="http://rootkiter.{{ site.domain }}/image/ropimage/ROP1-4.png" title="ropimage/ROP1-4.png" align="center">
 
@@ -111,9 +115,11 @@ WIN7中的实现是每次系统启动，模块地址随机，而启动完成后�
 地址：
 
 可以看到这次电脑启动 ntdll.dll模块的位置为 0x77880000
-<img src="http:/rootkiter.github.io/image/ropimage/ROP1-6.png">
+<img src="http://rootkiter.github.io/image/ropimage/ROP1-6.png" aglin="center">
+
 重启计算机后，这个模块的基地址变为0x77620000
-<img src="http:/rootkiter.github.io/image/ropimage/ROP1-7.png">
+
+<img src="http://rootkiter.github.io/image/ropimage/ROP1-7.png">
 
 从以上两幅截图可以看出，地址随机化带来的直观效果就是模块顺
 序同样发生了改变，这就如同把攻击者放到了一个内存密室中，暗
@@ -137,6 +143,7 @@ EP”的操作，关闭后跳转回shellcode进行实际攻击）。 以上这�
 击思路的前半段就是“现在人们传唱的ROP”了。.
 
 下面是metasploit中某个利用模块的ROP片段截图：
+
 <img src="http://rootkiter.github.io/image/ropimage/ROP1-8.png">
 
 关于以上图片的更多技术细节，请阅读本文下面的部分获得。
@@ -175,17 +182,23 @@ Nt* 是否能够达到利用目的了，毕竟两者的构造环境完全相同�
 <img src="http://rootkiter.github.io/image/ropimage/ROP1-9.png">
 
 从上图可以看出以下3点：
-1. EIP目前指向的地址正好为 [ESP-4] 对应的地址0x778896c9，
+
+1.EIP目前指向的地址正好为 [ESP-4] 对应的地址0x778896c9，
 可以表明此时EIP正在受ESP控制阶段。且当前指令如下图所示：
+
 <img src="http://rootkiter.github.io/image/ropimage/ROP1-10.png">
-2. 所指向的栈内的结构和1.4节给出的截图完全相同，为了方便观察，
+
+2.所指向的栈内的结构和1.4节给出的截图完全相同，为了方便观察，
 我将栈内的结构转换一下，方便大家对比：
+
 <img src="http://rootkiter.github.io/image/ropimage/ROP1-11.png">
-3. 0x0c0c0c14是常见的HeapSpray（风水）技术的遗留结果，既
+
+3.0x0c0c0c14是常见的HeapSpray（风水）技术的遗留结果，既
 HeapSpray发生之前，那个位置为ROP，那个位置为shellcode是完全
 可控的，此处无需考虑ASLR造成的影响。
 
 通过阅读ntdll_rop 中的注释可以确定栈内各数据的含义，如下图所示：
+
 <img src="http://rootkiter.github.io/image/ropimage/ROP1-12.png">
 
 把这张图用自然语言描述出来就是：在当前进程（ProcessHandler= -1）
@@ -196,6 +209,7 @@ HeapSpray发生之前，那个位置为ROP，那个位置为shellcode是完全
 相信到达这里就能清楚这条ROP的实际效果了，将shellcode所在的内
 存区域设置为0x00000040，当我们执行完这条指令后，这段内存会变
 成如下图所示的状态：
+
 <img src="http://rootkiter.github.io/image/ropimage/ROP1-13.png">
 
 <ul>
@@ -212,8 +226,11 @@ HeapSpray发生之前，那个位置为ROP，那个位置为shellcode是完全
 模块的ROP生成共用了近4分钟（没办法，它是虚拟了一个执行环境，
 然后又由Windbg调用，脚本环境下虚拟执行脚本，能快就怪了），刚
 开始用时候若不是我去了一趟厕所，我还以为它死掉了呢：
+
 <img src="http://rootkiter.github.io/image/ropimage/ROP1-14.png">
+
 生成结果的一个片段如下图所示：
+
 <img src="http://rootkiter.github.io/image/ropimage/ROP1-15.png">
 
 Mona 一般会生成两段ROP，分别用3种格式展示：Ruby、Python、
