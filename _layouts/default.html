@@ -12,15 +12,15 @@
         <!-- Custom CSS -->
         <link rel="stylesheet" href="/css/main.css">
 
-	<style>
-		<EMBED src="../music/backmusic.mp3" autostart="true" loop="true" width="80" height="20">
-	</style>
     </head>
     <body>
 
         <div class="site">
           <div class="header">
             <h1 class="title"><a href="/">{{ site.name }}</a></h1>
+	    <audio controls=true autoplay="true">
+	    	<source src="http://rootkiter.github.io/music/backmusic.mp3">
+	    </audio>
           </div>
 
           {{ content }}
