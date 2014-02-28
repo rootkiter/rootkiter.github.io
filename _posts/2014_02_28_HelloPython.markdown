@@ -28,4 +28,4 @@ music:  backmusic.mp3
 </table>
 
 <img 
-src="http://rootkiter.{{ site.domain }}/music/test.jpg" title="test.jpg" align="center">
+src="http://rootkiter.github.io/image/test.jpg" title="test.jpg" align="center">
