@@ -16,7 +16,7 @@ def addhead():
 	mytags  = raw_input("Input tags (nil) :")
 	if(len(mytags)<=0):
 		mytags='nil'
-	filename = 'new_'+nowdate.replace('-','_')+'_'+mytitle
+	filename = 'new_'+nowdate+'-'+mytitle
 
 	newfile = open(filename ,'w')
 	newfile.write('---')
@@ -65,7 +65,6 @@ def replaceCmd(filename):
 			while(not "end_table" in line):
 				line = line.replace("\n","")
 				resu += "<tr>\n"
-				print line
 				buf = line.split(" ")
 				for item in buf:
 					resu += "<th>"+item+"</th>\n"
@@ -77,7 +76,7 @@ def replaceCmd(filename):
 			newfile.write( line )
 		line = oldfile.readline()
 		i += 1
-		print i
+		print "Translating line: "+ i
 	oldfile.close()
 	newfile.close()
 	return newfilename

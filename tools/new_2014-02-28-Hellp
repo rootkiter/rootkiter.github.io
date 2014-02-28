@@ -1,0 +1,24 @@
+---
+layout: post
+title:  "HelloPython"
+date:   2014-02-28
+time:   18:13:07
+tags:   
+     - nil
+music:  backmusic.mp3
+---
+*This is a Python test Page*
+
+## This is a H2 String_test
+
+add_img:test.jpg
+
+add_liebiao:
+liebiao1
+liebiao2
+end_liebiao:
+
+add_table:
+2*2 =4
+3*3 =9
+end_table:
