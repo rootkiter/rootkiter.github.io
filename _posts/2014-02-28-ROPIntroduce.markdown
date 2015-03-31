@@ -5,7 +5,6 @@ date:   2014-02-28
 time:   20:56:17
 tags:   
      - nil
-music:  backmusic.mp3
 ---
 ## 背景介绍
 
@@ -21,10 +20,10 @@ DEP 保护是缓冲区溢出攻击出现后，出现的一种防护机制，
 下面的两幅图分别表示了数据区域内“不可执行”和“
 可执行”的状态：
 <img 
-src="http://rootkiter.{{ site.domain }}/image/ropimage/ROP1-1.png" title="ropimage/ROP1-3.png" align="center">
+src="http://{{ site.domain }}/image/ropimage/ROP1-1.png" title="ropimage/ROP1-3.png" align="center">
 
 <img 
-src="http://rootkiter.{{ site.domain }}/image/ropimage/ROP1-2.png" title="ropimage/ROP1-3.png" align="center">
+src="http://{{ site.domain }}/image/ropimage/ROP1-2.png" title="ropimage/ROP1-3.png" align="center">
 
 DEP的实现分为两种，一种为软件实现，是由各个操作系统
 编译过程中引入的，在微软中叫SafeSEH。 另一种为硬件
@@ -44,8 +43,8 @@ DEP的实现分为两种，一种为软件实现，是由各个操作系统
 DEP 保护机制出现后，攻击者几乎无法令数据段中的shellcode
 直接执行，看起来“防御技术”此时占得了先机。
 
-    这里插一句题外话：我觉得 Hacker 永远是这个世界上
-    最聪明的一群人，它们总能发现一些常人无法发现的东西。
+这里插一句题外话：我觉得 Hacker 永远是这个世界上
+最聪明的一群人，它们总能发现一些常人无法发现的东西。
 
 Hacker中此时出现了一位天才，他开始教育大家，既然数据区
 域没有执行状态那我们就让他们只保存数据吧，反正地址也是
@@ -62,196 +61,125 @@ Hacker中此时出现了一位天才，他开始教育大家，既然数据区
 用函数，并继续下面的执行，示意图如下：
 
 <img 
-src="http://rootkiter.{{ site.domain }}/image/ropimage/ROP1-3.png" title="ropimage/ROP1-3.png" align="center">
+src="http://{{ site.domain }}/image/ropimage/ROP1-3.png" title="ropimage/ROP1-3.png" align="center">
 
 *另一方面*
 
-这种DEP的保护机制，虽然安全，却令操作系统在做某些操作时受
-到限制，所以操作系统中又提供了一些解除DEP保护的API供软件
-开发人员调用，当攻击者在内存中定位到这些API并调用时，DEP
-保护便失去作用了。这些API一直散落于内存的某些角落，当攻击
-者触发它们时，就好像触发了某个密室的暗门一样，豁然开朗。
+这种DEP的保护机制，虽然安全，却令操作系统在做某些操作时受到限制，所以操作系统中又提供了一些解除DEP保护的API供软件开发人员调用，当攻击者在内存中定位到这些API并调用时，DEP保护便失去作用了。这些API一直散落于内存的某些角落，当攻击者触发它们时，就好像触发了某个密室的暗门一样，豁然开朗。
 
-当RETN指令同这些API联系在一起时，就会产生一些奇妙的化学反
-应，首先看一下原本缓冲区溢出的攻击模式：
+当RETN指令同这些API联系在一起时，就会产生一些奇妙的化学反应，首先看一下原本缓冲区溢出的攻击模式：
 
 <img 
-src="http://rootkiter.{{ site.domain }}/image/ropimage/ROP1-4.png" title="ropimage/ROP1-4.png" align="center">
+src="http://{{ site.domain }}/image/ropimage/ROP1-4.png" title="ropimage/ROP1-4.png" align="center">
 
 有了DEP后的间接利用攻击的示意图：
 <img 
-src="http://rootkiter.{{ site.domain }}/image/ropimage/ROP1-5.png" title="ropimage/ROP1-5.png" align="center">
+src="http://{{ site.domain }}/image/ropimage/ROP1-5.png" title="ropimage/ROP1-5.png" align="center">
 
-可以看到在第二种模式下，EIP的控制是通过栈中的地址，以及
-代码中的RETN指令共同控制的，此时栈中的数据仍然是“数据
-”，而执行位置却转移到了内存的代码空间，如此下来便巧妙的
-绕过了DEP保护。
+可以看到在第二种模式下，EIP的控制是通过栈中的地址，以及代码中的RETN指令共同控制的，此时栈中的数据仍然是“数据”，而执行位置却转移到了内存的代码空间，如此下来便巧妙的绕过了DEP保护。
 
-那么这种绕过技术其实是基于一个特定条件的，那就是你到某个
-地址一定能找到对应的包含RETN的代码片段，可以说这是当前漏
-洞利用方式的薄弱环节。
+那么这种绕过技术其实是基于一个特定条件的，那就是你到某个地址一定能找到对应的包含RETN的代码片段，可以说这是当前漏洞利用方式的薄弱环节。
 
 <ul>
 <li>ASLR保护</li>
 </ul>
-通过前面的阅读，大家可能已经了解，DEP机制的弱点就是可以通
-过某些API调用进行关闭，进而令其失效，然而令Hacker叫绝的是，
-这些API的地址完全固定，只要控制好栈结构，依然可以令shellcode
-得到执行。于是安全人员又提出了“ASLR机制”辅助DEP，提升系统
-安全性。
+通过前面的阅读，大家可能已经了解，DEP机制的弱点就是可以通过某些API调用进行关闭，进而令其失效，然而令Hacker叫绝的是，这些API的地址完全固定，只要控制好栈结构，依然可以令shellcode得到执行。于是安全人员又提出了“ASLR机制”辅助DEP，提升系统安全性。
 
-ASLR是一种内存地址随机化技术，它的核心思路是让程序执行时所
-调用的外部模块地址完全随机化，这种随机化令关闭DEP保护的API
-也随着飘忽不定，在WIN7中它的存在并不明显，而在WIN8中该技术
-得到了长足的发展。
+ASLR是一种内存地址随机化技术，它的核心思路是让程序执行时所调用的外部模块地址完全随机化，这种随机化令关闭DEP保护的API也随着飘忽不定，在WIN7中它的存在并不明显，而在WIN8中该技术得到了长足的发展。
 
-WIN7中的实现是每次系统启动，模块地址随机，而启动完成后，到
-关闭之前，这个地址一般都不会改变。然而WIN8中，每两次程序运
-行，加载的模块地址都会随机起来。这种随机地址带来的安全效果
-非常明显，攻击者几乎没有办法利用原有攻击手段完成漏洞利用
-（地址随机导致无法找到关闭DEP的地址，而无法关闭DEP就无法令
-数据块中的shellcode得到执行），所以安全人员经常戏称“ASLR+DEP”为
-“海尔兄弟”，下面是WIN7中启用ASLR后，ntdll在两次电脑开启时的
-地址：
+WIN7中的实现是每次系统启动，模块地址随机，而启动完成后，到关闭之前，这个地址一般都不会改变。然而WIN8中，每两次程序运行，加载的模块地址都会随机起来。这种随机地址带来的安全效果非常明显，攻击者几乎没有办法利用原有攻击手段完成漏洞利用（地址随机导致无法找到关闭DEP的地址，而无法关闭DEP就无法令数据块中的shellcode得到执行），所以安全人员经常戏称“ASLR+DEP”为“海尔兄弟”，下面是WIN7中启用ASLR后，ntdll在两次电脑开启时的地址：
 
 可以看到这次电脑启动 ntdll.dll模块的位置为 0x77880000
-<img src="http://rootkiter.github.io/image/ropimage/ROP1-6.png" aglin="center">
+<img src="http://{{ site.domain }}/image/ropimage/ROP1-6.png" aglin="center">
 
 重启计算机后，这个模块的基地址变为0x77620000
 
-<img src="http://rootkiter.github.io/image/ropimage/ROP1-7.png">
+<img src="http://{{ site.domain }}/image/ropimage/ROP1-7.png">
 
-从以上两幅截图可以看出，地址随机化带来的直观效果就是模块顺
-序同样发生了改变，这就如同把攻击者放到了一个内存密室中，暗
-门的位置随时在变化，攻击者想要找到暗门的难度无疑增大了许多。
+从以上两幅截图可以看出，地址随机化带来的直观效果就是模块顺序同样发生了改变，这就如同把攻击者放到了一个内存密室中，暗门的位置随时在变化，攻击者想要找到暗门的难度无疑增大了许多。
 
 <ul>
 <li>ROP</li>
 </ul>
-ASLR机制出现之后，攻击者面临着另一个严俊的挑战（我想管这个
-挑战叫：太行山），“ASLR”也成了他们攻击技术提升的障碍，然而
-所谓“道高一尺，魔高一丈”，“防御技术”总是落后于“攻击技术”出
-现的。
+ASLR机制出现之后，攻击者面临着另一个严俊的挑战（我想管这个挑战叫：太行山），“ASLR”也成了他们攻击技术提升的障碍，然而所谓“道高一尺，魔高一丈”，“防御技术”总是落后于“攻击技术”出现的。
 
-对于攻击者来说“关闭DEP的API”在某个模块中的偏移地址是固定的
-，所以内存漏洞利用的第一步就是找到模块基地址，随后根据偏移
-位置找到关闭DEP的API，而“信息泄露”类漏洞能够非常出色的完成
-这个基址定位的功能，所以可以看到WIN7之后很多漏洞的利用都是
-两个漏洞组合使用的（通过信息泄露类漏洞寻找dll文件基地址，
-随后计算API地址，最后在代码执行类漏洞中调用API完成“关闭D
-EP”的操作，关闭后跳转回shellcode进行实际攻击）。 以上这种攻
-击思路的前半段就是“现在人们传唱的ROP”了。.
+对于攻击者来说“关闭DEP的API”在某个模块中的偏移地址是固定的，所以内存漏洞利用的第一步就是找到模块基地址，随后根据偏移位置找到关闭DEP的API，而“信息泄露”类漏洞能够非常出色的完成这个基址定位的功能，所以可以看到WIN7之后很多漏洞的利用都是两个漏洞组合使用的（通过信息泄露类漏洞寻找dll文件基地址，随后计算API地址，最后在代码执行类漏洞中调用API完成“关闭DEP”的操作，关闭后跳转回shellcode进行实际攻击）。 以上这种攻击思路的前半段就是“现在人们传唱的ROP”了。.
 
 下面是metasploit中某个利用模块的ROP片段截图：
 
-<img src="http://rootkiter.github.io/image/ropimage/ROP1-8.png">
+<img src="http://{{ site.domain }}/image/ropimage/ROP1-8.png">
 
 关于以上图片的更多技术细节，请阅读本文下面的部分获得。
 
 ## ROP构造方法
 
-通过阅读大量文献，可以得知：在Windows中有多种绕过DEP的方式，
-可供ROP开发，包括但不限于以下几种：
+通过阅读相关文章，可以得知：在Windows中有多种绕过DEP的方式，可供ROP开发，包括但不限于以下几种：
 
-	1.Zw(Nt)SetInformationProcess()
-	2.VirtualProtect()
-	3.VirtualAlloc()
-	4.Zw(Nt)ProtectVirtualMemory()
-	5.利用可写可执行的内存空间绕过DEP
+1.Zw(Nt)SetInformationProcess()
+2.VirtualProtect()
+3.VirtualAlloc()
+4.Zw(Nt)ProtectVirtualMemory()
+5.利用可写可执行的内存空间绕过DEP
 
-其中1、2、3、5四种绕过办法在《0Day安全（第二版）》中有详细
-的阐述，其中第一种在《Python灰帽子》中，还详细介绍了如何通
-过脚本快速实现ROP开发。那些文字都是出自真正的大牛之手,所以
-我就不多说了，本节将对第四种绕过方式做一定的阐述。
+其中1、2、3、5四种绕过办法在《0Day安全（第二版）》中有详细的阐述，其中第一种在《Python灰帽子》中，还详细介绍了如何通过脚本快速实现ROP开发。那些文字都是出自真正的大牛之手,所以我就不多说了，本节将对第四种绕过方式做一定的阐述。
 
 <ul>
 <li>Zw(Nt)ProtectVirtualMemory()函数</li>
 </ul>
-这个函数位于ntdll模块中，有两个版本，分别是Zw* 和 Nt* ，分
-别对应用户态和内核态的调用实现，我个人觉得两者应该没有区别，
-不过鉴于当前各种EXP都是通过Zw*进行利用，我们也就没必要细究
-Nt* 是否能够达到利用目的了，毕竟两者的构造环境完全相同，花
-费的精力也完全相同。
+这个函数位于ntdll模块中，有两个版本，分别是Zw* 和 Nt* ，分别对应用户态和内核态的调用实现，我个人觉得两者应该没有区别，不过鉴于当前各种EXP都是通过Zw*进行利用，我们也就没必要细究Nt* 是否能够达到利用目的了，毕竟两者的构造环境完全相同，花费的精力也完全相同。
 
-在ROP章节的末尾我给出了一个ZwProtectVirtualMemory（）ROP的
-构造截图，图中的代码位于metasploit的MS13_037模块中，本意是
-借助HeapSpray（风水）技术控制内存，进行利用的，所以在实现过
-程中shellcode以及参数地址可以完全固定，为了分析的方便，我们
-直接观察触发后堆栈状态即可。如下图所示：
+在ROP章节的末尾我给出了一个ZwProtectVirtualMemory（）ROP的构造截图，图中的代码位于metasploit的MS13_037模块中，本意是借助HeapSpray（风水）技术控制内存，进行利用的，所以在实现过程中shellcode以及参数地址可以完全固定，为了分析的方便，我们直接观察触发后堆栈状态即可。如下图所示：
 
-<img src="http://rootkiter.github.io/image/ropimage/ROP1-9.png">
+<img src="http://{{ site.domain }}/image/ropimage/ROP1-9.png">
 
 从上图可以看出以下3点：
 
-1.EIP目前指向的地址正好为 [ESP-4] 对应的地址0x778896c9，
-可以表明此时EIP正在受ESP控制阶段。且当前指令如下图所示：
+1.EIP目前指向的地址正好为 [ESP-4] 对应的地址0x778896c9，可以表明此时EIP正在受ESP控制阶段。且当前指令如下图所示：
 
-<img src="http://rootkiter.github.io/image/ropimage/ROP1-10.png">
+<img src="http://{{ site.domain }}/image/ropimage/ROP1-10.png">
 
-2.所指向的栈内的结构和1.4节给出的截图完全相同，为了方便观察，
-我将栈内的结构转换一下，方便大家对比：
+2.所指向的栈内的结构和1.4节给出的截图完全相同，为了方便观察，我将栈内的结构转换一下，方便大家对比：
 
-<img src="http://rootkiter.github.io/image/ropimage/ROP1-11.png">
+<img src="http://{{ site.domain }}/image/ropimage/ROP1-11.png">
 
-3.0x0c0c0c14是常见的HeapSpray（风水）技术的遗留结果，既
-HeapSpray发生之前，那个位置为ROP，那个位置为shellcode是完全
-可控的，此处无需考虑ASLR造成的影响。
+3.0x0c0c0c14是常见的HeapSpray（风水）技术的遗留结果，既HeapSpray发生之前，那个位置为ROP，那个位置为shellcode是完全可控的，此处无需考虑ASLR造成的影响。
 
 通过阅读ntdll_rop 中的注释可以确定栈内各数据的含义，如下图所示：
 
-<img src="http://rootkiter.github.io/image/ropimage/ROP1-12.png">
+<img src="http://{{ site.domain }}/image/ropimage/ROP1-12.png">
 
-把这张图用自然语言描述出来就是：在当前进程（ProcessHandler= -1）
-划分0x400大小的内存片段，起始地址为0x0c0c0c40，将这块内存的状
-态设置为0x000040，原始状态为0x41414141（这就是垃圾字符嘛，请无视）
-，操作完成后跳转到0x0c0c0c40继续执行（1、指向ShellCode）。
+把这张图用自然语言描述出来就是：在当前进程（ProcessHandler= -1）划分0x400大小的内存片段，起始地址为0x0c0c0c40，将这块内存的状态设置为0x000040，原始状态为0x41414141（这就是垃圾字符嘛，请无视），操作完成后跳转到0x0c0c0c40继续执行（1、指向ShellCode）。
 
-相信到达这里就能清楚这条ROP的实际效果了，将shellcode所在的内
-存区域设置为0x00000040，当我们执行完这条指令后，这段内存会变
-成如下图所示的状态：
+相信到达这里就能清楚这条ROP的实际效果了，将shellcode所在的内存区域设置为0x00000040，当我们执行完这条指令后，这段内存会变成如下图所示的状态：
 
-<img src="http://rootkiter.github.io/image/ropimage/ROP1-13.png">
+<img src="http://{{ site.domain }}/image/ropimage/ROP1-13.png">
 
 <ul>
 <li>利用mona辅助构造ROP</li>
 </ul>
 
-目前网络中流通的ROP大部分都出自mona这个脚本，他是Immunity Sec
-公司开发的一个python脚本，可以辅助安全人员完成ROP的开发，原
-脚本仅适用于Immunity Debugger，后期开发了适用Windbg调试器的
-环境，看官可以参照{<a herf="http://redmine.corelan.be/projects/windbglib">网址</a>}进行配置。此处不浪费笔墨。
+目前网络中流通的ROP大部分都出自mona这个脚本，他是Immunity Sec公司开发的一个python脚本，可以辅助安全人员完成ROP的开发，原脚本仅适用于Immunity Debugger，后期开发了适用Windbg调试器的环境，看官可以参照{<a herf="http://redmine.corelan.be/projects/windbglib">网址</a>}进行配置。此处不浪费笔墨。
 
-通过[ .load pykd.pyd ] [ !py mona rop -m ntdll.dll ]两个命
-令，可以实现，指定模块的ROP生成，生成时间较长，本次针对ntdll
-模块的ROP生成共用了近4分钟（没办法，它是虚拟了一个执行环境，
-然后又由Windbg调用，脚本环境下虚拟执行脚本，能快就怪了），刚
-开始用时候若不是我去了一趟厕所，我还以为它死掉了呢：
+通过[ .load pykd.pyd ] [ !py mona rop -m ntdll.dll ]两个命令，可以实现，指定模块的ROP生成，生成时间较长，本次针对ntdll模块的ROP生成共用了近4分钟（没办法，它是虚拟了一个执行环境，然后又由Windbg调用，脚本环境下虚拟执行脚本，能快就怪了），刚开始用时候若不是我去了一趟厕所，我还以为它死掉了呢：
 
-<img src="http://rootkiter.github.io/image/ropimage/ROP1-14.png">
+<img src="http://{{ site.domain }}/image/ropimage/ROP1-14.png">
 
 生成结果的一个片段如下图所示：
 
-<img src="http://rootkiter.github.io/image/ropimage/ROP1-15.png">
+<img src="http://{{ site.domain }}/image/ropimage/ROP1-15.png">
 
-Mona 一般会生成两段ROP，分别用3种格式展示：Ruby、Python、
-Javascript。似乎Mona生成的ROP都是针对VirtualProtect的，而且是
-从内存序列中提取该函数指针，所以在ASLR模式下并不完全适用，我
-推荐这个工具的原因是：
+Mona 一般会生成两段ROP，分别用3种格式展示：Ruby、Python、Javascript。似乎Mona生成的ROP都是针对VirtualProtect的，而且是从内存序列中提取该函数指针，所以在ASLR模式下并不完全适用，我推荐这个工具的原因是：
 
-	1.它可以给你提供几个有效的ROP指令片段，以免你自己去找。
-	2.它可以给你一个构造ROP的思路，当然目前来看这个思路也极不靠谱。
+1.它可以给你提供几个有效的ROP指令片段，以免你自己去找。
+2.它可以给你一个构造ROP的思路，当然目前来看这个思路也极不靠谱。
 
 <ul>
 <li>有个黑阔展示过一个ROP生成工具</li>
 </ul>
 
-我听过一个不负责任的传说，为了大家不找我或者谣言散播者打击报复，
-我就必须声明：该传闻极不负责任，请大家不要相信。
+我听过一个不负责任的传说，为了大家不找我或者谣言散播者打击报复，我就必须声明：该传闻极不负责任，请大家不要相信。
 
-这个传说是这样的：有个黑阔在BlackHat上演讲，自己历时2年，开发了
-一个工具，并吹嘘自己的工具可以找到很多其他工具无法挖掘到的ROP指
-令，然后又现场展示了一下ROP生成效果，据说效果良好- -！。并在演讲
-的最后宣布：该工具，闭源不放。馋死他人！！
+这个传说是这样的：有个黑阔在BlackHat上演讲，自己历时2年，开发了一个工具，并吹嘘自己的工具可以找到很多其他工具无法挖掘到的ROP指令，然后又现场展示了一下ROP生成效果，据说效果良好- -！。并在演讲的最后宣布：该工具，闭源不放。馋死他人！！
 
 ## 回顾
 
@@ -259,6 +187,3 @@ Javascript。似乎Mona生成的ROP都是针对VirtualProtect的，而且是
 人能够读懂。
 
 第二部分介绍了一种ROP指令的技术细节，以及生成方法。
-
-希望各位感兴趣的童鞋能够仔细阅读本文，只有读懂本文，后续章节才能
-读的更加悠然哦。
