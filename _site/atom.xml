@@ -3,12 +3,29 @@
 <title>rootkiter</title>
 <link href="http://rootkiter.com/atom.xml" rel="self"/>
 <link href="http://rootkiter.com" />
-<updated>2015-04-01T00:23:19+08:00</updated>
+<updated>2015-04-06T22:20:26+08:00</updated>
 <id>http://rootkiter.rootkiter.com/</id>
 <author>
 <name>RootKiter</name>
 <email>2559964169@qq.com</email>
 </author>
+
+<entry>
+	<title>关于博客</title>
+        <link href="http://rootkiter.com/2015/04/06/AboutBlog.html"/>
+	<updated>2015-04-06T00:00:00+08:00</updated>
+	<id>http://rootkiter.rootkiter.com/2015/04/06/AboutBlog</id>
+	<content type="html">&lt;p&gt;距离上一篇文章已经过去了一年，这期间一直没想好如何来定位这个博客。&lt;/p&gt;
+
+&lt;p&gt;前段时间把蚯蚓的主页弄起来，才想起是时候重新构思这个博客了。&lt;/p&gt;
+
+&lt;p&gt;现在的我，开始决定不为了写博客而写博客，而是有选择性的写，挑有趣的东西来写，题材也不仅仅局限于技术，读过的书，追过的美剧，只要我觉得有趣，我就准备写在这里，Just For Fun，希望 linus 教主不会怪我乱用他老人家的名言。:-P &lt;/p&gt;
+
+&lt;p&gt;为了保证质量，不准备追求更新时间。只要写了一篇就总有下一篇。&lt;/p&gt;
+
+&lt;p&gt;看来我将有机会，成为有史以来最不靠谱的博主了，YO-HO-HO-HO~~~。&lt;/p&gt;
+</content>
+</entry>
 
 <entry>
 	<title>ROP Introduce</title>
