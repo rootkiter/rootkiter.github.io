@@ -57,7 +57,7 @@ src="http://rootkiter.com/image/ropimage/ROP1-2.png" title="ropimage/ROP1-3.png"
 
 <p>单从DEP的定义可以发现，这种机制应该是能够有效抑制数据
 区域内shellcode执行的。此时攻击者的面前出现了一座难以
-逾越的山，我喜欢叫它“王屋山”。</p>
+逾越的山。</p>
 
 <p>要想知道如何绕过这种保护机制，请详细阅读本文下面的部分。</p>
 
@@ -142,11 +142,13 @@ src="http://rootkiter.com/image/ropimage/ROP1-5.png" title="ropimage/ROP1-5.png"
 
 <p>通过阅读相关文章，可以得知：在Windows中有多种绕过DEP的方式，可供ROP开发，包括但不限于以下几种：</p>
 
-<p>1.Zw(Nt)SetInformationProcess()
-2.VirtualProtect()
-3.VirtualAlloc()
-4.Zw(Nt)ProtectVirtualMemory()
-5.利用可写可执行的内存空间绕过DEP</p>
+<ol>
+<li>Zw(Nt)SetInformationProcess()</li>
+<li>VirtualProtect()</li>
+<li>VirtualAlloc()</li>
+<li>Zw(Nt)ProtectVirtualMemory()</li>
+<li>利用可写可执行的内存空间绕过DEP</li>
+</ol>
 
 <p>其中1、2、3、5四种绕过办法在《0Day安全（第二版）》中有详细的阐述，其中第一种在《Python灰帽子》中，还详细介绍了如何通过脚本快速实现ROP开发。那些文字都是出自真正的大牛之手,所以我就不多说了，本节将对第四种绕过方式做一定的阐述。</p>
 
@@ -198,8 +200,10 @@ src="http://rootkiter.com/image/ropimage/ROP1-5.png" title="ropimage/ROP1-5.png"
 
 <p>Mona 一般会生成两段ROP，分别用3种格式展示：Ruby、Python、Javascript。似乎Mona生成的ROP都是针对VirtualProtect的，而且是从内存序列中提取该函数指针，所以在ASLR模式下并不完全适用，我推荐这个工具的原因是：</p>
 
-<p>1.它可以给你提供几个有效的ROP指令片段，以免你自己去找。
-2.它可以给你一个构造ROP的思路，当然目前来看这个思路也极不靠谱。</p>
+<ol>
+<li>它可以给你提供几个有效的ROP指令片段，以免你自己去找。</li>
+<li>它可以给你一个构造ROP的思路，当然目前来看这个思路也极不靠谱。</li>
+</ol>
 
 <ul>
 <li>有个黑阔展示过一个ROP生成工具</li>

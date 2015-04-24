@@ -3,12 +3,144 @@
 <title>rootkiter</title>
 <link href="http://rootkiter.com/atom.xml" rel="self"/>
 <link href="http://rootkiter.com" />
-<updated>2015-04-24T00:57:34+08:00</updated>
+<updated>2015-04-24T22:26:48+08:00</updated>
 <id>http://rootkiter.rootkiter.com/</id>
 <author>
 <name>RootKiter</name>
 <email>2559964169@qq.com</email>
 </author>
+
+<entry>
+	<title>构造ROP</title>
+        <link href="http://rootkiter.com/2015/04/24/MAKE_ROP.html"/>
+	<updated>2015-04-24T00:00:00+08:00</updated>
+	<id>http://rootkiter.rootkiter.com/2015/04/24/MAKE_ROP</id>
+	<content type="html">&lt;p&gt;构造一个可用的ROP可以分7步来操作：&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;确定目标&lt;br&gt;&lt;/li&gt;
+&lt;li&gt;针对目标实现步骤，确定需要的ROP样式&lt;br&gt;&lt;/li&gt;
+&lt;li&gt;搜索模块中可用代码片段。&lt;br&gt;&lt;/li&gt;
+&lt;li&gt;封装代码片段至模块&lt;br&gt;&lt;/li&gt;
+&lt;li&gt;书写简单的ROP伪指令&lt;br&gt;&lt;/li&gt;
+&lt;li&gt;组装代码片段&lt;br&gt;&lt;/li&gt;
+&lt;li&gt;调试完成&lt;br&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3&gt;一、确定目标：&lt;/h3&gt;
+
+&lt;p&gt;无论做什么都需要有明确的目标：&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;已知一信息泄漏漏洞（MS13-037）可泄漏 ntdll 的基地址 @ntdll_base;&lt;/li&gt;
+&lt;li&gt;被攻击目标为 WIN7_x86 ＋ IE8 ，且 ntdll 版本号为 6.1.7601.17514。&lt;/li&gt;
+&lt;li&gt;有一任意代码执行漏洞（任意 EIP 可控漏洞均可）&lt;/li&gt;
+&lt;li&gt;求一可用的 metasploit 的漏洞利用模块。&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;通过阅读&lt;a href=&quot;/2014/02/28/ROPIntroduce.html&quot; title=&quot;ROP介绍&quot;&gt;第一篇笔记&lt;/a&gt;可以得知：调用ZwProtectVirtualMemory（）可以完成关闭DEP的操作，而调用之前需要将栈状态布置为下图所示：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://rootkiter.com/images/2015_04_24_20_33/2_1_1.png&quot; alt=&quot;图片丢失，请联系作者&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;此时通过RETN指令调用Zw*函数后才能将shellcode所在区域开DEP保护。所以我们的目标就是构造这样一片的堆栈结构。&lt;/p&gt;
+
+&lt;h3&gt;二、针对目标实现步骤，确定需要的ROP样式&lt;/h3&gt;
+
+&lt;p&gt;观察目标堆栈结构可以发现，构造这样的堆栈存在以下几点困难：&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;
+1.ShellCode 地址由于是动态分配到堆内存中，无法固定&lt;br&gt;
+2.0x00000040   和 0x0000 0400 两个数据存在格式为%u0000的unicode坏字符，无法直接部署。
+&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;于是，这种栈状态存在7个双字需要在ROP中动态设置(参照上图带红点的位置)。这可能会用到以下种类的ROP代码：&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;
+1.MOV [ reg ], reg&lt;br&gt;
+//布置堆栈，操作内存，当然需要写内存指令了&lt;br&gt;
+2.ADD（SUB） reg,reg&lt;br&gt;
+//计算shellcode -0c、shellcode-04这种地址的值&lt;br&gt;
+//计算MOV [reg],reg 指令中  [reg] 的值&lt;br&gt;
+3.MOV  reg，ESP&lt;br&gt;
+//这条指令是最重要的，没有它，根本无法动态定位shellcode地址&lt;br&gt;
+4.NOT reg&lt;br&gt;
+//这条指令可有可没有，用来计算0x00000040 和 0x00000400 这种值，如果没有的话，通过Add（SUB） 指令也能实现&lt;br&gt;
+5.POP reg&lt;br&gt;
+//这条指令可用于向寄存器赋值，是寄存器计算前的必要指令。&lt;br&gt;
+&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;在这些种指令中，实际查找时会发现除第五条指令外，其他格式的指令均难以寻找。我也是找了一个星期才凑全这5种指令格式。&lt;/p&gt;
+
+&lt;h3&gt;三、搜索模块中可用代码片段&lt;/h3&gt;
+
+&lt;p&gt;搜索过程中搜到了很多和最终构造无关但可能有奇效的指令，详情可参考第二篇笔记。&lt;br&gt;
+1. MOV [ reg ], reg&lt;br&gt;
+&lt;img src=&quot;http://rootkiter.com/images/2015_04_24_20_33/2_3_1.png&quot; alt=&quot;图片丢失，请联系作者&quot;&gt;&lt;br&gt;
+需要 12个字节的垃圾填充。&lt;br&gt;
+2. SUB reg,reg&lt;br&gt;
+&lt;img src=&quot;http://rootkiter.com/images/2015_04_24_20_33/2_3_2.png&quot; alt=&quot;图片丢失，请联系作者&quot;&gt;&lt;br&gt;
+需要 8个字节的垃圾填充。&lt;br&gt;
+3. MOV reg,ESP&lt;br&gt;
+&lt;img src=&quot;http://rootkiter.com/images/2015_04_24_20_33/2_3_3.png&quot; alt=&quot;图片丢失，请联系作者&quot;&gt;&lt;br&gt;
+无需字节填充，但需要在pushad发生前构造各相关寄存器值。&lt;br&gt;
+4. NOT reg&lt;br&gt;
+&lt;img src=&quot;http://rootkiter.com/images/2015_04_24_20_33/2_3_4.png&quot; alt=&quot;图片丢失，请联系作者&quot;&gt;&lt;br&gt;
+需要16字节垃圾填充&lt;br&gt;
+5. POP reg&lt;br&gt;
+&lt;img src=&quot;http://rootkiter.com/images/2015_04_24_20_33/2_3_5.png&quot; alt=&quot;图片丢失，请联系作者&quot;&gt;&lt;br&gt;
+&lt;img src=&quot;http://rootkiter.com/images/2015_04_24_20_33/2_3_6.png&quot; alt=&quot;图片丢失，请联系作者&quot;&gt;&lt;br&gt;
+&lt;img src=&quot;http://rootkiter.com/images/2015_04_24_20_33/2_3_7.png&quot; alt=&quot;图片丢失，请联系作者&quot;&gt;&lt;br&gt;
+&lt;img src=&quot;http://rootkiter.com/images/2015_04_24_20_33/2_3_8.png&quot; alt=&quot;图片丢失，请联系作者&quot;&gt;  &lt;/p&gt;
+
+&lt;h3&gt;四、封装代码片段至模块&lt;/h3&gt;
+
+&lt;p&gt;为了后期使用的方便，最好能够将个代码片段封装成ROP片段，最终ROP_chain构造时直接拷贝粘贴即可。各个指令片段封装格式如下所示：&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;
+MOV [ ecx ], eax&lt;br&gt;
+&lt;img src=&quot;http://rootkiter.com/images/2015_04_24_20_33/2_4_1.png&quot; alt=&quot;图片丢失，请联系作者&quot;&gt;&lt;br&gt;
+SUB  eax,edx&lt;br&gt;
+&lt;img src=&quot;http://rootkiter.com/images/2015_04_24_20_33/2_4_2.png&quot; alt=&quot;图片丢失，请联系作者&quot;&gt;&lt;br&gt;
+MOV  ecx，ESP&lt;br&gt;
+&lt;img src=&quot;http://rootkiter.com/images/2015_04_24_20_33/2_4_3.png&quot; alt=&quot;图片丢失，请联系作者&quot;&gt;&lt;br&gt;
+MOV  eax, ESP&lt;br&gt;
+&lt;img src=&quot;http://rootkiter.com/images/2015_04_24_20_33/2_4_4.png&quot; alt=&quot;图片丢失，请联系作者&quot;&gt;&lt;br&gt;
+NOT eax&lt;br&gt;
+&lt;img src=&quot;http://rootkiter.com/images/2015_04_24_20_33/2_4_5.png&quot; alt=&quot;图片丢失，请联系作者&quot;&gt;&lt;br&gt;
+POP ecx&lt;br&gt;
+&lt;img src=&quot;http://rootkiter.com/images/2015_04_24_20_33/2_4_6.png&quot; alt=&quot;图片丢失，请联系作者&quot;&gt;&lt;br&gt;
+POP edx&lt;br&gt;
+&lt;img src=&quot;http://rootkiter.com/images/2015_04_24_20_33/2_4_8.png&quot; alt=&quot;图片丢失，请联系作者&quot;&gt;&lt;br&gt;
+&lt;/code&gt;&lt;/p&gt;
+
+&lt;h3&gt;五、书写简单的ROP伪指令&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://rootkiter.com/images/2015_04_24_20_33/2_5_1.png&quot; alt=&quot;图片丢失，请联系作者&quot;&gt;  &lt;/p&gt;
+
+&lt;p&gt;这段ROP片段 ＋ Zw* ＋ “调用栈结构” + Shellcode，就可以成功关闭DEP并运行后侧的 shellcode 了。 
+然而在这段伪指令中发现，每次写地址需要计算两次，如果都用SUB实现，将会经常备份数据，因为eax只有一个，组织代码将会相当复杂，如果能找到其他的加法指令就会好多了。
+带着这个问题，我在内存中又简单的搜索了一下，顺利找到了以下代码：
+&lt;img src=&quot;http://rootkiter.com/images/2015_04_24_20_33/2_5_2.png&quot; alt=&quot;图片丢失，请联系作者&quot;&gt;&lt;br&gt;
+这处代码原本是INC ECX \  RETN 如果连续使用4次，正好能够完成ADD ecx，4的功能。至此“万事具备，只欠拼接”。&lt;/p&gt;
+
+&lt;h3&gt;六、组装代码片段&lt;/h3&gt;
+
+&lt;p&gt;这个没什么好说的了，就是参照伪代码，把封装好的代码片段组合到一起，如下图所示：
+&lt;img src=&quot;http://rootkiter.com/images/2015_04_24_20_33/2_6_1.png&quot; alt=&quot;图片丢失，请联系作者&quot;&gt;  &lt;/p&gt;
+
+&lt;h3&gt;七、调试完成&lt;/h3&gt;
+
+&lt;p&gt;在metasploit中启动运行，用IE8+Win7访问，查看是否能够成功执行shellcode，如果访问失败，可以通过设置c3断点，或在ROP中设置0x41414141进行中断，另外SUB指令执行时的EDX值，既可以在构造完成后集中计算，也可以单步跟踪时手动调节。&lt;br&gt;
+&lt;img src=&quot;http://rootkiter.com/images/2015_04_24_20_33/2_7_1.png&quot; alt=&quot;图片丢失，请联系作者&quot;&gt;&lt;br&gt;
+&lt;img src=&quot;http://rootkiter.com/images/2015_04_24_20_33/2_7_2.png&quot; alt=&quot;图片丢失，请联系作者&quot;&gt;  &lt;/p&gt;
+
+&lt;h1&gt;结尾：&lt;/h1&gt;
+
+&lt;p&gt;本篇笔记记录了一个相对复杂的ROP构造过程。&lt;/p&gt;
+
+&lt;p&gt;ROP构造是一个奇妙的过程，它和程序设计有着很多相似之处，都是需要先明确目标，然后选择伪代码描述，最终用代码组织完成。然而和普通程序设计不同的是，ROP的语法块需要在内存中去寻找，并自己定义，只有找全了各种功能的代码片段，才能完成最终的ROP_chain编写。&lt;/p&gt;
+</content>
+</entry>
 
 <entry>
 	<title>ntdll 空间中的金疙瘩</title>
@@ -281,7 +413,7 @@ src=&quot;http://rootkiter.com/image/ropimage/ROP1-2.png&quot; title=&quot;ropim
 
 &lt;p&gt;单从DEP的定义可以发现，这种机制应该是能够有效抑制数据
 区域内shellcode执行的。此时攻击者的面前出现了一座难以
-逾越的山，我喜欢叫它“王屋山”。&lt;/p&gt;
+逾越的山。&lt;/p&gt;
 
 &lt;p&gt;要想知道如何绕过这种保护机制，请详细阅读本文下面的部分。&lt;/p&gt;
 
@@ -366,11 +498,13 @@ src=&quot;http://rootkiter.com/image/ropimage/ROP1-5.png&quot; title=&quot;ropim
 
 &lt;p&gt;通过阅读相关文章，可以得知：在Windows中有多种绕过DEP的方式，可供ROP开发，包括但不限于以下几种：&lt;/p&gt;
 
-&lt;p&gt;1.Zw(Nt)SetInformationProcess()
-2.VirtualProtect()
-3.VirtualAlloc()
-4.Zw(Nt)ProtectVirtualMemory()
-5.利用可写可执行的内存空间绕过DEP&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Zw(Nt)SetInformationProcess()&lt;/li&gt;
+&lt;li&gt;VirtualProtect()&lt;/li&gt;
+&lt;li&gt;VirtualAlloc()&lt;/li&gt;
+&lt;li&gt;Zw(Nt)ProtectVirtualMemory()&lt;/li&gt;
+&lt;li&gt;利用可写可执行的内存空间绕过DEP&lt;/li&gt;
+&lt;/ol&gt;
 
 &lt;p&gt;其中1、2、3、5四种绕过办法在《0Day安全（第二版）》中有详细的阐述，其中第一种在《Python灰帽子》中，还详细介绍了如何通过脚本快速实现ROP开发。那些文字都是出自真正的大牛之手,所以我就不多说了，本节将对第四种绕过方式做一定的阐述。&lt;/p&gt;
 
@@ -422,8 +556,10 @@ src=&quot;http://rootkiter.com/image/ropimage/ROP1-5.png&quot; title=&quot;ropim
 
 &lt;p&gt;Mona 一般会生成两段ROP，分别用3种格式展示：Ruby、Python、Javascript。似乎Mona生成的ROP都是针对VirtualProtect的，而且是从内存序列中提取该函数指针，所以在ASLR模式下并不完全适用，我推荐这个工具的原因是：&lt;/p&gt;
 
-&lt;p&gt;1.它可以给你提供几个有效的ROP指令片段，以免你自己去找。
-2.它可以给你一个构造ROP的思路，当然目前来看这个思路也极不靠谱。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;它可以给你提供几个有效的ROP指令片段，以免你自己去找。&lt;/li&gt;
+&lt;li&gt;它可以给你一个构造ROP的思路，当然目前来看这个思路也极不靠谱。&lt;/li&gt;
+&lt;/ol&gt;
 
 &lt;ul&gt;
 &lt;li&gt;有个黑阔展示过一个ROP生成工具&lt;/li&gt;
