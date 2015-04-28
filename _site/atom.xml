@@ -3,12 +3,72 @@
 <title>rootkiter</title>
 <link href="http://rootkiter.com/atom.xml" rel="self"/>
 <link href="http://rootkiter.com" />
-<updated>2015-04-24T22:26:48+08:00</updated>
+<updated>2015-04-28T22:46:37+08:00</updated>
 <id>http://rootkiter.rootkiter.com/</id>
 <author>
 <name>RootKiter</name>
 <email>2559964169@qq.com</email>
 </author>
+
+<entry>
+	<title>端口转发和SOCKS代理</title>
+        <link href="http://rootkiter.com/2015/04/28/LCX_SOCKS.html"/>
+	<updated>2015-04-28T00:00:00+08:00</updated>
+	<id>http://rootkiter.rootkiter.com/2015/04/28/LCX_SOCKS</id>
+	<content type="html">&lt;h1&gt;起因&lt;/h1&gt;
+
+&lt;p&gt;在&lt;a href=&quot;http://rootkiter.com/EarthWorm/&quot; title=&quot;EarthWorm&quot;&gt;蚯蚓&lt;/a&gt;构思之初，我在网上集中搜集过socks代理的知识，发现网上的很多资料都把 &amp;quot;Socks代理&amp;quot;和&amp;quot;socket端口转发&amp;quot;混为一谈。于是我决定写这样一篇文章，来辨析一下它们之间的异同。&lt;/p&gt;
+
+&lt;h2&gt;Socket端口转发&lt;/h2&gt;
+
+&lt;p&gt;lcx.exe 就是一个基于 socket 套接字实现的端口转发工具，它是从 linux 下的htran 工具移植到windows平台的。 &lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://rootkiter.com/images/2015_04_28_22_13/2_1_1.png&quot; alt=&quot;图片丢失，请联系作者&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;一条正常的socket隧道必具备两端，一侧为服务端，它会监听一个端口等待客户端连接；&lt;br&gt;
+另一侧为客户端，通过传入服务端的ip和端口，才能主动连接到服务器。  &lt;/p&gt;
+
+&lt;p&gt;而端口转发工具（lcx.exe/htran)的工作原理其实是将两条 socket 隧道对接起来，打造一条可“异步双向通讯”的转接隧道。由于合法的socket隧道有两种接口分别对应服务端和客户端，根据数学中的排列组合可计算出端口转发供具有4种工作状态，它们是：&lt;br&gt;
+&lt;code&gt;
+1.“客户端” 接 “客户端”&lt;br&gt;
+2.“客户端” 接 “服务端”&lt;br&gt;
+3.“服务端” 接 “客户端”&lt;br&gt;
+4.“服务端” 接 “服务端”&lt;br&gt;
+&lt;/code&gt;
+又由于端口转发为“异步双向通讯”隧道，隧道转接不分先后，所以状态2和状态3 是相同的，合并之后，便分别对应了lcx的三种工作模式，如下所示：
+&lt;code&gt;
+1、slave    “客户端” 接 “客户端”
+2、tran     “服务端” 接 “客户端”
+3、listen    “服务端” 接 “服务端”
+&lt;/code&gt;
+于是便可理解lcx工具的三种命令参数的格式为何是以下的样子了：&lt;br&gt;
+&lt;code&gt;
+–listen  ConnectPort  TransmitPort&lt;br&gt;
+–tran   ConnectPort  TransmitHost  TransmitPort&lt;br&gt;
+–slave  ConnectHost  ConnectPort  TransmitHost  TransmitPort&lt;br&gt;
+&lt;/code&gt;&lt;/p&gt;
+
+&lt;h2&gt;Socks代理&lt;/h2&gt;
+
+&lt;p&gt;Socks 代理从名字中的“代理”二字就可以了解它的功能核心：那就是帮他人完成socket访问网络。  &lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://rootkiter.com/images/2015_04_28_22_13/2_2_1.png&quot; alt=&quot;图片丢失，请联系作者&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;有过翻墙经历的同学大概知道浏览器（IE／Chrome／FireFox等）有设置socks代理的配置项，可用来访问网络的能力。当我们通过代理服务器访问一个网址时，socks服务器其实是起到了一个中间人的身份，他分别与两方（浏览器／被访问的网站）通讯然后将获取到的结果告知另一方。&lt;br&gt;
+在使用代理服务的过程中我们会发现，只要配置好socks代理后，就不再需要指定被访问目标，直接在浏览器的地址栏输入地址就能访问任意网站。这是由于socks代理中有一个交互协议，当我们准备访问一个网站并敲击回车时，浏览器会先发送一个被访问目标的基本信息（URL和服务端口）给socks服务端，socks服务端解析了这个信息后，会代替浏览器去访问目标网站，并将访问结果回复给浏览器端。这便是socks代理的工作原理了。&lt;br&gt;
+通过这段对socks代理的描述，可知socks代理其实可理解为一个增强版的 lcx -tran 它在服务端监听一个服务端口（ConnectPort），当有新的连接请求时会从socks协议中解析出访问目标的URL（TransmitHost）的目标端口(TransmitPort)，再开始执行lcx -tran 的具体功能。  &lt;/p&gt;
+
+&lt;h2&gt;两者的异同&lt;/h2&gt;
+
+&lt;p&gt;1.socket端口转发无需通讯协议支持，而socks代理需要socks协议支持。&lt;br&gt;
+2.socket端口转发有三种工作方式，而socks代理仅有一种工作方式。&lt;br&gt;
+3.如果说socks是帮他人访问网络（一对多），那么端口转发就是帮他人访问主机的某个端口（一对一）。&lt;/p&gt;
+
+&lt;h1&gt;一句话总结：&lt;/h1&gt;
+
+&lt;p&gt;这篇笔记从“socket端口转发”和 “socks代理” 两者的工作原理出发，介绍了两者的区别。&lt;/p&gt;
+</content>
+</entry>
 
 <entry>
 	<title>构造ROP</title>
@@ -73,7 +133,7 @@
 
 &lt;h3&gt;三、搜索模块中可用代码片段&lt;/h3&gt;
 
-&lt;p&gt;搜索过程中搜到了很多和最终构造无关但可能有奇效的指令，详情可参考第二篇笔记。&lt;br&gt;
+&lt;p&gt;搜索过程中搜到了很多和最终构造无关但可能有奇效的指令，详情可参考&lt;a href=&quot;/2015/04/23/GOLD_IN_THE_NTDLL.html&quot; title=&quot;NTDLL空间&quot;&gt;第二篇笔记&lt;/a&gt;。&lt;br&gt;
 1. MOV [ reg ], reg&lt;br&gt;
 &lt;img src=&quot;http://rootkiter.com/images/2015_04_24_20_33/2_3_1.png&quot; alt=&quot;图片丢失，请联系作者&quot;&gt;&lt;br&gt;
 需要 12个字节的垃圾填充。&lt;br&gt;
