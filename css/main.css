@@ -150,3 +150,9 @@ img {
       margin-left: 5%;
       width: 90%;
 }
+
+.mytalk {
+    font-style: "Ubuntu Mone", monospace;
+    font-size: 90%;
+    color: #FFF0FF;
+}
