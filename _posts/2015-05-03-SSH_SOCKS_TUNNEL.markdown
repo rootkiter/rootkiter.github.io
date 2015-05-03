@@ -37,3 +37,6 @@ SSH是Secure Shell的缩写，常见于linux主机远程管理中，它和telnet
 
 ![图7](/images/2015_05_03_16_36/2_7.png)  
 
+代理的使用，依然可参考[这篇文章](/2015/05/01/使用Socks代理服务.html "Socks代理")。
+
+
