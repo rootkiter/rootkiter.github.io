@@ -156,3 +156,10 @@ img {
     font-size: 90%;
     color: #FFF0FF;
 }
+
+cmd {
+    margin-left: 2%;
+    font-style: "New York", monospace;
+    font-size: 80%;
+    color: #777777;
+}

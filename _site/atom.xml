@@ -3,12 +3,76 @@
 <title>rootkiter</title>
 <link href="http://rootkiter.com/atom.xml" rel="self"/>
 <link href="http://rootkiter.com" />
-<updated>2015-05-03T18:36:17+08:00</updated>
+<updated>2015-05-08T23:57:54+08:00</updated>
 <id>http://rootkiter.rootkiter.com/</id>
 <author>
 <name>RootKiter</name>
 <email>2559964169@qq.com</email>
 </author>
+
+<entry>
+	<title>借力打力－smali代码窃取</title>
+        <link href="http://rootkiter.com/2015/05/08/%E5%80%9F%E5%8A%9B%E6%89%93%E5%8A%9B_smali%E4%BB%A3%E7%A0%81%E7%AA%83%E5%8F%96.html"/>
+	<updated>2015-05-08T00:00:00+08:00</updated>
+	<id>http://rootkiter.rootkiter.com/2015/05/08/借力打力_smali代码窃取</id>
+	<content type="html">&lt;h1&gt;起因&lt;/h1&gt;
+
+&lt;p&gt;这两天在分析一个apk样本，在分析中遇到了一个硬编码密文字符串的情况。
+下图就是样本中的一个硬编码密文：&lt;br&gt;
+&lt;img src=&quot;http://rootkiter.com/images/2015_05_08_20_00/2_1.png&quot; alt=&quot;rootkiter.com&quot;&gt; &lt;/p&gt;
+
+&lt;p&gt;其对应的解码函数为：&lt;br&gt;
+&lt;img src=&quot;http://rootkiter.com/images/2015_05_08_20_00/2_2.png&quot; alt=&quot;rootkiter.com&quot;&gt;  &lt;/p&gt;
+
+&lt;p&gt;要想确定上面的硬编码字符串经isInstallation这个函数还原后的原始结果，有三种思路：  &lt;/p&gt;
+
+&lt;p&gt;1.动态调试，调试到解密位置，看寄存器的结果。&lt;br&gt;
+2.重打包，在解密后的位置加段打日志的代码，然后重打包运行，就能在日志中看到解密结果了。&lt;br&gt;
+3.代码窃取，它的主体思路是：将解密函数（isInstallation）的smali代码抠出来，然后我们自己写一段代码去掉用这个解密函数。  &lt;/p&gt;
+
+&lt;p&gt;其实头两种是比较常见的做法，可惜这个样本有反调试机制，而且dex文件中有一段代码又是通过so文件动态还原的，导致头两种方法都很难有效。于是只能用最后一种方法。&lt;/p&gt;
+
+&lt;h1&gt;操作步骤&lt;/h1&gt;
+
+&lt;p&gt;首先按照isInstallation的定义格式（这里方法定义为公有或者私有不用较真，能调用就行），写一个段java框架代码，如下所示：&lt;br&gt;
+&lt;img src=&quot;http://rootkiter.com/images/2015_05_08_20_00/2_3.png&quot; alt=&quot;rootkiter.com&quot;&gt; &lt;/p&gt;
+
+&lt;p&gt;保存运行，试一下这段代码是否有错误：
+&lt;img src=&quot;http://rootkiter.com/images/2015_05_08_20_00/2_4.png&quot; alt=&quot;rootkiter.com&quot;&gt;  &lt;/p&gt;
+
+&lt;p&gt;将字节码文件（.class）转化成dex文件，命令为：&lt;br&gt;
+&lt;cmd&gt;
+$ dx --dex --output=classes.dex HelloWorld.class
+&lt;/cmd&gt;
+&lt;img src=&quot;http://rootkiter.com/images/2015_05_08_20_00/2_5.png&quot; alt=&quot;rootkiter.com&quot;&gt;  &lt;/p&gt;
+
+&lt;p&gt;再将dex文件反编译成 smali文件，命令为：&lt;br&gt;
+&lt;cmd&gt;
+$ java -jar baksmali.jar -o aaa/ classes.dex
+&lt;/cmd&gt;
+&lt;img src=&quot;http://rootkiter.com/images/2015_05_08_20_00/2_6.png&quot; alt=&quot;rootkiter.com&quot;&gt;  &lt;/p&gt;
+
+&lt;p&gt;去样本中将isInstallation反编译的代码结果覆盖到 aaa/HelloWorld.smali 的相应代码中：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://rootkiter.com/images/2015_05_08_20_00/2_7.png&quot; alt=&quot;rootkiter.com&quot;&gt;  &lt;/p&gt;
+
+&lt;p&gt;保存退出后，将这个smali代码编译为dex文件,命令为：&lt;br&gt;
+&lt;cmd&gt;
+$ java -jar smali.jar -o classes.dex  aaa/HelloWorld.smali
+&lt;/cmd&gt;&lt;br&gt;
+&lt;img src=&quot;http://rootkiter.com/images/2015_05_08_20_00/2_8.png&quot; alt=&quot;rootkiter.com&quot;&gt;  &lt;/p&gt;
+
+&lt;p&gt;此时将生成的dex文件上传到手机等待调用。&lt;br&gt;
+&lt;img src=&quot;http://rootkiter.com/images/2015_05_08_20_00/2_9.png&quot; alt=&quot;rootkiter.com&quot;&gt;&lt;br&gt;
+最后将要解密的字符串传到这个程序中就能解密对应字符串了，命令如下所示：&lt;br&gt;
+&lt;cmd&gt;
+# dalvikvm -cp /data/local/HelloWorld.zip HelloWorld Q=6/pbCypY64tfHs8UFBpZfETzsr
+&lt;/cmd&gt;
+&lt;img src=&quot;http://rootkiter.com/images/2015_05_08_20_00/2_10.png&quot; alt=&quot;rootkiter.com&quot;&gt;  &lt;/p&gt;
+
+&lt;p&gt;这时输出的 “contact_id = ” 就是 ”Q=6/pbCypY64tfHs8UFBpZfETzsr” 这个字符串解密的结果了。&lt;/p&gt;
+</content>
+</entry>
 
 <entry>
 	<title>SSH-Socks-Tunnel</title>
