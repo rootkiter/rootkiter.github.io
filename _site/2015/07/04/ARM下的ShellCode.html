@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>ARM 架构下的 ShellCode</title>
+        <meta name="viewport" content="width=device-width">
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" href="/css/syntax.css">
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="/css/main.css">
+
+    </head>
+    <body>
+
+        <div class="site">
+          <div class="header">
+            <h1 class="title"><a href="/">RootKiter</a></h1>
+          </div>
+
+          <h2>ARM 架构下的 ShellCode
+</h2>
+<!--
+<audio controls=true autoplay="true">
+  <source src="http://rootkiter.rootkiter.com/music/">
+</audio>
+-->
+
+<p class="meta">04 Jul 2015</p>
+
+<div class="post">
+<h2>引言</h2>
+
+<p>这是我很久以前学习 ANDROID＋ARM 时的学习笔记，共有6篇，这是第5篇，其他笔记会在适当的时候继续整理出来。先整理一下这一篇。</p>
+
+<h2>写段 HelloWorld</h2>
+
+<p>我编写shellcode也是从HelloWorld开始滴，下图是相应的代码截图：</p>
+
+<p><img src="http://rootkiter.com/images/2015_07_04_19_25/1.png" alt="rootkiter.com"></p>
+
+<p>然后编译链接运行：</p>
+
+<p><img src="http://rootkiter.com/images/2015_07_04_19_25/2.png" alt="rootkiter.com"></p>
+
+<h2>ShellCode 提取</h2>
+
+<p>到目前为止，自己编写的ARM汇编程序已经完全可执行了，下一步就是提炼16进制的shellcode，可以通过以下命令获取16进制结果：</p>
+
+<p><img src="http://rootkiter.com/images/2015_07_04_19_25/3.png" alt="rootkiter.com"></p>
+
+<p>然后就是固定的shellcode测试代码（C语言格式），如下图所示：</p>
+
+<p><img src="http://rootkiter.com/images/2015_07_04_19_25/4.png" alt="rootkiter.com"></p>
+
+<h2>RecvShell 的 ShellCode</h2>
+
+<p>这段代码是网上有人给出的，但是给出的却是objdump-d 版本，在还原指令的时候遇到很多语法问题，也就顺便学了一些Thumb语法，收获挺大的，看下面的截图（可以通过右键菜单中查看原图来查看放大图）：</p>
+
+<p><img src="http://rootkiter.com/images/2015_07_04_19_25/5.png" alt="rootkiter.com"></p>
+
+<p>程序编译连接后的执行结果如下所示：</p>
+
+<p><img src="http://rootkiter.com/images/2015_07_04_19_25/6.png" alt="rootkiter.com"></p>
+
+<p>还是利用objdump提取16进制shellcode，得到如下代码：</p>
+
+<p><img src="http://rootkiter.com/images/2015_07_04_19_25/7.png" alt="rootkiter.com"></p>
+
+<p>执行后运行结果如下图所示：</p>
+
+<p><img src="http://rootkiter.com/images/2015_07_04_19_25/8.png" alt="rootkiter.com"></p>
+
+<h2>结束</h2>
+
+<p>这里没有高深的技术点，只是一篇学习笔记和一些很详细的操作截图。</p>
+
+</div>
+
+
+          <div class="footer">
+            <div class="contact">
+              <p>
+                链接 1：<br />
+                链接 2：<br />
+              </p>
+            </div>
+            <div class="contact">
+              <p>
+                <a href="http://rootkiter.com/atom.xml"> RSS 源 </a><br />
+                <a href="http://rootkiter.com/EarthWorm"> EarthWorm 主页</a><br />
+              </p>
+            </div>
+          </div>
+        <a href="/friend_links.html" style="float:right">友链在此，想看就看</a>
+        </div>
+    </body>
+</html>
