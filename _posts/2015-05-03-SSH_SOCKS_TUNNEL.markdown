@@ -3,6 +3,7 @@ layout: post
 title:  "SSH-Socks-Tunnel"
 date:   2015-05-03
 time:   16:06:00
+categories : [ socks , lcx , 技术相关 ]
 
 ---
 

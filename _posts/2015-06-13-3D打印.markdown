@@ -3,8 +3,7 @@ layout: post
 title:  3D打印
 date:   2015-06-13
 time:   22:08:00
-tags:  
-     -funny
+categories : [ 技术相关 , 3D打印 ]
 
 ---
 

@@ -3,8 +3,7 @@ layout: post
 title:  程序员的世界
 date:   2015-07-02
 time:   22:54:00
-tags:  
-     -funny
+categories : [ 技术无关 ]
 
 ---
 

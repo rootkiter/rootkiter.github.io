@@ -3,8 +3,7 @@ layout: post
 title:  《一席》中的好故事
 date:   2015-07-05
 time:   15:00:00
-tags:  
-     -funny
+categories : [ 技术无关 ]
 
 ---
 

@@ -137,13 +137,12 @@ hr {
     text-shadow: none;
 }
 
-@media (max-width: 979px) {
-  body {
-      padding: 100px;
-      margin-left: 0px;
-      margin-right: 0px;
-      width: 60%;
-  }
+@media {
+    max-width: 979px 
+    padding: 100px;
+    margin-left: 0px;
+    margin-right: 0px;
+    width: 60%;
 }
 
 img {

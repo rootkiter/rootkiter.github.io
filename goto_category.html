@@ -1,0 +1,31 @@
+---
+layout: default
+title: RootKiter的博文
+---
+
+<a class="mytalk" style="float:right" href="{{ post.url }}/old_talks.html"> {% include talks.txt %} </a>
+<div id="home">
+  <h1>CATEGORIES</h1>
+<!--
+<audio controls=true autoplay="true">
+ 	<source src="{{ site.defmusic }}">
+</audio>
+-->
+<hr>  
+{% for category in site.categories %}  
+    <a href="#{{ category | first }}">{{ category | first }}</a> ({{ category | last | size }})  
+{% endfor %}  
+
+
+{% for category in site.categories %}
+    <a name="{{ category | first }}"></a>
+    <h3>{{ category | first }}  ({{ category | last | size }})</h3>
+    <ul class="arc-list">
+        {% for post in category.last %} 
+            <li>{{ post.date | date:"%Y/%m/%d" }} &raquo; <a href="{{ post.url }}">   {{ post.title }}</a></li>
+        {% endfor %}
+    </ul> 
+{% endfor %}
+
+
+</div>

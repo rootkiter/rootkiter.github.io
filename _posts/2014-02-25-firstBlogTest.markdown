@@ -4,6 +4,8 @@ title:  "第一篇 博客"
 date:   2014-02-25
 time:   20:35:00
 music:  backmusic.mp3
+categories : [ 技术无关 ] 
+
 ---
 
 *这里是普通的斜体字*

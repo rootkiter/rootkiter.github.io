@@ -2,7 +2,9 @@
 layout: post
 title:  "使用Socks代理服务"
 date:   2015-05-01
-time:   16:46:00
+time:   16:46:00 
+categories : [ socks , 技术相关 ]
+
 ---
 
 # Socks代理服务介绍

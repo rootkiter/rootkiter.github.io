@@ -13,7 +13,15 @@ title: RootKiter的博文
 -->
   <ul class="posts">
     {% for post in site.posts %}
-      <li><span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ post.url }}">{{ post.title }}</a></li>
+      <li><span>{{ post.date | date:"%Y/%m/%d" }}</span> &raquo; <a href="{{ post.url }}">{{ post.title }}</a></li>
     {% endfor %}
   </ul>
+
+
+<hr>  
+    <h4>CATEGORIES</h4>  
+        {% for category in site.categories %}  
+       <a href="/goto_category.html#{{ category | first }}">{{ category | first }}</a> ({{ category | last | size }})  
+        {% endfor %}  
+
 </div>

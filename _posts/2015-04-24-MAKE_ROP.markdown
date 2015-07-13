@@ -2,7 +2,9 @@
 layout: post
 title:  "构造ROP"
 date:   2015-04-24
-time:   20:05:00
+time:   20:05:00 
+categories : [ exploit-rop , 技术相关, 汇编+bin ]
+
 ---
 
 构造一个可用的ROP可以分7步来操作：
