@@ -19,9 +19,9 @@ title: RootKiter的博文
 
 
 <hr>  
-    <h4>CATEGORIES</h4>  
-        {% for category in site.categories %}  
-       <a href="/goto_category.html#{{ category | first }}">{{ category | first }}</a> ({{ category | last | size }})  
+    <h4>TAGS</h4>  
+        {% for category in site.tags %}  
+       <a href="/goto_tags.html#{{ category | first }}">{{ category | first }}</a> ({{ category | last | size }})  
         {% endfor %}  
 
 </div>

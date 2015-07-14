@@ -3,7 +3,7 @@ layout: post
 title:  "端口转发和SOCKS代理"
 date:   2015-04-28
 time:   20:37:00 
-categories : [ socks , lcx , 技术相关 ]
+tags : [ socks , lcx , 技术相关 ]
 
 ---
 

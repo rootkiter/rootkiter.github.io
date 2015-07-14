@@ -3,7 +3,7 @@ layout: post
 title:  "ROP Introduce"
 date:   2014-02-28
 time:   20:56:17
-categories : [ 技术相关 , exploit-rop ,  汇编+bin ]
+tags : [ 技术相关 , exploit-rop ,  汇编+bin ]
 
 ---
 ## 背景介绍

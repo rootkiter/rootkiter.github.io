@@ -3,7 +3,7 @@
 <title>rootkiter</title>
 <link href="http://rootkiter.com/atom.xml" rel="self"/>
 <link href="http://rootkiter.com" />
-<updated>2015-07-13T23:22:50+08:00</updated>
+<updated>2015-07-14T19:55:31+08:00</updated>
 <id>http://rootkiter.rootkiter.com/</id>
 <author>
 <name>RootKiter</name>
@@ -12,9 +12,9 @@
 
 <entry>
 	<title>《一席》中的好故事</title>
-        <link href="http://rootkiter.com/%E6%8A%80%E6%9C%AF%E6%97%A0%E5%85%B3/2015/07/05/%E3%80%8A%E4%B8%80%E5%B8%AD%E3%80%8B%E4%B8%AD%E7%9A%84%E5%A5%BD%E6%95%85%E4%BA%8B.html"/>
+        <link href="http://rootkiter.com/2015/07/05/%E3%80%8A%E4%B8%80%E5%B8%AD%E3%80%8B%E4%B8%AD%E7%9A%84%E5%A5%BD%E6%95%85%E4%BA%8B.html"/>
 	<updated>2015-07-05T00:00:00+08:00</updated>
-	<id>http://rootkiter.rootkiter.com/%E6%8A%80%E6%9C%AF%E6%97%A0%E5%85%B3/2015/07/05/《一席》中的好故事</id>
+	<id>http://rootkiter.rootkiter.com/2015/07/05/《一席》中的好故事</id>
 	<content type="html">&lt;h2&gt;关于《一席》&lt;/h2&gt;
 
 &lt;p&gt;最近在听《一席》这个节目，用了大概一个月时间把每期节目过了一遍，这个栏目原本是参照《TED》来做，但现在看来这里水分确实很大，很多人都是上来推荐自己的产品，或者上这里讲些不切实际的东西，企盼吸引到投资。在这一个月听了上百期左右后找到了几个有趣的议题，下面依次介绍下（文中有视频地址）。&lt;/p&gt;
@@ -71,9 +71,9 @@
 
 <entry>
 	<title>ARM 架构下的 ShellCode</title>
-        <link href="http://rootkiter.com/%E6%B1%87%E7%BC%96+bin/%E6%8A%80%E6%9C%AF%E7%9B%B8%E5%85%B3/2015/07/04/ARM%E4%B8%8B%E7%9A%84ShellCode.html"/>
+        <link href="http://rootkiter.com/2015/07/04/ARM%E4%B8%8B%E7%9A%84ShellCode.html"/>
 	<updated>2015-07-04T00:00:00+08:00</updated>
-	<id>http://rootkiter.rootkiter.com/%E6%B1%87%E7%BC%96+bin/%E6%8A%80%E6%9C%AF%E7%9B%B8%E5%85%B3/2015/07/04/ARM下的ShellCode</id>
+	<id>http://rootkiter.rootkiter.com/2015/07/04/ARM下的ShellCode</id>
 	<content type="html">&lt;h2&gt;引言&lt;/h2&gt;
 
 &lt;p&gt;这是我很久以前学习 ANDROID＋ARM 时的学习笔记，共有6篇，这是第5篇，其他笔记会在适当的时候继续整理出来。先整理一下这一篇。&lt;/p&gt;
@@ -124,9 +124,9 @@
 
 <entry>
 	<title>程序员的世界</title>
-        <link href="http://rootkiter.com/%E6%8A%80%E6%9C%AF%E6%97%A0%E5%85%B3/2015/07/02/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E4%B8%96%E7%95%8C.html"/>
+        <link href="http://rootkiter.com/2015/07/02/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E4%B8%96%E7%95%8C.html"/>
 	<updated>2015-07-02T00:00:00+08:00</updated>
-	<id>http://rootkiter.rootkiter.com/%E6%8A%80%E6%9C%AF%E6%97%A0%E5%85%B3/2015/07/02/程序员的世界</id>
+	<id>http://rootkiter.rootkiter.com/2015/07/02/程序员的世界</id>
 	<content type="html">&lt;h2&gt;好久没更新博客了，今天来写点什么&lt;/h2&gt;
 
 &lt;p&gt;在21世纪开始后，程序员成为了一种很重要的生产力。由于工作性质的特殊性，决定了他们是社会中的另类。你会发现这类人很难管理，他们经常会做出一些奇怪的举动（比如冲着电脑发呆，偶尔舒展下眉宇什么的）；甚至会为了一些工作无关的事情（通常是自然科学和谁更缺心眼这种话题）争吵很久。想要管理这些人，就要知道他们究竟是怎么想的，又是什么原因导致的。&lt;/p&gt;
@@ -163,9 +163,9 @@
 
 <entry>
 	<title>3D打印</title>
-        <link href="http://rootkiter.com/%E6%8A%80%E6%9C%AF%E7%9B%B8%E5%85%B3/3d%E6%89%93%E5%8D%B0/2015/06/13/3D%E6%89%93%E5%8D%B0.html"/>
+        <link href="http://rootkiter.com/2015/06/13/3D%E6%89%93%E5%8D%B0.html"/>
 	<updated>2015-06-13T00:00:00+08:00</updated>
-	<id>http://rootkiter.rootkiter.com/%E6%8A%80%E6%9C%AF%E7%9B%B8%E5%85%B3/3d%E6%89%93%E5%8D%B0/2015/06/13/3D打印</id>
+	<id>http://rootkiter.rootkiter.com/2015/06/13/3D打印</id>
 	<content type="html">&lt;h2&gt;起因&lt;/h2&gt;
 
 &lt;p&gt;最近由于痴迷3D打印，所以好久没有更新文章。搞了几天发觉终于有些入门了，就来记些心得。独自happy一下。&lt;/p&gt;
@@ -226,9 +226,9 @@
 
 <entry>
 	<title>借力打力－smali代码窃取</title>
-        <link href="http://rootkiter.com/%E6%8A%80%E6%9C%AF%E7%9B%B8%E5%85%B3/android/smali/2015/05/08/%E5%80%9F%E5%8A%9B%E6%89%93%E5%8A%9B_smali%E4%BB%A3%E7%A0%81%E7%AA%83%E5%8F%96.html"/>
+        <link href="http://rootkiter.com/2015/05/08/%E5%80%9F%E5%8A%9B%E6%89%93%E5%8A%9B_smali%E4%BB%A3%E7%A0%81%E7%AA%83%E5%8F%96.html"/>
 	<updated>2015-05-08T00:00:00+08:00</updated>
-	<id>http://rootkiter.rootkiter.com/%E6%8A%80%E6%9C%AF%E7%9B%B8%E5%85%B3/android/smali/2015/05/08/借力打力_smali代码窃取</id>
+	<id>http://rootkiter.rootkiter.com/2015/05/08/借力打力_smali代码窃取</id>
 	<content type="html">&lt;h1&gt;起因&lt;/h1&gt;
 
 &lt;p&gt;这两天在分析一个apk样本，在分析中遇到了一个硬编码密文字符串的情况。
@@ -290,9 +290,9 @@ $ java -jar smali.jar -o classes.dex  aaa/HelloWorld.smali
 
 <entry>
 	<title>SSH-Socks-Tunnel</title>
-        <link href="http://rootkiter.com/socks/lcx/%E6%8A%80%E6%9C%AF%E7%9B%B8%E5%85%B3/2015/05/03/SSH_SOCKS_TUNNEL.html"/>
+        <link href="http://rootkiter.com/2015/05/03/SSH_SOCKS_TUNNEL.html"/>
 	<updated>2015-05-03T00:00:00+08:00</updated>
-	<id>http://rootkiter.rootkiter.com/socks/lcx/%E6%8A%80%E6%9C%AF%E7%9B%B8%E5%85%B3/2015/05/03/SSH_SOCKS_TUNNEL</id>
+	<id>http://rootkiter.rootkiter.com/2015/05/03/SSH_SOCKS_TUNNEL</id>
 	<content type="html">&lt;h1&gt;介绍&lt;/h1&gt;
 
 &lt;p&gt;SSH是Secure Shell的缩写，常见于linux主机远程管理中，它和telnet之间有一定的联系，区别在于它的网络传输数据是经过加密的，而telnet是明文传输的，如果被抓包程序抓到，可能导致敏感信息泄漏的问题。&lt;br&gt;
@@ -329,9 +329,9 @@ $ java -jar smali.jar -o classes.dex  aaa/HelloWorld.smali
 
 <entry>
 	<title>使用Socks代理服务</title>
-        <link href="http://rootkiter.com/socks/%E6%8A%80%E6%9C%AF%E7%9B%B8%E5%85%B3/2015/05/01/%E4%BD%BF%E7%94%A8Socks%E4%BB%A3%E7%90%86%E6%9C%8D%E5%8A%A1.html"/>
+        <link href="http://rootkiter.com/2015/05/01/%E4%BD%BF%E7%94%A8Socks%E4%BB%A3%E7%90%86%E6%9C%8D%E5%8A%A1.html"/>
 	<updated>2015-05-01T00:00:00+08:00</updated>
-	<id>http://rootkiter.rootkiter.com/socks/%E6%8A%80%E6%9C%AF%E7%9B%B8%E5%85%B3/2015/05/01/使用Socks代理服务</id>
+	<id>http://rootkiter.rootkiter.com/2015/05/01/使用Socks代理服务</id>
 	<content type="html">&lt;h1&gt;Socks代理服务介绍&lt;/h1&gt;
 
 &lt;p&gt;Socks代理的工作原理可以通过一张时序图来直观展示：&lt;/p&gt;
@@ -411,9 +411,9 @@ forward-socks5   /               127.0.0.1:1080  .&lt;br&gt;
 
 <entry>
 	<title>端口转发和SOCKS代理</title>
-        <link href="http://rootkiter.com/socks/lcx/%E6%8A%80%E6%9C%AF%E7%9B%B8%E5%85%B3/2015/04/28/LCX_SOCKS.html"/>
+        <link href="http://rootkiter.com/2015/04/28/LCX_SOCKS.html"/>
 	<updated>2015-04-28T00:00:00+08:00</updated>
-	<id>http://rootkiter.rootkiter.com/socks/lcx/%E6%8A%80%E6%9C%AF%E7%9B%B8%E5%85%B3/2015/04/28/LCX_SOCKS</id>
+	<id>http://rootkiter.rootkiter.com/2015/04/28/LCX_SOCKS</id>
 	<content type="html">&lt;h1&gt;起因&lt;/h1&gt;
 
 &lt;p&gt;在&lt;a href=&quot;http://rootkiter.com/EarthWorm/&quot; title=&quot;EarthWorm&quot;&gt;蚯蚓&lt;/a&gt;构思之初，我在网上集中搜集过socks代理的知识，发现网上的很多资料都把 &amp;quot;Socks代理&amp;quot;和&amp;quot;socket端口转发&amp;quot;混为一谈。于是我决定写这样一篇文章，来辨析一下它们之间的异同。&lt;/p&gt;
@@ -471,9 +471,9 @@ forward-socks5   /               127.0.0.1:1080  .&lt;br&gt;
 
 <entry>
 	<title>构造ROP</title>
-        <link href="http://rootkiter.com/exploit-rop/%E6%8A%80%E6%9C%AF%E7%9B%B8%E5%85%B3/%E6%B1%87%E7%BC%96+bin/2015/04/24/MAKE_ROP.html"/>
+        <link href="http://rootkiter.com/2015/04/24/MAKE_ROP.html"/>
 	<updated>2015-04-24T00:00:00+08:00</updated>
-	<id>http://rootkiter.rootkiter.com/exploit-rop/%E6%8A%80%E6%9C%AF%E7%9B%B8%E5%85%B3/%E6%B1%87%E7%BC%96+bin/2015/04/24/MAKE_ROP</id>
+	<id>http://rootkiter.rootkiter.com/2015/04/24/MAKE_ROP</id>
 	<content type="html">&lt;p&gt;构造一个可用的ROP可以分7步来操作：&lt;/p&gt;
 
 &lt;ol&gt;
@@ -603,9 +603,9 @@ POP edx&lt;br&gt;
 
 <entry>
 	<title>ntdll 空间中的金疙瘩</title>
-        <link href="http://rootkiter.com/exploit-rop/%E6%8A%80%E6%9C%AF%E7%9B%B8%E5%85%B3/%E6%B1%87%E7%BC%96+bin/2015/04/23/GOLD_IN_THE_NTDLL.html"/>
+        <link href="http://rootkiter.com/2015/04/23/GOLD_IN_THE_NTDLL.html"/>
 	<updated>2015-04-23T00:00:00+08:00</updated>
-	<id>http://rootkiter.rootkiter.com/exploit-rop/%E6%8A%80%E6%9C%AF%E7%9B%B8%E5%85%B3/%E6%B1%87%E7%BC%96+bin/2015/04/23/GOLD_IN_THE_NTDLL</id>
+	<id>http://rootkiter.rootkiter.com/2015/04/23/GOLD_IN_THE_NTDLL</id>
 	<content type="html">&lt;h1&gt;背景&lt;/h1&gt;
 
 &lt;p&gt;通过阅读&lt;a href=&quot;/2014/02/28/ROPIntroduce.html&quot; title=&quot;ROP介绍&quot;&gt;第一篇笔记&lt;/a&gt;，可以知道，ROP构造是软件类漏洞利用中很重要的一环(为了绕过dep保护)，然而用过mona工具的童鞋应该都清楚，这个工具似乎不太好用。即使你通过mona搞定了ROP骨架的生成，有时仍然需要微调，特别是当mona结果中拥有和漏洞环境相关的坏字符时，修复ROP-chain 也成为了软件类漏洞利用的重要一环。&lt;/p&gt;
@@ -826,9 +826,9 @@ Address -&amp;gt; { POP EAX # RETN }
 
 <entry>
 	<title>关于博客</title>
-        <link href="http://rootkiter.com/%E6%8A%80%E6%9C%AF%E6%97%A0%E5%85%B3/2015/04/06/AboutBlog.html"/>
+        <link href="http://rootkiter.com/2015/04/06/AboutBlog.html"/>
 	<updated>2015-04-06T00:00:00+08:00</updated>
-	<id>http://rootkiter.rootkiter.com/%E6%8A%80%E6%9C%AF%E6%97%A0%E5%85%B3/2015/04/06/AboutBlog</id>
+	<id>http://rootkiter.rootkiter.com/2015/04/06/AboutBlog</id>
 	<content type="html">&lt;p&gt;距离上一篇文章已经过去了一年，这期间一直没想好如何来定位这个博客。&lt;/p&gt;
 
 &lt;p&gt;前段时间把蚯蚓的主页弄起来，才想起是时候重新构思这个博客了。&lt;/p&gt;
@@ -843,9 +843,9 @@ Address -&amp;gt; { POP EAX # RETN }
 
 <entry>
 	<title>ROP Introduce</title>
-        <link href="http://rootkiter.com/%E6%8A%80%E6%9C%AF%E7%9B%B8%E5%85%B3/exploit-rop/%E6%B1%87%E7%BC%96+bin/2014/02/28/ROPIntroduce.html"/>
+        <link href="http://rootkiter.com/2014/02/28/ROPIntroduce.html"/>
 	<updated>2014-02-28T00:00:00+08:00</updated>
-	<id>http://rootkiter.rootkiter.com/%E6%8A%80%E6%9C%AF%E7%9B%B8%E5%85%B3/exploit-rop/%E6%B1%87%E7%BC%96+bin/2014/02/28/ROPIntroduce</id>
+	<id>http://rootkiter.rootkiter.com/2014/02/28/ROPIntroduce</id>
 	<content type="html">&lt;h2&gt;背景介绍&lt;/h2&gt;
 
 &lt;ul&gt;
@@ -1039,9 +1039,9 @@ src=&quot;http://rootkiter.com/image/ropimage/ROP1-5.png&quot; title=&quot;ropim
 
 <entry>
 	<title>第一篇 博客</title>
-        <link href="http://rootkiter.com/%E6%8A%80%E6%9C%AF%E6%97%A0%E5%85%B3/2014/02/25/firstBlogTest.html"/>
+        <link href="http://rootkiter.com/2014/02/25/firstBlogTest.html"/>
 	<updated>2014-02-25T00:00:00+08:00</updated>
-	<id>http://rootkiter.rootkiter.com/%E6%8A%80%E6%9C%AF%E6%97%A0%E5%85%B3/2014/02/25/firstBlogTest</id>
+	<id>http://rootkiter.rootkiter.com/2014/02/25/firstBlogTest</id>
 	<content type="html">&lt;p&gt;&lt;em&gt;这里是普通的斜体字&lt;/em&gt;&lt;/p&gt;
 
 &lt;h2&gt;这里可以使用 H2 的字体&lt;/h2&gt;

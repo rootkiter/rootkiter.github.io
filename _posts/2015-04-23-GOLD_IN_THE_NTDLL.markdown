@@ -3,7 +3,7 @@ layout: post
 title:  "ntdll 空间中的金疙瘩"
 date:   2015-04-23
 time:   22:23:00
-categories : [ exploit-rop , 技术相关, 汇编+bin ] 
+tags : [ exploit-rop , 技术相关, 汇编+bin ] 
 
 ---
 

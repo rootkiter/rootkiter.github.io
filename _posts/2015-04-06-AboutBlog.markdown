@@ -3,7 +3,7 @@ layout: post
 title:  "关于博客"
 date:   2015-04-06
 time:   20:52:00
-categories : [ 技术无关 ]
+tags : [ 技术无关 ]
 
 ---
 

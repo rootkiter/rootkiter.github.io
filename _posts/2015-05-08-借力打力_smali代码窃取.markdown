@@ -3,7 +3,7 @@ layout: post
 title:  "借力打力－smali代码窃取"
 date:   2015-05-08
 time:   16:06:00
-categories : [ 技术相关 , android , smali ]
+tags : [ 技术相关 , android-smali ]
 
 ---
 

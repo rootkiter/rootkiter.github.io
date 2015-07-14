@@ -3,7 +3,7 @@ layout: post
 title:  3D打印
 date:   2015-06-13
 time:   22:08:00
-categories : [ 技术相关 , 3D打印 ]
+tags : [ 技术相关 , 3D打印 ]
 
 ---
 
