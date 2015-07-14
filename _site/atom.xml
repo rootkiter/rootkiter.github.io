@@ -3,12 +3,64 @@
 <title>rootkiter</title>
 <link href="http://rootkiter.com/atom.xml" rel="self"/>
 <link href="http://rootkiter.com" />
-<updated>2015-07-14T19:55:31+08:00</updated>
+<updated>2015-07-14T21:48:05+08:00</updated>
 <id>http://rootkiter.rootkiter.com/</id>
 <author>
 <name>RootKiter</name>
 <email>2559964169@qq.com</email>
 </author>
+
+<entry>
+	<title>Jekyll页面的索引实现</title>
+        <link href="http://rootkiter.com/2015/07/14/Jekyll%E9%A1%B5%E9%9D%A2%E7%9A%84%E7%B4%A2%E5%BC%95%E5%AE%9E%E7%8E%B0.html"/>
+	<updated>2015-07-14T00:00:00+08:00</updated>
+	<id>http://rootkiter.rootkiter.com/2015/07/14/Jekyll页面的索引实现</id>
+	<content type="html">&lt;h2&gt;起因&lt;/h2&gt;
+
+&lt;p&gt;一直觉得博客还缺些什么，思考过后，发现博客还缺一个快速定位文章的功能，于是实现了&lt;a href=&quot;/goto_tags.html&quot;&gt;这样一个页面&lt;/a&gt;，在这个页面里，可以通过标签索引来快速定位文章位置。这个页面的实现既用到了 Jekyll 的特性，也用到了 HTML 标签的一些特性。&lt;/p&gt;
+
+&lt;h3&gt;前人做过的尝试&lt;/h3&gt;
+
+&lt;p&gt;在Jekyll下实现文章定位，网上有很多人做过尝试，有人通过js代码实现，比如这篇《&lt;a href=&quot;http://www.tuicool.com/articles/6vA36f6&quot;&gt;Jekyll站内搜索：jekyll-lunr-js-search使用说明&lt;/a&gt;》。也有人通过添加 Ruby 插件来实现，比如这篇《&lt;a href=&quot;http://codemacro.com/2012/07/18/add-category-list-to-octopress/&quot;&gt;为octopress添加分类(category)列表&lt;/a&gt;》。这些方法，都很好，而且很简单，但我只想要一个非常基础的文章定位或分类功能。这些方法都显得复杂了。&lt;/p&gt;
+
+&lt;h3&gt;思考后的解决方案&lt;/h3&gt;
+
+&lt;h4&gt;1. 锚标签&lt;/h4&gt;
+
+&lt;p&gt;浏览器实现了一个页面内快速跳转的方法，通过配置某些标签的 name 属性，即可在页面中进行插桩，此时，在浏览器地址栏使用 “#” 字符，即可快速跳到相应的标签。相关的知识细节可以参考这两篇文章《&lt;a href=&quot;http://www.w3school.com.cn/tags/att_a_name.asp&quot;&gt;HTML &lt;a&gt; 标签的 name 属性&lt;/a&gt;》和《&lt;a href=&quot;http://blog.csdn.net/qq1712088151/article/details/7402019&quot;&gt;锚标签和href属性&lt;/a&gt;》。&lt;/p&gt;
+
+&lt;h4&gt;2. Jekyll 实现&lt;/h4&gt;
+
+&lt;p&gt;Jekyll的文章可以支持tags来给文章打标签。一篇文章可以有具多个标签，格式如下：&lt;br&gt;
+&lt;code&gt;
+---&lt;br&gt;
+layout: xxxxx&lt;br&gt;
+title : xxxxxxxxxx&lt;br&gt;
+tags  : [ tag1 , tag2 ]&lt;br&gt;
+---&lt;br&gt;
+&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;由于 Jekyll 的特性，我们可以通过 site.tags 来访问这些标签，这也是一种常见的Jekyll文章索引方法，关于这一特性的具体细节可以参考《&lt;a href=&quot;http://havee.me/internet/2013-11/jekyll-liquid-designers.html&quot;&gt;Jekyll 扩展的 Liquid 设计&lt;/a&gt;》，随后我在主页下方添加了如下代码：&lt;br&gt;
+&lt;img src=&quot;http://rootkiter.com/images/2015_07_14_21_13/4.png&quot; alt=&quot;rootkiter.com&quot;&gt;  &lt;/p&gt;
+
+&lt;p&gt;标签能够自动统计了。
+&lt;img src=&quot;http://rootkiter.com/images/2015_07_14_21_13/1.png&quot; alt=&quot;rootkiter.com&quot;&gt;&lt;/p&gt;
+
+&lt;h4&gt;3. 标签分类展示页&lt;/h4&gt;
+
+&lt;p&gt;随后我们可以继续创建一个单独的标签分类页，用来管理博客的所有文章。核心代码如下：  &lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://rootkiter.com/images/2015_07_14_21_13/3.png&quot; alt=&quot;rootkiter.com&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;可以看到在这个具有分类功能的页面中，我在每个分类前加了一个具有name属性的a标签，进行锚定。此时我们就可以通过 ’＃‘ 来实现页面内定位跳转。
+于是&lt;a href=&quot;/goto_tags.html&quot;&gt;这样的页面&lt;/a&gt;就实现了。
+&lt;img src=&quot;http://rootkiter.com/images/2015_07_14_21_13/2.png&quot; alt=&quot;rootkiter.com&quot;&gt;&lt;/p&gt;
+
+&lt;h2&gt;结束&lt;/h2&gt;
+
+&lt;p&gt;通过这个方法，就可以实现文章的分类以及索引定位了。用起来感觉还挺方便的。&lt;/p&gt;
+</content>
+</entry>
 
 <entry>
 	<title>《一席》中的好故事</title>

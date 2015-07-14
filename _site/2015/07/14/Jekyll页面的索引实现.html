@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Jekyll页面的索引实现</title>
+        <meta name="viewport" content="width=device-width">
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" href="/css/syntax.css">
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="/css/main.css">
+
+    </head>
+    <body>
+
+        <div class="site">
+          <div class="header">
+            <h1 class="title"><a href="/">RootKiter</a></h1>
+          </div>
+
+          <h2>Jekyll页面的索引实现
+</h2>
+<!--
+<audio controls=true autoplay="true">
+  <source src="http://rootkiter.rootkiter.com/music/">
+</audio>
+-->
+
+<p class="meta">14 Jul 2015</p>
+
+<div class="post">
+<h2>起因</h2>
+
+<p>一直觉得博客还缺些什么，思考过后，发现博客还缺一个快速定位文章的功能，于是实现了<a href="/goto_tags.html">这样一个页面</a>，在这个页面里，可以通过标签索引来快速定位文章位置。这个页面的实现既用到了 Jekyll 的特性，也用到了 HTML 标签的一些特性。</p>
+
+<h3>前人做过的尝试</h3>
+
+<p>在Jekyll下实现文章定位，网上有很多人做过尝试，有人通过js代码实现，比如这篇《<a href="http://www.tuicool.com/articles/6vA36f6">Jekyll站内搜索：jekyll-lunr-js-search使用说明</a>》。也有人通过添加 Ruby 插件来实现，比如这篇《<a href="http://codemacro.com/2012/07/18/add-category-list-to-octopress/">为octopress添加分类(category)列表</a>》。这些方法，都很好，而且很简单，但我只想要一个非常基础的文章定位或分类功能。这些方法都显得复杂了。</p>
+
+<h3>思考后的解决方案</h3>
+
+<h4>1. 锚标签</h4>
+
+<p>浏览器实现了一个页面内快速跳转的方法，通过配置某些标签的 name 属性，即可在页面中进行插桩，此时，在浏览器地址栏使用 “#” 字符，即可快速跳到相应的标签。相关的知识细节可以参考这两篇文章《<a href="http://www.w3school.com.cn/tags/att_a_name.asp">HTML <a> 标签的 name 属性</a>》和《<a href="http://blog.csdn.net/qq1712088151/article/details/7402019">锚标签和href属性</a>》。</p>
+
+<h4>2. Jekyll 实现</h4>
+
+<p>Jekyll的文章可以支持tags来给文章打标签。一篇文章可以有具多个标签，格式如下：<br>
+<code>
+---<br>
+layout: xxxxx<br>
+title : xxxxxxxxxx<br>
+tags  : [ tag1 , tag2 ]<br>
+---<br>
+</code></p>
+
+<p>由于 Jekyll 的特性，我们可以通过 site.tags 来访问这些标签，这也是一种常见的Jekyll文章索引方法，关于这一特性的具体细节可以参考《<a href="http://havee.me/internet/2013-11/jekyll-liquid-designers.html">Jekyll 扩展的 Liquid 设计</a>》，随后我在主页下方添加了如下代码：<br>
+<img src="http://rootkiter.com/images/2015_07_14_21_13/4.png" alt="rootkiter.com">  </p>
+
+<p>标签能够自动统计了。
+<img src="http://rootkiter.com/images/2015_07_14_21_13/1.png" alt="rootkiter.com"></p>
+
+<h4>3. 标签分类展示页</h4>
+
+<p>随后我们可以继续创建一个单独的标签分类页，用来管理博客的所有文章。核心代码如下：  </p>
+
+<p><img src="http://rootkiter.com/images/2015_07_14_21_13/3.png" alt="rootkiter.com"></p>
+
+<p>可以看到在这个具有分类功能的页面中，我在每个分类前加了一个具有name属性的a标签，进行锚定。此时我们就可以通过 ’＃‘ 来实现页面内定位跳转。
+于是<a href="/goto_tags.html">这样的页面</a>就实现了。
+<img src="http://rootkiter.com/images/2015_07_14_21_13/2.png" alt="rootkiter.com"></p>
+
+<h2>结束</h2>
+
+<p>通过这个方法，就可以实现文章的分类以及索引定位了。用起来感觉还挺方便的。</p>
+
+</div>
+
+
+          <div class="footer">
+            <div class="contact">
+              <p>
+                链接 1：<br />
+                链接 2：<br />
+              </p>
+            </div>
+            <div class="contact">
+              <p>
+                <a href="http://rootkiter.com/atom.xml"> RSS 源 </a><br />
+                <a href="http://rootkiter.com/EarthWorm"> EarthWorm 主页</a><br />
+              </p>
+            </div>
+          </div>
+        <a href="/friend_links.html" style="float:right">友链在此，想看就看</a>
+        </div>
+    </body>
+</html>
