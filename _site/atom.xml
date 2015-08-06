@@ -3,12 +3,128 @@
 <title>rootkiter</title>
 <link href="http://rootkiter.com/atom.xml" rel="self"/>
 <link href="http://rootkiter.com" />
-<updated>2015-07-14T21:48:05+08:00</updated>
+<updated>2015-08-06T09:28:06+08:00</updated>
 <id>http://rootkiter.rootkiter.com/</id>
 <author>
 <name>RootKiter</name>
 <email>2559964169@qq.com</email>
 </author>
+
+<entry>
+	<title>ARM指令结构和crack思路</title>
+        <link href="http://rootkiter.com/2015/08/05/ARM%E6%8C%87%E4%BB%A4%E7%BB%93%E6%9E%84%E5%92%8Ccrack%E6%80%9D%E8%B7%AF.html"/>
+	<updated>2015-08-05T00:00:00+08:00</updated>
+	<id>http://rootkiter.rootkiter.com/2015/08/05/ARM指令结构和crack思路</id>
+	<content type="html">&lt;h2&gt;写在开头&lt;/h2&gt;
+
+&lt;p&gt;很久之前写了一些围绕ANDROID和ARM的学习笔记，前段时间已经整理过&lt;a href=&quot;http://rootkiter.com/2015/07/04/ARM%E4%B8%8B%E7%9A%84ShellCode.html&quot;&gt;一篇&lt;/a&gt;，这是另一篇。这里记录了一些围绕着ARM指令系统的知识。&lt;/p&gt;
+
+&lt;p&gt;ARM指令系统是由ARM公司定义的一类芯片的指令规则，这种芯片普遍应用于各种便携式设备，以及智能终端中，具有低功耗，便于开发等特点。 &lt;/p&gt;
+
+&lt;h3&gt;ARM指令系统同X86指令的区别&lt;/h3&gt;
+
+&lt;p&gt;从指令长度上看，ARM指令属于定长指令系统，每一条指令都为固定的4字节长度，而X86却是变长，长度取决于指令本身的复杂程度。  &lt;/p&gt;
+
+&lt;p&gt;从CPU架构上看，ARM指令系统拥有着更多的寄存器供开发者使用(31个通用寄存器和6个状态寄存器)，与之相对的X86寄存器数量便少的可怜了，这一问题也在X64指令中得到了很大程度大缓解。  &lt;/p&gt;
+
+&lt;p&gt;以上两点仅是比较明显的区别，也是ARM同X86相比更优秀的地方，如果想要了解更详细的区别可以通过网络自行检索，这里就不细致描述了。  &lt;/p&gt;
+
+&lt;h3&gt;Arm指令格式介绍&lt;/h3&gt;
+
+&lt;p&gt;前面提到：ARM 指令是定长指令，长度为4个字节（32位二进制位），这样做的好处之一是便于CPU寻址，而另一个好处就是在指令定义时，可以人为固定一些特殊的标志位，用于确定指令的执行规则。ARM指令的一般编码形式如下：
+&lt;img src=&quot;http://rootkiter.com/images/2015_08_05_22_34/1.jpg&quot; alt=&quot;rootkiter.com&quot;&gt;  &lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;
+其中：&lt;br&gt;
+&amp;nbsp;&amp;nbsp;cond 指令执行的条件码；&lt;br&gt;
+&amp;nbsp;&amp;nbsp;opcode 指令操作编码&lt;br&gt;
+&amp;nbsp;&amp;nbsp;S 决定指令的操作是否影响CPSR（状态寄存器类似于X86中的flag寄存器）的值&lt;br&gt;
+&amp;nbsp;&amp;nbsp;Rd   目标寄存器编码（通过二进制序列描述各种寄存器）&lt;br&gt;
+&amp;nbsp;&amp;nbsp;Rn 包含第一个操作数的寄存器编码。&lt;br&gt;
+&amp;nbsp;&amp;nbsp;Shifter&lt;em&gt;operand  表示第二个操作数&lt;br&gt;
+随后规定了一条ARM指令语法模版：&lt;br&gt;
+&amp;nbsp;&amp;nbsp;&amp;lt;opcode&amp;gt;{&amp;lt;cond&amp;gt;}{S}  &amp;lt;Rd&amp;gt;,&amp;lt;Rn&amp;gt;,&amp;lt;shifter&lt;/em&gt;operand&amp;gt;&lt;br&gt;
+&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;通过上面的描述不难发现，在指令序列中有一个名称为cond的片段，是X86指令序列中所没有的，该序列决定了当前指令是否会被执行，换句话说，通过修改这个字段，就可以实现程序逻辑的修改。&lt;/p&gt;
+
+&lt;h3&gt;cond片段的含义&lt;/h3&gt;
+
+&lt;h4&gt;影响程序执行流程的标志&lt;/h4&gt;
+
+&lt;p&gt;从X86的汇编指令中我们可以得知，指令执行过程中会出现如下几种情况：&lt;br&gt;
+&amp;nbsp;&amp;nbsp;&lt;em&gt;1.指令执行结果为“0”&lt;/em&gt;&lt;br&gt;
+&amp;nbsp;&amp;nbsp;&lt;em&gt;2.指令执行结果出现溢出&lt;/em&gt;&lt;br&gt;
+&amp;nbsp;&amp;nbsp;&lt;em&gt;3.指令执行结果为负&lt;/em&gt;&lt;br&gt;
+&amp;nbsp;&amp;nbsp;&lt;em&gt;4.两个操作数的大小判别&lt;/em&gt;&lt;br&gt;
+这些情况将会决定后续程序的执行流程，在Flag寄存器中会找到它们的身影。相同的情况ARM指令系统同样也考虑到了，并且将这些情况通过CPSR寄存器（类似X86中的FLAG寄存器）中进行存储，并为它们命名为：Z、V、N、C 四个标志位。CPU通过访问CPSR寄存器的状态便可以确定程序的执行流程。&lt;/p&gt;
+
+&lt;h4&gt;条件码以及助记符的对应关系&lt;/h4&gt;
+
+&lt;p&gt;通过cond片段的条件码，可以对CPSR寄存器进行相应的访问，为了便于记忆，特规定了一些助记符，它们之间的对应关系可以参照下图：
+&lt;img src=&quot;http://rootkiter.com/images/2015_08_05_22_34/2.png&quot; alt=&quot;rootkiter.com&quot;&gt;  &lt;/p&gt;
+
+&lt;h4&gt;如何使用cond片段&lt;/h4&gt;
+
+&lt;p&gt;到目前为止，ARM指令系统基本已经熟悉了，可以进行一些破解的思索了，从crackme的游戏规则可以知道：crackme其实就是让一段指令片段在“执行”同“不执行”之间转换，从而达到破解的目的。  &lt;/p&gt;
+
+&lt;p&gt;在X86中“爆破”通常都是通过修改jmp，cmp的操作数、或Flag标志位，来crack程序的。这些方法同样适用于ARM平台，然而通过以上对于cond片段的了解不难发现：&lt;br&gt;
+如果修改了cond片段的值同样也能够达到crack的目的，只需修改一位二进制位即可完成BNE到BEQ的转化，修改四位二进制位即可让一条指令失效，或让其无条件执行，可以说，手握“条件码同助记符对应表”即可决定ARM程序中每一条指令的生死。&lt;/p&gt;
+
+&lt;h3&gt;通过crackme来验证cond片段的功效&lt;/h3&gt;
+
+&lt;h4&gt;如何获得crackme&lt;/h4&gt;
+
+&lt;p&gt;从各大破解论坛游走一圈之后，并没有找到 ARM 版的crackme，原因大概在于大牛们不屑于 ARM 平台的破解尝试，也可能是ARM平台本来就没有什么值得破解的东西。好在以前编写过 windows 的 crackme ，既然没有那么就自己写一个吧，随便弄一个弱智的功能测试一下修改cond的效果。ARM下的编程语言，除了特定的汇编语言、C语言以外，似乎没有发现其他的嵌入式原生开发的语言，既然我喜欢C语言那么就用C语言实现一个傻瓜式的crackme吧。&lt;/p&gt;
+
+&lt;h4&gt;Crackme的构思&lt;/h4&gt;
+
+&lt;p&gt;既然已经定义为“傻瓜式”的crackme了，那就自然要有一个傻瓜式的规则，提示用户输入一个字符，如果输入的是‘a’则提示crack成功，否则提示失败。
+具体的C实现代码如下所示：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://rootkiter.com/images/2015_08_05_22_34/3.png&quot; alt=&quot;rootkiter.com&quot;&gt;&lt;br&gt;
+代码编写完毕利用交叉编译器生成arm平台对应的二进制可执行文件。
+运行结果如下图所示：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://rootkiter.com/images/2015_08_05_22_34/4.jpg&quot; alt=&quot;rootkiter.com&quot;&gt;  &lt;/p&gt;
+
+&lt;p&gt;效果还不错，现在不输入‘a’是不会提示OK的了。下面的目标就是：输入除‘a’以外的其他key都会提示“OK：You crack me now !”&lt;/p&gt;
+
+&lt;h3&gt;开始Crack&lt;/h3&gt;
+
+&lt;h4&gt;破解准备&lt;/h4&gt;
+
+&lt;p&gt;Crack必须的工具有两个，一款好用的调试器，和一个16进制文件编辑器，由于crackme并不复杂，IDA 61 +  C32Asm足以。
+首先用IDA61打开crackme，并进行简单的分析，如下图所示：
+&lt;img src=&quot;http://rootkiter.com/images/2015_08_05_22_34/5.jpg&quot; alt=&quot;rootkiter.com&quot;&gt;  &lt;/p&gt;
+
+&lt;p&gt;简单看一下都是比较基础的ARM指令，没有什么难度，关键跳转一目了然：“BNE loc_8228”，只需要将BNE改为BEQ，或者B，即可跳转到输出“OK”的分支。既然如此马上动手。&lt;/p&gt;
+
+&lt;h4&gt;找到cond片段&lt;/h4&gt;
+
+&lt;p&gt;通过IDA的HEX标签查看可以得知：BNE所对应的指令片段为：02 00 00 1A，如下图所示：
+&lt;img src=&quot;http://rootkiter.com/images/2015_08_05_22_34/6.jpg&quot; alt=&quot;rootkiter.com&quot;&gt;&lt;br&gt;
+由于ARM指令在文件中为字节倒序排列，所以其中1A 的1  便是cond片段的值，将其修改为：0A 即可将BNE指令变为BEQ，貌似IDA不支持修改源文件，那么就在C32Asm中修改吧。&lt;/p&gt;
+
+&lt;h4&gt;用C32Asm进行代码变更&lt;/h4&gt;
+
+&lt;p&gt;通过C32Asm的16进制查找功能定位到该序列处，并将1A修改为0A（BNE-&amp;gt; BEQ）然后保存修改结果。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://rootkiter.com/images/2015_08_05_22_34/7.jpg&quot; alt=&quot;rootkiter.com&quot;&gt;&lt;br&gt;
+最后用IDA载入查看修改后的程序流程：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://rootkiter.com/images/2015_08_05_22_34/8.jpg&quot; alt=&quot;rootkiter.com&quot;&gt;&lt;br&gt;
+可以发现，该指令已经变为预期的BEQ指令。
+具体arm平台测试结果如下图所示：
+&lt;img src=&quot;http://rootkiter.com/images/2015_08_05_22_34/9.jpg&quot; alt=&quot;rootkiter.com&quot;&gt;  &lt;/p&gt;
+
+&lt;p&gt;可以发现，输入‘a’同输入‘b’得到的返回值发生了交换，证明程序的流程被有效的修改了，crack成功，现在就可以根据自己的要求修改指令中的cond片段从而达到crack的目的了。&lt;/p&gt;
+
+&lt;h2&gt;结束&lt;/h2&gt;
+
+&lt;p&gt;以上介绍了ARM平台下通过修改cond条件码的方法达到crack程序的目的，通过这种方式可以任意的修改程序执行流程，所需要的仅是“IDA + 16进制编辑器 + 条件码助记符对应表”的组合，可以说难度并不是很大。&lt;/p&gt;
+</content>
+</entry>
 
 <entry>
 	<title>Jekyll页面的索引实现</title>
@@ -128,7 +244,7 @@ tags  : [ tag1 , tag2 ]&lt;br&gt;
 	<id>http://rootkiter.rootkiter.com/2015/07/04/ARM下的ShellCode</id>
 	<content type="html">&lt;h2&gt;引言&lt;/h2&gt;
 
-&lt;p&gt;这是我很久以前学习 ANDROID＋ARM 时的学习笔记，共有6篇，这是第5篇，其他笔记会在适当的时候继续整理出来。先整理一下这一篇。&lt;/p&gt;
+&lt;p&gt;这是我很久以前写的一些学习 ANDROID＋ARM 的学习笔记，这是其中一篇，其他笔记会在适当的时候继续整理出来。先整理一下这一篇。&lt;/p&gt;
 
 &lt;h2&gt;写段 HelloWorld&lt;/h2&gt;
 

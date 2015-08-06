@@ -3,12 +3,12 @@ layout: post
 title:  ARM 架构下的 ShellCode
 date:   2015-07-04
 time:   22:54:00
-tags : [ 汇编+bin , 技术相关 ]
+tags : [ ARM , 汇编+bin , 技术相关 ]
 
 ---
 
 ## 引言
-这是我很久以前学习 ANDROID＋ARM 时的学习笔记，共有6篇，这是第5篇，其他笔记会在适当的时候继续整理出来。先整理一下这一篇。
+这是我很久以前写的一些学习 ANDROID＋ARM 的学习笔记，这是其中一篇，其他笔记会在适当的时候继续整理出来。先整理一下这一篇。
 
 ## 写段 HelloWorld
 

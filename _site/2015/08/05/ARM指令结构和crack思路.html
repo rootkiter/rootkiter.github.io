@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>ARM指令结构和crack思路</title>
+        <meta name="viewport" content="width=device-width">
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" href="/css/syntax.css">
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="/css/main.css">
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "http://hm.baidu.com/hm.js?7bf4580b913f88aacb1065688fea0758";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+    </head>
+    <body>
+
+        <div class="site">
+          <div class="header">
+            <h1 class="title"><a href="/">RootKiter</a></h1>
+          </div>
+
+          <h2>ARM指令结构和crack思路
+</h2>
+<!--
+<audio controls=true autoplay="true">
+  <source src="http://rootkiter.rootkiter.com/music/">
+</audio>
+-->
+
+<p class="meta">05 Aug 2015</p>
+
+<div class="post">
+<h2>写在开头</h2>
+
+<p>很久之前写了一些围绕ANDROID和ARM的学习笔记，前段时间已经整理过<a href="http://rootkiter.com/2015/07/04/ARM%E4%B8%8B%E7%9A%84ShellCode.html">一篇</a>，这是另一篇。这里记录了一些围绕着ARM指令系统的知识。</p>
+
+<p>ARM指令系统是由ARM公司定义的一类芯片的指令规则，这种芯片普遍应用于各种便携式设备，以及智能终端中，具有低功耗，便于开发等特点。 </p>
+
+<h3>ARM指令系统同X86指令的区别</h3>
+
+<p>从指令长度上看，ARM指令属于定长指令系统，每一条指令都为固定的4字节长度，而X86却是变长，长度取决于指令本身的复杂程度。  </p>
+
+<p>从CPU架构上看，ARM指令系统拥有着更多的寄存器供开发者使用(31个通用寄存器和6个状态寄存器)，与之相对的X86寄存器数量便少的可怜了，这一问题也在X64指令中得到了很大程度大缓解。  </p>
+
+<p>以上两点仅是比较明显的区别，也是ARM同X86相比更优秀的地方，如果想要了解更详细的区别可以通过网络自行检索，这里就不细致描述了。  </p>
+
+<h3>Arm指令格式介绍</h3>
+
+<p>前面提到：ARM 指令是定长指令，长度为4个字节（32位二进制位），这样做的好处之一是便于CPU寻址，而另一个好处就是在指令定义时，可以人为固定一些特殊的标志位，用于确定指令的执行规则。ARM指令的一般编码形式如下：
+<img src="http://rootkiter.com/images/2015_08_05_22_34/1.jpg" alt="rootkiter.com">  </p>
+
+<p><code>
+其中：<br>
+&nbsp;&nbsp;cond 指令执行的条件码；<br>
+&nbsp;&nbsp;opcode 指令操作编码<br>
+&nbsp;&nbsp;S 决定指令的操作是否影响CPSR（状态寄存器类似于X86中的flag寄存器）的值<br>
+&nbsp;&nbsp;Rd   目标寄存器编码（通过二进制序列描述各种寄存器）<br>
+&nbsp;&nbsp;Rn 包含第一个操作数的寄存器编码。<br>
+&nbsp;&nbsp;Shifter<em>operand  表示第二个操作数<br>
+随后规定了一条ARM指令语法模版：<br>
+&nbsp;&nbsp;&lt;opcode&gt;{&lt;cond&gt;}{S}  &lt;Rd&gt;,&lt;Rn&gt;,&lt;shifter</em>operand&gt;<br>
+</code></p>
+
+<p>通过上面的描述不难发现，在指令序列中有一个名称为cond的片段，是X86指令序列中所没有的，该序列决定了当前指令是否会被执行，换句话说，通过修改这个字段，就可以实现程序逻辑的修改。</p>
+
+<h3>cond片段的含义</h3>
+
+<h4>影响程序执行流程的标志</h4>
+
+<p>从X86的汇编指令中我们可以得知，指令执行过程中会出现如下几种情况：<br>
+&nbsp;&nbsp;<em>1.指令执行结果为“0”</em><br>
+&nbsp;&nbsp;<em>2.指令执行结果出现溢出</em><br>
+&nbsp;&nbsp;<em>3.指令执行结果为负</em><br>
+&nbsp;&nbsp;<em>4.两个操作数的大小判别</em><br>
+这些情况将会决定后续程序的执行流程，在Flag寄存器中会找到它们的身影。相同的情况ARM指令系统同样也考虑到了，并且将这些情况通过CPSR寄存器（类似X86中的FLAG寄存器）中进行存储，并为它们命名为：Z、V、N、C 四个标志位。CPU通过访问CPSR寄存器的状态便可以确定程序的执行流程。</p>
+
+<h4>条件码以及助记符的对应关系</h4>
+
+<p>通过cond片段的条件码，可以对CPSR寄存器进行相应的访问，为了便于记忆，特规定了一些助记符，它们之间的对应关系可以参照下图：
+<img src="http://rootkiter.com/images/2015_08_05_22_34/2.png" alt="rootkiter.com">  </p>
+
+<h4>如何使用cond片段</h4>
+
+<p>到目前为止，ARM指令系统基本已经熟悉了，可以进行一些破解的思索了，从crackme的游戏规则可以知道：crackme其实就是让一段指令片段在“执行”同“不执行”之间转换，从而达到破解的目的。  </p>
+
+<p>在X86中“爆破”通常都是通过修改jmp，cmp的操作数、或Flag标志位，来crack程序的。这些方法同样适用于ARM平台，然而通过以上对于cond片段的了解不难发现：<br>
+如果修改了cond片段的值同样也能够达到crack的目的，只需修改一位二进制位即可完成BNE到BEQ的转化，修改四位二进制位即可让一条指令失效，或让其无条件执行，可以说，手握“条件码同助记符对应表”即可决定ARM程序中每一条指令的生死。</p>
+
+<h3>通过crackme来验证cond片段的功效</h3>
+
+<h4>如何获得crackme</h4>
+
+<p>从各大破解论坛游走一圈之后，并没有找到 ARM 版的crackme，原因大概在于大牛们不屑于 ARM 平台的破解尝试，也可能是ARM平台本来就没有什么值得破解的东西。好在以前编写过 windows 的 crackme ，既然没有那么就自己写一个吧，随便弄一个弱智的功能测试一下修改cond的效果。ARM下的编程语言，除了特定的汇编语言、C语言以外，似乎没有发现其他的嵌入式原生开发的语言，既然我喜欢C语言那么就用C语言实现一个傻瓜式的crackme吧。</p>
+
+<h4>Crackme的构思</h4>
+
+<p>既然已经定义为“傻瓜式”的crackme了，那就自然要有一个傻瓜式的规则，提示用户输入一个字符，如果输入的是‘a’则提示crack成功，否则提示失败。
+具体的C实现代码如下所示：</p>
+
+<p><img src="http://rootkiter.com/images/2015_08_05_22_34/3.png" alt="rootkiter.com"><br>
+代码编写完毕利用交叉编译器生成arm平台对应的二进制可执行文件。
+运行结果如下图所示：</p>
+
+<p><img src="http://rootkiter.com/images/2015_08_05_22_34/4.jpg" alt="rootkiter.com">  </p>
+
+<p>效果还不错，现在不输入‘a’是不会提示OK的了。下面的目标就是：输入除‘a’以外的其他key都会提示“OK：You crack me now !”</p>
+
+<h3>开始Crack</h3>
+
+<h4>破解准备</h4>
+
+<p>Crack必须的工具有两个，一款好用的调试器，和一个16进制文件编辑器，由于crackme并不复杂，IDA 61 +  C32Asm足以。
+首先用IDA61打开crackme，并进行简单的分析，如下图所示：
+<img src="http://rootkiter.com/images/2015_08_05_22_34/5.jpg" alt="rootkiter.com">  </p>
+
+<p>简单看一下都是比较基础的ARM指令，没有什么难度，关键跳转一目了然：“BNE loc_8228”，只需要将BNE改为BEQ，或者B，即可跳转到输出“OK”的分支。既然如此马上动手。</p>
+
+<h4>找到cond片段</h4>
+
+<p>通过IDA的HEX标签查看可以得知：BNE所对应的指令片段为：02 00 00 1A，如下图所示：
+<img src="http://rootkiter.com/images/2015_08_05_22_34/6.jpg" alt="rootkiter.com"><br>
+由于ARM指令在文件中为字节倒序排列，所以其中1A 的1  便是cond片段的值，将其修改为：0A 即可将BNE指令变为BEQ，貌似IDA不支持修改源文件，那么就在C32Asm中修改吧。</p>
+
+<h4>用C32Asm进行代码变更</h4>
+
+<p>通过C32Asm的16进制查找功能定位到该序列处，并将1A修改为0A（BNE-&gt; BEQ）然后保存修改结果。</p>
+
+<p><img src="http://rootkiter.com/images/2015_08_05_22_34/7.jpg" alt="rootkiter.com"><br>
+最后用IDA载入查看修改后的程序流程：</p>
+
+<p><img src="http://rootkiter.com/images/2015_08_05_22_34/8.jpg" alt="rootkiter.com"><br>
+可以发现，该指令已经变为预期的BEQ指令。
+具体arm平台测试结果如下图所示：
+<img src="http://rootkiter.com/images/2015_08_05_22_34/9.jpg" alt="rootkiter.com">  </p>
+
+<p>可以发现，输入‘a’同输入‘b’得到的返回值发生了交换，证明程序的流程被有效的修改了，crack成功，现在就可以根据自己的要求修改指令中的cond片段从而达到crack的目的了。</p>
+
+<h2>结束</h2>
+
+<p>以上介绍了ARM平台下通过修改cond条件码的方法达到crack程序的目的，通过这种方式可以任意的修改程序执行流程，所需要的仅是“IDA + 16进制编辑器 + 条件码助记符对应表”的组合，可以说难度并不是很大。</p>
+
+</div>
+
+
+          <div class="footer">
+            <div class="contact">
+              <p>
+                链接 1：<br />
+                链接 2：<br />
+              </p>
+            </div>
+            <div class="contact">
+              <p>
+                <a href="http://rootkiter.com/atom.xml"> RSS 源 </a><br />
+                <a href="http://rootkiter.com/EarthWorm"> EarthWorm 主页</a><br />
+              </p>
+            </div>
+          </div>
+        <a href="/friend_links.html" style="float:right">友链在此，想看就看</a>
+        </div>
+    </body>
+</html>
