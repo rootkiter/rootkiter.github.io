@@ -3,12 +3,83 @@
 <title>rootkiter</title>
 <link href="http://rootkiter.com/atom.xml" rel="self"/>
 <link href="http://rootkiter.com" />
-<updated>2015-08-06T09:28:06+08:00</updated>
+<updated>2015-08-06T23:10:26+08:00</updated>
 <id>http://rootkiter.rootkiter.com/</id>
 <author>
 <name>RootKiter</name>
 <email>2559964169@qq.com</email>
 </author>
+
+<entry>
+	<title>Android下的NDK</title>
+        <link href="http://rootkiter.com/2015/08/05/Android%E4%B8%8B%E7%9A%84NDK.html"/>
+	<updated>2015-08-05T00:00:00+08:00</updated>
+	<id>http://rootkiter.rootkiter.com/2015/08/05/Android下的NDK</id>
+	<content type="html">&lt;h2&gt;前言&lt;/h2&gt;
+
+&lt;p&gt;这也是很久之前写的一篇学习笔记，刚翻出来瞅了一眼，有些小细节还是已经有些过时了，看来技术的变更速度真的是太快了。既然也是曾经的劳动成果，那就同样拿出来简单的整理一下吧。&lt;/p&gt;
+
+&lt;p&gt;该笔记参考http://blog.sina.com.cn/s/blog_61b056970100sy0u.html博文而成。&lt;/p&gt;
+
+&lt;h3&gt;环境搭建&lt;/h3&gt;
+
+&lt;p&gt;首先，jdk，eclipse，android sdk ，android ndk ，cygwin ，cdt，adt你肯定要安装好吧，没安装好的同学请百度下相关配置教程，这不是我文章的重点。  &lt;/p&gt;
+
+&lt;h2&gt;编写helloworld&lt;/h2&gt;
+
+&lt;h3&gt;编写Jni接口：&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;在资源目录下创建 jni.java文件
+&lt;img src=&quot;http://rootkiter.com/images/2015_08_06_22_43/1.png&quot; alt=&quot;rootkiter.com&quot;&gt;&lt;br&gt;&lt;/li&gt;
+&lt;li&gt;声明jni接口
+&lt;img src=&quot;http://rootkiter.com/images/2015_08_06_22_43/2.png&quot; alt=&quot;rootkiter.com&quot;&gt;&lt;br&gt;&lt;/li&gt;
+&lt;li&gt;命令行模式下进入src目录执行javac jni.java&lt;br&gt;
+&lt;img src=&quot;http://rootkiter.com/images/2015_08_06_22_43/3.png&quot; alt=&quot;rootkiter.com&quot;&gt;&lt;br&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;将生成的 .class 文件拷贝到 /bin 目录下的对应路径并覆盖
+&lt;img src=&quot;http://rootkiter.com/images/2015_08_06_22_43/4.png&quot; alt=&quot;rootkiter.com&quot;&gt;  &lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;命令行进入 /bin/classes/ 目录 执行javah  –jni com.example.killndk.Jni  生成一个 .h  文件：
+&lt;img src=&quot;http://rootkiter.com/images/2015_08_06_22_43/5.png&quot; alt=&quot;rootkiter.com&quot;&gt;  &lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;在根目录下创建jni文件夹用于保存C程序代码，并将刚生成的.h文件拷贝进去：  &lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;以jni目录为根目录建立C工程，添加C源码以及.mk  文件。
+&lt;img src=&quot;http://rootkiter.com/images/2015_08_06_22_43/6.png&quot; alt=&quot;rootkiter.com&quot;&gt;&lt;br&gt;
+&lt;a href=&quot;/files/Android.txt&quot;&gt;Android.mk&lt;/a&gt;&lt;br&gt;
+&lt;a href=&quot;/files/com_example_killndk_Jni.txt&quot;&gt;com_example_killndk_Jni.c&lt;/a&gt;  &lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;在android工程上配置编译选项：
+&lt;img src=&quot;http://rootkiter.com/images/2015_08_06_22_43/7.png&quot; alt=&quot;rootkiter.com&quot;&gt;  &lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;左侧选择Builders，右侧选择New按钮，添加编译选项：&lt;br&gt;
+填写编译配置信息：&lt;br&gt;
+&lt;img src=&quot;http://rootkiter.com/images/2015_08_06_22_43/8.png&quot; alt=&quot;rootkiter.com&quot;&gt;  &lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;这一页主要是填写与cygwin相关的绝对路径，以及工程的绝对路径，各位需要根据实际情况予以调整。&lt;br&gt;
+&lt;img src=&quot;http://rootkiter.com/images/2015_08_06_22_43/9.png&quot; alt=&quot;rootkiter.com&quot;&gt;  &lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;C代码被编译后会放在libs目录下。&lt;br&gt;
+&lt;img src=&quot;http://rootkiter.com/images/2015_08_06_22_43/10.png&quot; alt=&quot;rootkiter.com&quot;&gt;  &lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;C的相关代码放在jni目录下。&lt;br&gt;
+配置完成后，每次jni文件夹发生变化，就会自动执行makefile命令了。  &lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;现在可以通过Jni定义的接口来访问C语言函数了：&lt;br&gt;
+&lt;img src=&quot;http://rootkiter.com/images/2015_08_06_22_43/11.png&quot; alt=&quot;rootkiter.com&quot;&gt;  &lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;看看执行效果吧，还算不错：
+&lt;img src=&quot;http://rootkiter.com/images/2015_08_06_22_43/12.png&quot; alt=&quot;rootkiter.com&quot;&gt;  &lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2&gt;编写内嵌汇编&lt;/h2&gt;
+
+&lt;p&gt;由于NDK的C代码是通过gcc编译而成的，则必然支持内嵌汇编式的编程，并通过汇编方式实现C语言无法实现的功能，下面就介绍一下通过NDK如何进行内嵌汇编式编程。  &lt;/p&gt;
+
+&lt;p&gt;注意：gcc本身的去除冗余效率是非常高的，除极特殊原因不建议使用内嵌汇编式编程。&lt;/p&gt;
+
+&lt;p&gt;内嵌汇编式编程同其它NDK编程基本类似，需要注意的是Arm的函数调用方式采用快速调用的方法，形参均通过寄存器进行直接传递，在编写内嵌汇编程序时要注意形参同寄存器的对应关系。下面给出“参数加一函数”的内嵌汇编实现。
+&lt;img src=&quot;http://rootkiter.com/images/2015_08_06_22_43/13.png&quot; alt=&quot;rootkiter.com&quot;&gt;  &lt;/p&gt;
+
+&lt;p&gt;可以看出，key的值被自动关联为R2寄存器，且返回值也被自动的关联为R0寄存器。&lt;/p&gt;
+
+&lt;p&gt;如果想要关注更多关于gcc for arm下的内嵌汇编编程可以参照这篇文章&lt;a href=&quot;www.ethernut.de/en/documents/arm-inline-asm.html&quot;&gt;传送门&lt;/a&gt;。&lt;/p&gt;
+
+&lt;h2&gt;结束&lt;/h2&gt;
+
+&lt;p&gt;13年的学习笔记，现在看就有些过时了。知识更新真是太快了。。。当时高考报志愿，怎么就偏偏选了这么一个专业呢。。。&lt;/p&gt;
+</content>
+</entry>
 
 <entry>
 	<title>ARM指令结构和crack思路</title>
