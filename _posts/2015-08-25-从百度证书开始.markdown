@@ -1,0 +1,227 @@
+---
+layout: post
+title:  从百度证书开始
+date:   2015-08-25
+time:   21:34:00
+tags : [ OpenSSL , 证书 , CA , x509 ]
+
+---
+
+## 前言   
+最近在读OpenSSL的命令参数，在这个学习过程中发现OpenSSL之中，架构了一个非常庞大的理论系统，结果原以为学习一两天就能学完的基础知识，整整学了两个星期，才学到一些皮毛。
+
+这里先整理一个阶段性的学习笔记，其他学习笔记将在后面继续整理。在这篇学习笔记中，将包含一个相对完整的证书周边的知识，以及与之相关的OpenSSL指令用法。为了让这篇笔记看起来更连贯，将以百度的证书为起点展开证书体系的介绍。  
+
+## 百度的证书  
+### 获取百度的HTTPS证书  
+在OpenSSL中，提供了一个s_client选项，它可以模拟一个访问https的客户端。利用这个客户端可以很方便的获取到HTTPS的证书信息。  
+命令如下所示：  
+<cmd>
+$ openssl s\_client -connect baidu.com:443  
+</cmd>
+
+命令执行后，会在控制台中打出一整段格式怪异的执行结果，它包含两个部分 : 证书相关的内容 + 实际https会话相关信息。  
+
+
+### 证书链
+s_client这条命令执行完，可以在结果中看到这样一块区域，名字为：Certificate chain。如下图所示：    
+![rootkiter.com](http://rootkiter.com/images/2015_08_25_22_01/1.png)  
+
+可以看到它包含 0/1/2 三段标示，每个标示都指代着一条证书记录。  
+
+标示0：从它的s字段，可以看出这个证书的所属者为百度（O=BeiJing Baidu Netcom Science Technology），它的注册地点为北京，是一家中国公司（C=CN/ST=beijing）。颁发这个证书的认证机构（所谓的CA）信息在i字段中，他是由G3 这个证书签发的。  
+
+类似的，在标示1中，可以看到G3 这个CA的证书又是由G5这个CA签发的。	在标示2中，G5证书又是由Public Primary Certification Authority.签发的。  
+
+看到这里，“证书链”的概念就容易理解了，根CA为了自身管理的方便，会将证书的签署权限依次下发给其他CA，本例中就是签署了G5，阅读G5的OU内容可以看到该机构只负责颁布证书。G5又签署认证了G3于是G3又合法了。最后，G3就签署了百度的证书。  
+
+从认证流程来看，在“证书链”中，只要有一个证书认证出现问题，那么处于证书链后方的所有证书都将认证失败。  
+
+## 证书内的信息
+### 提取证书
+
+证书链字段下方，就是百度的证书内容了，它被一个起始和终止标签包围，如下所示：
+<cmd>   
+\-----BEGIN CERTIFICATE-----  
+MIIGaTCCBVGgAwIBAgIQN23AqZqLxKVCT8qo88qpAzANBgkqhkiG9w0BAQUFADC  
+...  
+...balabala...  
+...  
+CIhENC7RHoQqph7JJQ==  
+-----END CERTIFICATE-----  
+</cmd>
+想要阅读这一堆字符所包含的信息，就需要用到OpenSSL的另一条指令：  
+<cmd>
+$ openssl x509 -in baidu.pem -inform PEM -noout -text  
+</cmd>
+在这条命令内，用到了x509指令中的几个选项，它们的含义如下：
+
+1.  in参数指定一个证书录入路径，  
+2.  inform参数标示该文件的格式，这种base64编码类型的证书串为PEM格式，当编码无法直接可读时一般为DER编码。  
+3.  -noout参数表明该指令不会生成新文件，以免占用本地磁盘空间。  
+4.  -text   参数会告诉x509指令将证书的所有信息以可直接阅读的方式输出。    
+
+由于该指令参数需要从一个文件中读取证书内容，所以，首先要把百度的证书保存为一个名为baidu.pem的文件。如下图所示：     
+![rootkiter.com](http://rootkiter.com/images/2015_08_25_22_01/2.png)  
+
+### 解析证书中的字段
+X509指令执行完毕后，在控制端就可以得到证书的详细内容，下面将对其中部分字段做详细解释。
+
+1. 序列号字段，指明了该证书的序列号，该序列号在同CA下唯一。  
+_Serial Number: 37:6d:c0:a9:9a:8b:c4:a5:42:4f:ca:a8:f3:ca:a9:03_
+2. 签发方式字段，指明了该证书的签名算法  
+_Signature Algorithm: sha1WithRSAEncryption_
+3. Issuer字段，指明了该证书的颁发者信息，百度这个证书是由G3颁发的。  
+_Issuer: C=US, O=VeriSign, Inc., OU=VeriSign Trust Network, OU=Terms of use at https://www.verisign.com/rpa (c)10, CN=VeriSign Class 3 International Server CA - G3_
+4. Validity字段，指明了证书的有效期，有趣的是证书有效期竟然使用排除法描述。  
+_Not Before: Apr 16 00:00:00 2015 GMT
+Not After : Apr 16 23:59:59 2016 GMT_
+5. Subject字段，指明了本证书的主体描述  
+_Subject: C=CN, ST=beijing, L=beijing, O=BeiJing Baidu Netcom Science Technology Co., Ltd, OU=service operation department, CN=www.baidu.cn_
+6. Subject Public Key Info字段，指明了证书中的公钥详细信息。  
+![rootkiter.com](http://rootkiter.com/images/2015_08_25_22_01/3.png)  
+
+7. X509v3 Subject Alternative Name字段，指明了该证书同样适用的几个域名。  
+_DNS:baidu.cn, DNS:baidu.com, DNS:baidu.com.cn, DNS:w.baidu.com, DNS:ww.baidu.com, DNS:www.baidu.cn, DNS:www.baidu.com.cn, DNS:www.baidu.com.hk, DNS:www.baidu.hk, DNS:www.baidu.net.au, DNS:www.baidu.net.my, DNS:www.baidu.net.ph, DNS:www.baidu.net.pk, DNS:www.baidu.net.tw, DNS:www.baidu.net.vn, DNS:wwww.baidu.com, DNS:wwww.baidu.com.cn_   
+可以看到这些域名都是百度公司自己的域名。  
+
+8. X509v3 Basic Constraints字段，指明该证书是否可用于CA验签，如果可用于验签则其值为TRUE。  
+_CA:FALSE_
+
+9. X509v3 Key Usage字段，该字段指明该证书的用途，百度这个证书是用于数字签名，和密钥加密  
+_Digital Signature, Key Encipherment_
+
+10. X509v3 Extended Key Usage字段，指明该证书的扩展用途，百度这个证书还可以用于TLS服务验证、TLS客户端验证、Netscape服务的加密  
+X509v3 Extended Key Usage: 
+_TLS Web Server Authentication, TLS Web Client Authentication, Netscape Server Gated Crypto_
+
+11. X509v3 Certificate Policies字段，是一个扩展字段。应该是由CA要求填写的一个字段。  
+_X509v3 Certificate Policies:   
+Policy: 2.16.840.1.113733.1.7.54  
+CPS: https://d.symcb.com/cps  
+User Notice:  
+Explicit Text: https://d.symcb.com/rpa_  
+可以看到该字段中描述了一些赛门铁克相关的网址链接。事实上百度的这个证书正是由赛门铁克颁发的。  
+
+12. X509v3 Authority Key Identifier字段，指明了G3的证书序列号  
+_keyid:D7:9B:7C:D8:22:A0:15:F7:DD:AD:5F:CE:29:9B:58:C3:BC:46:00:B5_
+13. X509v3 CRL Distribution Points，当前的CRL列表，当证书失效或被窃取后，需要将出问题的证书在对应的CA签发机构进行吊销（就是令相应证书失效），每个CA机构都会为自己签发的证书维护一个吊销列表，当某个证书在吊销列表中时，对该证书的验签将会失败。  
+_Full Name:
+URI:http://se.symcb.com/se.crl_
+14. Authority Information Access，和签发CA有关的信息，从内容看一个为在线的CRL服务地址，另一个为CA的证书地址。  
+_OCSP - URI:http://se.symcd.com
+CA Issuers - URI:http://se.symcb.com/se.crt_
+15. Signature Algorithm，这个字段的内容为CA机构提供的数字签名结果，证书验证者用CA提供的公钥解密这个字段值后，会得以上所有内容的一个摘要信息，通过比对这个摘要信息结果，可以确定证书的合法性。    
+![rootkiter.com](http://rootkiter.com/images/2015_08_25_22_01/4.png)  
+
+### 证书中关键信息回顾  
+
+#### 证书主体框架   
+
+通过3.2章节的介绍，可以了解，一个证书是由“公钥数据”+“证书适用范围及其他扩展信息”+“CA的认证签名”三个主要部分组成，其中“CA的认证签名”也只负责前两个主要部分的校验，并保证这两个部分的数据没有更改、替换或遗失。  
+
+#### 签名算法  
+
+百度这个证书中，用到的是sha1WithRSAEncryption签名算法，这个算法名由两个部分组成，分别为sha1和RSA，其中RSA为非对称加密算法，正好可以解决身份认证的问题，但该算法在实际使用中有短板，那就是只能加密定长（加密长度取决于密钥长度）的数据（证书中需要认证的数据远大于这个长度），如果使用分组加密模式，加解密的过程又非常耗时，为了解决这两个问题，就引入了信息摘要算法sha1，将需要加密的数据首先做一次摘要，生成一个定长的摘要结果，再对这个定长的摘要结果进行非对称认证就可以迅速解决问题了。 
+
+#### 证书验证相关指令
+实际使用中，证书的验证过程相对比较复杂，不但要验证证书是否由合法CA签发，还要验证这个证书是否已经被吊销过。这一小节就将对这两个操作分开说明。
+
+##### 证书验证
+
+OpenSSL提供了verify指令以便我们验证证书合法性。下面我们继续以百度这个证书为例，来看一下如何校验证书。  
+想要验证百度的这个证书，首先要有其对应CA的证书，在证书中提供了一CA证书的下载地址，直接wget即可得到。  
+<cmd>
+$ wget http://se.symcb.com/se.crt  
+</cmd>
+
+得到证书后，可以发现该证书是一个DER编码的证书，而OpenSSL大多数指令都要求输入的文件编码为PEM编码，于是，需要对其进行一次格式转换，指令如下： 
+<cmd>  
+$ openssl x509 -in se.crt -inform DER -out se.pem -outform PEM
+</cmd>
+
+编码转换完，就可以用se.pem来验证baidu.pem这个证书的合法性了。命令如下所示:  
+
+<cmd>
+$ openssl verify -CAfile se.pem baidu.pem  
+</cmd>
+
+PS:在ubuntu下，OpenSSL的可信根证书在 /usr/lib/ssl/certs/ 目录下，在这里可以找到G5 的证书，不过由于签发时间有更改，所以证书序列号有改动，但证书公钥完全相同。  
+
+##### 吊销凭证
+
+证书在使用中，可能会遇到密钥被窃、密钥遗失等问题，这些问题一旦出现，就需要对已经颁发的证书进行吊销，使其失效。实现这个机制的方案就是由CA机构维护一个证书的吊销列表，当证书被吊销时，会将这个证书的序列号就添加到吊销列表（CRL）中。  
+百度这个证书是由赛门铁克签发，所以其对应的吊销列表（CRL）也由赛门铁克维护，在证书中给出了获取该列表的URI，即http://se.symcb.com/se.crl，可以直接使用wget命令将其下载至本地：  
+<cmd>
+$ wget http://se.symcb.com/se.crl  
+</cmd>
+
+下载到这个证书后，同样可以使用OpenSSL的crl指令来阅读其内容，指令格式如下：  
+<cmd>
+$ openssl crl –in se.crl –inform DER –text –out result.txt  
+</cmd>
+
+指令执行完毕，可以在result.txt文件中看到crl列表的具体内容， 通过查看该文件，可以发现，该文件的内容也是相对比较复杂的，除了包含必要的CRL介绍信息（Issuer、Last Update、Next Update、CRL Number、Authority Key Identifier、Revoked Certificates）外，结果文件中还包含着对这些内容信息的签名，签名算法同样是使用sha1WithRSAEncryption，这个签名是为了防止伪造CRL文件的，为其签名者同样是G3证书。  
+在吊销列表中可以发现，被吊销过的证书有25194之多（2015年8月12日的CRL列表），随着时间的继续，该数量还会继续增加，crl文件的大小也会继续增加，这意味着查找证书序列号会越来越耗时，为了解决这个问题，CA机构一般都会提供一个在线服务（OCSP）来支持快速验证。百度的证书中也给出了赛门铁克公司的OCSP地址:http://se.symcd.com，我们同样可以通过该服务来实现在线验证一个证书是否被吊销过，查找命令在OpenSSL中同样有提供，命令格式如下：  
+<cmd>
+$ openssl ocsp -issuer se.pem -cert baidu.pem -url http://se.symcd.com -respout resp.der -text -CAfile se.pem
+</cmd>
+
+事实上OpenSSL官网给出的ocsp查询指令示例（https://www.openssl.org/docs/apps/ocsp.html）不包含CAfile选项，但本人测试时发现，如果不加该选项，执行结果会报“Response Verify Failure” 这个错误，这表明本地openssl对ocsp的回复合法性存疑，即无法确定回复确实是由赛门铁克公司给出的ocsp结果。只有添加了CAfile参数并将其指定为赛门铁克的公钥证书时才可以认证通过，估计这可能是openssl官网在写样例命令时的一个疏忽吧。  
+这些问题都解决后，命令就可以成功执行了，最后给出的结论为baidu.pem: good 证明百度这个证书没有被吊销过。如下图所示：  
+
+![rootkiter.com](http://rootkiter.com/images/2015_08_25_22_01/5.png)    
+
+事实上吊销凭证的查询还有另一种方式，当我们掌握了被查询证书的序列号后，就可以直接递交序列号来查询，百度证书序列号的查询方法可以用以下命令：  
+<cmd>
+$ openssl x509 -in baidu.pem -serial -noout  
+serial=376DC0A99A8BC4A5424FCAA8F3CAA903  
+</cmd>
+
+那么此时，ocsp的查询指令就变为了：  
+<cmd>
+$ openssl ocsp -issuer se.pem -serial 0x376DC0A99A8BC4A5424FCAA8F3CAA903 -url http://se.symcd.com -respout resp.der  -text -CAfile se.pem  
+</cmd>
+
+如果证书被吊销过，会显示什么结果呢，我们从刚才看到的crl吊销列表随便找一个被吊销过的证书序列号：0106CCE3880F7C2E74140912A0CC379E，然后查询一下它，就得到如下结果：  
+
+![rootkiter.com](http://rootkiter.com/images/2015_08_25_22_01/6.png)   
+
+从这个查询结果中可以看出该证书于2011年12月12日被吊销，吊销原因为：密匙数据外泄。
+
+## 面临的威胁及影响
+### 来自CA的威胁  
+
+CA是互联网证书体系的根基，一旦CA出现问题，互联网上的证书认证必将混乱。从宏观来看，证书体系对技术的要求并不是很高，一台装有OpenSSL的机器就可以轻松模拟一个CA机构。所以对于一个CA机构来说，最难掌控的部分在于如何维护它的合法性，能够威胁其合法性的情况大体有以下几种情况（个人可以预见的几点，必然不够全面）：  
+
+1. CA私钥泄漏：这是最危险的情况，因为私钥持有者可以拿着私钥随意签名，随意颁布吊销列表，整个互联网将没有任何信任可言。  
+2. CA私钥遗失：仅次于私钥泄漏，CA的多数操作（证书签发、证书续约、颁发吊销列表等）都是依赖CA私钥进行的，丢失了私钥的CA将完全无法正常工作。
+3. 证书颁发流程不严谨：一个CA在颁布一个合法证书前，要对客户进行非常完善的调查（申请人是不是合法公民？证书的使用范围是否超越常理？等等），这套机制不亚于公安机关办案。在这套流程中一旦出现问题，后果是非常严重的，一个只需要普通证书的用户却得到了一个CA证书，那他就可以拿着这个证书去给别人颁发证书赚钱了呢。这样的CA能被人信任就怪了。
+4. 证书吊销流程不严谨：如果这个流程不够严谨，就意味着我看谁的证书不爽，我就可以去告诉CA吊销了它。这也会给互联网的认证机制造成混乱。
+
+### 算法层威胁
+
+这是一种来自数学层面的攻击，从证书的颁发和认证流程就可以看出它的核心工作流程是基于非对称加密算法实现的，一旦这些认证算法，或者签名算法出现问题，这也会引起认证体系的混乱。和百度证书认证有关的算法，叫做sha1WithRSAEncryption，它由两部分组成：信息摘要算法（sha1）+非对称加密算法（RSA）。  
+
+**信息摘要算法**
+
+摘要算法的基本数学描述为：对一段数据m进行信息摘要得到结果z，摘要算法为H(x)，则 z=H(m)。  
+在签名机制中，摘要算法面临的主要攻击是，找到相同摘要结果的不同定制数据。数学描述就是：已知 H(m1)=z 的情况下，很难找到一个有特定意义的m2 另 H(m2)=z也同时成立。一旦攻击者能够很容易找到m2 数据的构造方法，他就可以将自己的密钥对封装在m2中，并复用m1的签名结果，进行签名伪造(不同私钥共用相同签名的状态)。  
+
+**非对称加密算法**
+
+非对称算法在身份认证机制中，主要用到的是公私钥唯一对应关系，即公钥加密的数据只能由私钥进行解密，同时私钥加密的数据只能由公钥进行解密。那么它面临的攻击将有两个方面：  
+
+1. 可通过公钥很容易的推出私钥，这种情况意味着私钥的直接泄漏。认证体系自然会混乱。  
+2. 可通过公钥找到另一个私钥，这种情况虽然不是私钥直接泄漏，但威胁同泄漏私钥的结果是相同的，认证体系也同样会混乱。  
+
+### 私钥泄漏威胁
+前面在CA威胁中提到过CA私钥泄漏的情况，这里与之的区别在于泄漏私钥的主体为用户。实际生活中，普通用户对于密钥体系的理解可能会存在误区，导致错误使用私钥，进而泄漏私钥。我这里可以想到的两个误区为：
+
+1. 对密钥文件的理解误区：了解过OpenSSL指令体系的同学一般都会知道，直接从OpenSSL生成的公钥和私钥一般都存储在同一文件中，如果用户在使用中（一般是公钥公布的环节）没有注意到这一个细节，就会造成私钥的泄漏。
+2. 对公私钥体系的理解误区：学习过公私钥资料的同学通常会很自然的认为，公私钥权利是等价的：“公钥加密，私钥解密”，或“私钥加密，公钥解密”。他们觉得只要把其中一个称为公钥，而另一个称为私钥即可，而不用在意其顺序。在这种错误的观念下很容易把两者用反，最终导致私钥泄漏。从公钥无法反推出私钥是有大量的数学推导提供安全保障的，而反过来则不存在安全保障。
+
+## 总结
+综上所述，证书管理及验证是一套非常庞大的体系，建造一个完备的证书认证系统也是存在一定困难的。身份认证机制并不只在https通信中有应用，它在银行行业中化身为Ukey，网络当中有些功能重要的服务器为了防止密码暴力破解也采取了密钥证书的身份认证机制。  
+
+
