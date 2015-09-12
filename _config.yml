@@ -2,6 +2,8 @@ markdown: rdiscount
 author: RootKiter
 name: RootKiter
 markdown: redcarpet
+redcarpet:
+    extensions: ["tables"]
 pygments: true
 email: 2559964169@qq.com
 domain: rootkiter.com

@@ -3,12 +3,215 @@
 <title>rootkiter</title>
 <link href="http://rootkiter.com/atom.xml" rel="self"/>
 <link href="http://rootkiter.com" />
-<updated>2015-08-30T00:44:52+08:00</updated>
+<updated>2015-09-12T16:02:24+08:00</updated>
 <id>http://rootkiter.rootkiter.com/</id>
 <author>
 <name>RootKiter</name>
 <email>2559964169@qq.com</email>
 </author>
+
+<entry>
+	<title>OpenSSL中的对称算法（四）</title>
+        <link href="http://rootkiter.com/2015/09/12/OpenSSL%E4%B8%AD%E7%9A%84%E5%AF%B9%E7%A7%B0%E7%AE%97%E6%B3%95.html"/>
+	<updated>2015-09-12T00:00:00+08:00</updated>
+	<id>http://rootkiter.rootkiter.com/2015/09/12/OpenSSL中的对称算法</id>
+	<content type="html">&lt;h2&gt;前言&lt;/h2&gt;
+
+&lt;p&gt;最近在读OpenSSL的命令参数，在这个学习过程中发现OpenSSL之中，架构了一个非常庞大的理论系统，结果原以为学习一两天就能学完的基础知识，却学了将近一个月，才学到一些皮毛。  &lt;/p&gt;
+
+&lt;p&gt;之前整理了一些OpenSSL相关的学习笔记，这篇将涉及一些OpenSSL中对称算法的一些知识。&lt;/p&gt;
+
+&lt;h2&gt;常见的对称算法&lt;/h2&gt;
+
+&lt;p&gt;在OpenSSL中提供了多种对称算法（其中多数都为分组加密算法），以供用户使用，常用的对称算法有以下几种： &lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;AES算法：在OpenSSL中提供了AES的多种位数支持，常见的有128位，192位，256位。&lt;br&gt;&lt;/li&gt;
+&lt;li&gt;Blowfish算法：OpenSSL提供了bf指令，以支持Blowfish算法的各种加解密操作。&lt;br&gt;&lt;/li&gt;
+&lt;li&gt;CAST5算法：OpenSSL提供了cast指令，以支持CAST5算法的各种加解密操作。&lt;br&gt;&lt;/li&gt;
+&lt;li&gt;DES算法：OpenSSL提供了des指令，以支持DES算法的各种加解密操作。&lt;br&gt;&lt;/li&gt;
+&lt;li&gt;IDEA算法：IDEA是一种国际数据加密算法，由DES算法演化而来，目的是为解决DES算法密&lt;br&gt;&lt;/li&gt;
+&lt;li&gt;钥太短的缺点，其算法密钥为128位长度。&lt;br&gt;&lt;/li&gt;
+&lt;li&gt;RC2算法：也是一种分组加密算法，可作为DES算法的替代算法，输入输出均为64位。&lt;br&gt;&lt;/li&gt;
+&lt;li&gt;RC4算法：这是一种老旧的验证和加密算法，易于受到黑客攻击。&lt;br&gt;&lt;/li&gt;
+&lt;li&gt;RC5算法：这是一种相对较新的算法。&lt;br&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2&gt;常用分组加密模式&lt;/h2&gt;
+
+&lt;p&gt;由于分组加密算法的输入输出均有位数限制，导致无法加密较大的数据，所以日常使用中，会将被加密文件按照算法特性进行分组，每组加密后再拼接在一起形成最终密文。按照分组后的处理方式，将分组算法进行了模式分类，在OpenSSL中有4种常见的分组加密模式，复用于分组加密算法中。以本节介绍中，所有示意图均选自《密码学》，这些图实在太难画了，就用手机照下来的，看不清也凑合看把。。。&lt;/p&gt;
+
+&lt;h3&gt;ECB&lt;/h3&gt;
+
+&lt;p&gt;电子密码本模式（Electronic Codebook Mode）。将被加密数据分段，最后一段不足时按照预定模式（补0或补F）补足。将每一段进行加密，加密后的各个段之间互不影响，将各段按顺序连在一起就是加密结果。每一段参与计算的只有&amp;quot;密钥K&amp;quot;，示意图如下所示：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://rootkiter.com/images/2015_09_12_00_23/1.png&quot; alt=&quot;rootkiter.com&quot;&gt; &lt;/p&gt;
+
+&lt;h3&gt;CBC&lt;/h3&gt;
+
+&lt;p&gt;密文块链接模式（Cipher Block Chaining Mode）。将被加密数据分段，每一段数据先与前一段数据加密后的密文进行按位模加（XOR：异或），如果当前段为首段数据（即不存在前一段数据）则与初始化向量（iv）进行模加。模加结果同&amp;quot;密钥K&amp;quot;共同进行加密计算得到当前段的密文。每一段参与计算的都有&amp;quot;密钥K&amp;quot;以及&amp;quot;前一段密文/初始化向量&amp;quot;。示意图如下所示：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://rootkiter.com/images/2015_09_12_00_23/2.png&quot; alt=&quot;rootkiter.com&quot;&gt; &lt;/p&gt;
+
+&lt;h3&gt;CFB&lt;/h3&gt;
+
+&lt;p&gt;密文反馈模式（Cipher Feedback Mode）。将被加密数据分块（r比特一块），将每一块的加密结果作为下一块的初始化向量IV，将该向量先同 密钥K 做加密计算，计算结果同与下一块的明文进行按位模加（XOR：异或），从而得到当前块的加密结果。下图是一张示意图：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://rootkiter.com/images/2015_09_12_00_23/3.png&quot; alt=&quot;rootkiter.com&quot;&gt; &lt;/p&gt;
+
+&lt;h3&gt;OFB&lt;/h3&gt;
+
+&lt;p&gt;输出反馈模式（Output Feedback Mode）。将被加密数据分块（r比特一块），每一块明文只同向量表的左侧r位进行按位模加（XOR：异或）得到密文。每一块密文不对后续计算造成影响，“密钥K”仅对向量表变形发生作用。这也是OFB模式 相对 CFB模式的区别。下图是一张示意图：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://rootkiter.com/images/2015_09_12_00_23/4.png&quot; alt=&quot;rootkiter.com&quot;&gt; &lt;/p&gt;
+
+&lt;h3&gt;EDE&lt;/h3&gt;
+
+&lt;p&gt;三重分组加密模式（Encrypt-Decrypt-Encrypt）。将一段数据通过 “加密-解密-加密” 进而生成密文。且这种模式所需密钥可以不止一个（二个不同密钥或三个不同密钥），以提高加密强度。常见的两种加密公式如下:
+其中,E( k,P ) 代表: 用密钥 k 对 P 进行加密操作。D( k,C ) 代表: 用密钥 k 对 C 进行解密操作。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;二密钥加解密公式如下----可以看到 1/3 密钥是相同的：&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;C = E( k1,D( k2,E( k1,P )))&lt;br&gt;
+   P = D( k1,E( k2,D( k1,C )))&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;三密钥加解密公式如下----可以看到3个密钥 各不相同：&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;C = E( k3,D( k2,E( k1,P )))&lt;br&gt;
+   P = D( k1,E( k2,D( k3,C )))&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/blockquote&gt;
+
+&lt;h2&gt;参数指令体系（对称算法相关）&lt;/h2&gt;
+
+&lt;p&gt;OpenSSL支持8种对称加密算法，将这8中对称加密算法同5种加密模式进行糅合，最终形成了OpenSSL中强大的对称加密算法被选选项，下面在命令行下，看一下enc这条指令下支持多少种加密方法，如下图所示：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://rootkiter.com/images/2015_09_12_00_23/5.png&quot; alt=&quot;rootkiter.com&quot;&gt; &lt;/p&gt;
+
+&lt;h3&gt;从DES加密开始&lt;/h3&gt;
+
+&lt;p&gt;在OpenSSL中，所有的对称加密指令的格式均是想通的，掌握其中一种即可掌握其他种类的对称加密算法指令，下面先以DES指令作为入门指令，进行介绍。&lt;br&gt;
+首先新建一个文件名为beenc.txt 内容为Hello World：&lt;br&gt;
+&lt;cmd&gt;
+rootkiter@PC:~$ echo &amp;quot;Hello World&amp;quot; &amp;gt; beenc.txt
+&lt;/cmd&gt;&lt;/p&gt;
+
+&lt;p&gt;随后用DES对该文件进行加密（密码为1234）：&lt;br&gt;
+&lt;cmd&gt;
+rootkiter@PC:~$ openssl des -e -in beenc.txt -out bedec  -pass pass:1234 
+&lt;/cmd&gt;&lt;/p&gt;
+
+&lt;p&gt;加密后使用常用的文件查看指令进行查看可以得到密文的一些特征：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://rootkiter.com/images/2015_09_12_00_23/6.png&quot; alt=&quot;rootkiter.com&quot;&gt; &lt;/p&gt;
+
+&lt;p&gt;从cat结果可以看出，加密后的文件，不是可视字符，且以Salted作为文件开头，这意味着密文是加盐的加密结果。而在我们执行的命令中，没有加盐参数，这也表明，加盐操作是默认的。
+解密操作是加密的逆操作，在des指令中有另一个名为d的参数设置，由于加密时密码为1234，所以解密时密码同样为1234，指令格式如下所示：&lt;br&gt;
+&lt;cmd&gt;
+$ openssl des -d -in bedec -out final.txt -pass pass:1234
+&lt;/cmd&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://rootkiter.com/images/2015_09_12_00_23/7.png&quot; alt=&quot;rootkiter.com&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;可以看到在解密指令中同样没有提到盐值，这证明盐值对于加解密操作是透明的。那么盐值在哪里呢，通过在指令中添加-p参数可以获得加密时的盐值结果：&lt;br&gt;
+&lt;cmd&gt;
+$ openssl des -e -in beenc.txt -out bedec -pass pass:1234 -p
+&lt;/cmd&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://rootkiter.com/images/2015_09_12_00_23/8.png&quot; alt=&quot;rootkiter.com&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;从上图可以发现，盐值其实是保存在密文的8-16字节的。这也证明，盐值并不是一个需要保密的值。为什么会这样呢，这是盐值本身的特性决定的。盐值是一个随机数，他会对每次加密后的结果产生影响，导致相同密文下每两次加密产生的密文均不同，这可以在一定程度下对抗彩虹表的分析。   &lt;/p&gt;
+
+&lt;p&gt;在-p参数下，和盐值被共同输出的两个内容为 key 和 iv，这两个参数的功能又什么呢？&lt;/p&gt;
+
+&lt;p&gt;在“分组加密模式”章节中可以发现，很多模式均有“初始化密钥”和“初始化向量”，这两个值与之是相对应的。当我们通过-pass 参数来输入密码时，OpenSSL会将“密码”和“系统随机数”进行一些操作，并从操作结果中提取出“盐值”、“初始化密钥”和“初始化向量”用于后续的加密。这样就让对称算法的密码输入变得简单起来了。&lt;/p&gt;
+
+&lt;p&gt;事实上当我们不想主动输入密码时，也可以通过人为指定Key/iv/salt三个参数的值，实现加密，指令格式如下所示：&lt;br&gt;
+&lt;cmd&gt;
+$ openssl [被选算法名] -e -in beenc.txt -out bedec -S 0x1234 -K AAAAAAAAAAAAAAAA -iv BBBBBBBBBBBBBBBB -p
+&lt;/cmd&gt;&lt;/p&gt;
+
+&lt;p&gt;不过需要注意的是，具体指定的参数是否生效还要看所选择的“分组加密模式”是否支持对应参数。比如初始向量在“电子密码本（ECB）”模式下就没有用到，此时虽然指定了-K和 -iv 的值，但是由于没有使用，同样不会有效果。&lt;/p&gt;
+
+&lt;h3&gt;指令格式讲解&lt;/h3&gt;
+
+&lt;h4&gt;基本指令格式&lt;/h4&gt;
+
+&lt;p&gt;在OpenSSL中提供两种交互模式，一种为脚本交互，一种为控制台交互。两种方式的执行效果完全相同只是交互方式略有区别，下面是两种交互模式的样例，它们是完全等价的：&lt;br&gt;
+&lt;em&gt;脚本交互&lt;/em&gt;&lt;br&gt;
+&lt;cmd&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;$ openssl des -e -in beenc.txt -out bedec  -pass pass:1234
+&lt;/cmd&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;em&gt;控制台交互&lt;/em&gt;&lt;br&gt;
+&lt;cmd&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;$ openssl&lt;br&gt;
+OpenSSL&amp;gt; des -e -in beenc.txt -out bedec -pass pass:1234
+&lt;/cmd&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;两者的唯一区别在于：脚本交互方式可以由shell脚本直接调用，而人工操作时，控制台交互模式可以在每一次指令测试时少输入一个openssl程序名。&lt;/p&gt;
+
+&lt;h4&gt;输入输出说明&lt;/h4&gt;
+
+&lt;p&gt;OpenSSL的输入输出参数种类很多，下面分别介绍。  &lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;直接由参数指定输入，比如-K/-iv 这种，再配置命令参数时直接输入即可。&lt;/li&gt;
+&lt;li&gt;从文件输入输出，比如in/out 这两个参数，就可以用来控制程序的输入输出路径。&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;控制台交互输入，在调用指令时由于没有指定输入密码，以及初始密钥等参数，指令就会在执行过程中提示用户输入口令，如下图所示：&lt;br&gt;
+&lt;img src=&quot;http://rootkiter.com/images/2015_09_12_00_23/9.png&quot; alt=&quot;rootkiter.com&quot;&gt; &lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;编码后输出，有时我们希望out选项输出的文件为可读字符内容，即可用cat直接查看的结果，这时就要用到-base64/a 选项，下图是个示例：&lt;br&gt;
+&lt;img src=&quot;http://rootkiter.com/images/2015_09_12_00_23/10.png&quot; alt=&quot;rootkiter.com&quot;&gt; &lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;pass选项可以支持5中密码输入方式，他们分别为：&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;table&gt;&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&quot;text-align: left&quot;&gt;支持的方式&lt;/th&gt;
+&lt;th style=&quot;text-align: left&quot;&gt;含义&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;-pass stdin&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;从控制台读入密码&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;-pass pass:xxxx&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;从参数中读入密码密码为xxxx字段的内容&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;-pass env:passwdvar&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;从环境变量中读取密码&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;-pass file:filename&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;从文件中读入密码&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;-pass fd:number&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;number是一个文件描述句柄的编号，比如Unix系统中的管道就可以通过这种方式作为命令的输入。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;&lt;/table&gt;
+
+&lt;h4&gt;外部加密库的支持&lt;/h4&gt;
+
+&lt;p&gt;现实使用中，总有人需要外接加密设备（加密机、Ukey等）或软件加密库，为了支持这些设备的加解密模块，OpenSSL提供了engine参数，该参数以设备名称（一般是一个字符串）为输入。如果不知道自己的设备名称可以先通过 engine 的-t参数进行查询。&lt;/p&gt;
+
+&lt;h2&gt;总结&lt;/h2&gt;
+
+&lt;p&gt;这篇学习笔记记录了OpenSSL中和对称算法相关的一些操作指令，以及背景知识。&lt;/p&gt;
+</content>
+</entry>
 
 <entry>
 	<title>OpenSSL中的CA周边（三）</title>
