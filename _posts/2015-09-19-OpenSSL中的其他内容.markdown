@@ -1,0 +1,180 @@
+---
+layout: post
+title:  OpenSSL中的其他内容（五）
+date:   2015-09-16
+time:   01:58:00
+tags : [ OpenSSL , 信息摘要 , 证书 , OpenSSL中的其他 , MD5＋SHA1+DSS1 ]
+
+---
+
+## 前言   
+最近在读OpenSSL的命令参数，在这个学习过程中发现OpenSSL之中，架构了一个非常庞大的理论系统，结果原以为学习一两天就能学完的基础知识，却学了将近一个月，才学到一些皮毛。
+
+之前整理了一些学习笔记，这篇将涉及一些OpenSSL中乱七八糟的一些知识。
+
+
+## 常见的信息摘要算法  
+
+在OpenSSL中提供的信息摘要算法有很多，有SHA1、SHA、MD5、DSS和RIPEMD160这样几种。这些指令既可以通过单独的同名指令进行使用，也可以在dgst指令中用参数指定方式使用。  
+
+摘要算法是对一段数据进行特征提取的方法，理论上讲，一个摘要算法的输出长度一般是固定的，当输入的数据发生很小的改变时，输出的摘要结果变化应该很明显。同时从摘要算法的结果要很难反推出原数据。  
+
+数字签名则是采用非对称加密的方法，对一段数据进行私钥加密，数据验签时，首先用公钥解密出数据再和被验签数据进行比对，如果相同，则验签成功，否则验签失败。摘要算法和数字签名结合在一起可以解决大量数据的验签问题，即对摘要算法的结果进行验签，以保证原数据的合法性。  
+
+下面分别针对不同的摘要算法提几个使用实例：
+  
+
+
+### MD5
+
+
+>rootkiter@PC:~$ echo "Hello World" > bedgst.txt  
+>rootkiter@PC:~$ openssl md5 -c -hex bedgst.txt   
+>MD5(bedgst.txt)= e5:9f:f9:79:41:04:4f:85:df:52:97:e1:c3:02:d2:60  
+>rootkiter@PC:~$ openssl dgst -md5 -c -hex bedgst.txt   
+>MD5(bedgst.txt)= e5:9f:f9:79:41:04:4f:85:df:52:97:e1:c3:02:d2:60  
+
+![rootkiter.com](http://rootkiter.com/images/2015_09_19_01_46/1.png) 
+
+### SHA1
+
+
+>rootkiter@PC:~$ echo "Hello World" > bedgst.txt  
+>rootkiter@PC:~$ openssl sha1 -c -hex bedgst.txt   
+>SHA1(bedgst.txt)= 64:8a:6a:6f:ff:fd:aa:0b:ad:b2:3b:8b:af:90:b6:16:8d:d1:6b:3a  
+>rootkiter@PC:~$ openssl dgst -sha1 -c -hex bedgst.txt   
+>SHA1(bedgst.txt)= 64:8a:6a:6f:ff:fd:aa:0b:ad:b2:3b:8b:af:90:b6:16:8d:d1:6b:3a  
+
+
+![rootkiter.com](http://rootkiter.com/images/2015_09_19_01_46/2.png) 
+
+### DSS1
+
+
+>rootkiter@PC:~$ echo "Hello World" > bedgst.txt  
+>rootkiter@PC:~$ openssl dss1 -c -hex bedgst.txt   
+>DSA(bedgst.txt)= 64:8a:6a:6f:ff:fd:aa:0b:ad:b2:3b:8b:af:90:b6:16:8d:d1:6b:3a  
+>rootkiter@PC:~$ openssl dgst -dss1 -c -hex bedgst.txt   
+>DSA(bedgst.txt)= 64:8a:6a:6f:ff:fd:aa:0b:ad:b2:3b:8b:af:90:b6:16:8d:d1:6b:3a   
+
+
+![rootkiter.com](http://rootkiter.com/images/2015_09_19_01_46/3.png) 
+
+## OpenSSL指令整体结构
+
+OpenSSL提供了非常庞大的算法库，然而又很少有资料介绍OpenSSL每条指令功能，和所属体系，导致初次接触无从下手，这里就把所有的指令进行一个基本分类，以帮助使用OpenSSL时，快速找到对应的指令，找到之后就可以通过-h参数依次确定指令的参数内容了。
+
+### 对称算法加解密相关
+
+更多详细内容，可参阅《OPENSSL 与网络信息安全-基础、结构和指令》的第128页。
+
+|指令|功能介绍|
+|:---|:---|
+|enc|对称加密算法的统一入口指令，可通过进一步配置参数选择加密算法，如 -des|
+|aes* |使用aes算法对文件进行加解密操作，-e参数为加密，-d参数为解密|
+| bf* |bf算法对文件进行加解密操作，-e参数为加密， -d参数为解密|
+| camellia* |使用camellia算法对文件进行加解密操作， -e参数为加密，-d参数为解密|
+| cast*  |使用cast算法对文件进行加解密操作， -e参数为加密，-d参数为解密|
+| des* |使用des算法对文件进行加解密操作， -e参数为加密，-d参数为解密|
+| des-ede-* | 使用3des算法对文件进行加解密操作， -e参数为加密，-d参数为解密，需要注意的是ede算法的输入中k1 和 k3 相同。 |
+| des-ede3-* |  使用3des算法对文件进行加解密操作， -e参数为加密，-d参数为解密，需要注意的是ede3相关算法的输入中有三个不同的密码。所以强度会高于des-ede-* |
+| des3 | 使用des3算法对文件进行加解密操作， -e参数为加密，-d参数为解密，从字面理解应该是3次的des加密。 |
+| rc2* | 使用rc算法对文件进行加解密操作， -e参数为加密，-d参数为解密 |
+| seed* | 使用seed算法对文件进行加解密操作， -e参数为加密，-d参数为解密 |
+| base64 | 使用base64对文件进行转码，-e参数为编码，-d参数为解码，但该算法不是对称加密算法，而是编码指令。 |
+
+
+### 信息摘要算法
+
+更多详细内容，可参阅《OPENSSL 与网络信息安全-基础、结构和指令》的第164页。
+
+|指令|功能介绍|
+|:---|:---|
+|dgst | 信息摘要算法指令的统一入口，可通过参数进一步指定被选择的摘要算法，如 -md5 。 |
+| md4 |  使用md4摘要算法对文件进行摘要计算。 |
+| md5 |  使用md5摘要算法对文件进行摘要计算。 |
+| rmd160 | 使用rmd160摘要算法对文件进行摘要计算。 |
+| sha | 使用sha摘要算法对文件进行摘要计算。 | 
+| sha1 | 使用sha1摘要算法对文件进行摘要计算。 | 
+
+
+### 非对称算法相关指令
+
+更多详细内容，可参阅《OPENSSL 与网络信息安全-基础、结构和指令》的第136页。
+
+| 算法名称|指令|功能介绍|
+|:---|:---|:---|
+|DSA| dsaparam | 用于生成dsa密钥参数的指令。 |
+| * | gendsa | 用于生成dsa密钥对的指令。 |
+| * | dsa    | dsa密钥文件维护的指令，一般包括（加密存储、更换保护密码、更换加密算法、编码转换、阅读内容等操作） | 
+|RSA| genrsa | 用于生成dsa密钥的指令|
+| * | rsa | rsa密钥文件维护的指令，一般包括（加密存储、更换保护密码、更换加密算法、编码转换、阅读内容等操作）|
+| * | rsautl | 使用rsa密钥对文件进行加解密操作。 |
+|DH| gendh | 生成dh密钥 |
+| * | dh | 对dh密钥文件格式进行编辑的指令，一般包括（编码转换、阅读内容、检查安全性、输出C格式代码等操作） |
+| * | dhparam | dh算法的入口指令，包含dh和gendh的所有功能。 |
+
+## 证书操作相关指令
+
+更多详细内容，可参阅《OPENSSL 与网络信息安全-基础、结构和指令》的第167页。
+
+| 所属证书操作过程|操作指令|功能介绍|
+|:---|:---|:---|
+|生成证书请求| req | 生成证书请求指令，同时可以查看证书文件内容。 |
+| CA 机构的操作 | ca | CA机构的维护指令，包括证书签发，证书吊销，生成新吊销列表，为其他CA签发证书等操作。|
+|   *  |        *   | -revoke | 吊销证书 |
+|  *  |     *        | -gencrl | 生成新的吊销列表 | 
+| 证书验证过程 | x509  | 证书格式维护指令（证书内容查看，编码格式转换，根据已有证书生成新的证书请求等） |
+| * | crl | crl文件维护指令（crl文件内容查看，编码格式转换等操作） |
+| * | verify | 根据已有的CA证书，校验当前证书是否合法。 | 
+| * | ocsp | 创建一个在线的证书状态查询服务，或在已有的证书查询服务上查询一个证书状态。 | 
+
+### 文件格式转化指令
+
+通常情况的文件编码都可以使用分类中的指令进行转化（比如X509、rsa、dsa指令等），然而总有些证书使用场景（软件版本太老，只能识别个别的证书文件）是无法直接转化的，于是OpenSSL提供了更多的转化指令以适应不同的场景。
+
+| 操作指令 | 功能介绍 |
+|:---|:---|
+|crl2pkcs7 | 可将多个证书以及crl文件封装在相同的PKCS#7标准的文件中（当不想封装crl文件时，可通过 -nocrl 选项指定）。|
+| pkcs7 | 证书编码转换（PEM->DER），输出文件中个整数内容 | 
+| 证书编码转换（PEM->DER），输出文件中个整数内容 | 对私钥的格式进行转化：1.生产一种非标准格式的RSA私钥，以兼容一些软件；2.生产一种非标准格式的DSA密钥，此时的DSA参数会内嵌至PrivateKey结构中。3.生产一种兼容Netscape私钥数据库格式的DSA密钥。4.将已有密钥转化为pkcs8文件格式的密钥，同时可选择加密保存方式。 | 
+| pkcs12 | 将多个证书及crl文件封装为一个PKCS#12标准的文件中，并支持对PKCS#12文件内容的查询和编辑，可针对其中封装的某一证书进行针对性操作（更换加密算法、更换密码等） | 
+
+
+更多详细内容，可参阅《OPENSSL 与网络信息安全-基础、结构和指令》的第230/213/217页。
+
+
+### 其他指令
+
+| 指令 | 指令功能 | 备注 |
+|:---|:---|:---|
+|asn1parse| 是一种用来诊断ASN.1结构的工具，也能用于从ASN1.1数据中提取数据。 | http://blog.csdn.net/as3luyuan123/article/details/13339803 | 
+| ciphers | 可用于查看OpenSSL支持的ciphers，或指定一个ssl的算法版本。 | $ openssl ciphers -v | 
+| cms | 该命令处理S/MIME v3.1邮件。可以用它对S/MIME消息进行加密、解密、签名、验证签名、压缩以及解压缩等操作。 | http://blog.csdn.net/as3luyuan123/article/details/13612917 | 
+| ec | 椭圆曲线密钥处理工具。 | http://blog.csdn.net/as3luyuan123/article/details/14138983 | 
+| ecparam | 椭圆曲线密钥参数生成及操作。 | http://blog.csdn.net/as3luyuan123/article/details/14406429 | 
+| engine | 查询OpenSSL支持的engine设备列表。 | 帮助指令：<br/>$ openssl engine -h | 
+| errstr | 本命令用于查询错误代码。 | http://blog.csdn.net/as3luyuan123/article/details/14413745 | 
+| genpkey | 	用于产生各种密钥（RSA、DSA、DH、EC等）的私钥值。 | http://blog.csdn.net/as3luyuan123/article/details/14498339 | 
+| nseq | 	本命令用于多个证书与netscape证书序列间相互转化。|http://blog.csdn.net/as3luyuan123/article/details/14901077 | 
+| passwd| 	passwd命令计算一个密钥的哈希值或者计算列表中的每个密钥的hash值。 | http://blog.csdn.net/as3luyuan123/article/details/14917959
+| pkey	| 	
+| pkeyparam | 	公共密钥算法参数处理工具。它能够处理公钥或私钥文件。它能够转换组件信息并将它们打印出来。| 	http://blog.csdn.net/as3luyuan123/article/details/16330979 |
+| pkeyutl | 	本命令能够测试所支持的密钥算法的性能。|	http://blog.csdn.net/as3luyuan123/article/details/16331003|
+| prime|	产生并检查一个数是否为素数。|	http://blog.csdn.net/as3luyuan123/article/details/16331073 | 
+| rand	|用来产生伪随机字节。 |	http://blog.csdn.net/as3luyuan123/article/details/16811693 |
+|s_client|	s_client为一个SSL/TLS客户端程序，与s_server对应，它不仅能与s_server进行通信，也能与任何使用ssl协议的其他服务程序进行通信。|	http://blog.csdn.net/as3luyuan123/article/details/16812071 |
+|s_server	| s_server是openssl提供的一个SSL服务程序。使用此程序前，需要生成各种证书。本命令可以用来测试ssl客户端，比如各种浏览器的https协议支持。	| http://blog.csdn.net/as3luyuan123/article/details/16850727| 
+| s_time |	s_time是openss提供的SSL/TLS性能测试工具，用于测试SSL/TSL服务。 |	http://blog.csdn.net/as3luyuan123/article/details/16850825|
+| sess_id	|本指令是处理SSL_SESSION结构的，可以打印出其中的细节。这也是一个调试工具。|	http://blog.csdn.net/as3luyuan123/article/details/16850893|
+|smime|	S/MIME工具，用于处理S/MIME邮件，它能加密、解密、签名和验证S/MIME消息。|	http://blog.csdn.net/as3luyuan123/article/details/16850953|
+|speed	|speed命令用于测试库的性能。|	http://blog.csdn.net/as3luyuan123/article/details/16851125|
+|spkac	|SPKAC打印和产生工具。它能够处理Netscape格式的签名公钥。它可以打印它们的上下文，验证签名值和根据提供的私钥产生自己的SPKACs。	|http://blog.csdn.net/as3luyuan123/article/details/16851173|
+|srp	|Xxxxx 这个指令我一顿乱翻也不知道是干什么用的。。。貌似是个叫TLS-SRP的算法可惜呀。没看到指令样例和文档。|	
+|ts	|时间戳处理工具|	http://blog.csdn.net/as3luyuan123/article/details/16867849|
+
+
+## 总结
+这篇学习笔记记录了OpenSSL中的信息摘要算法和OpenSSL工具的指令整体脚骨，以及背景知识。  
+
+在第三章节大量引用VitalityShow的博客内容，是因为google结果只有他配有中文解释。感谢他的无私奉献吧。

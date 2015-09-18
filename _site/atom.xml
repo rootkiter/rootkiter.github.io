@@ -3,12 +3,449 @@
 <title>rootkiter</title>
 <link href="http://rootkiter.com/atom.xml" rel="self"/>
 <link href="http://rootkiter.com" />
-<updated>2015-09-12T16:02:24+08:00</updated>
+<updated>2015-09-19T02:00:35+08:00</updated>
 <id>http://rootkiter.rootkiter.com/</id>
 <author>
 <name>RootKiter</name>
 <email>2559964169@qq.com</email>
 </author>
+
+<entry>
+	<title>OpenSSL中的其他内容（五）</title>
+        <link href="http://rootkiter.com/2015/09/16/OpenSSL%E4%B8%AD%E7%9A%84%E5%85%B6%E4%BB%96%E5%86%85%E5%AE%B9.html"/>
+	<updated>2015-09-16T00:00:00+08:00</updated>
+	<id>http://rootkiter.rootkiter.com/2015/09/16/OpenSSL中的其他内容</id>
+	<content type="html">&lt;h2&gt;前言&lt;/h2&gt;
+
+&lt;p&gt;最近在读OpenSSL的命令参数，在这个学习过程中发现OpenSSL之中，架构了一个非常庞大的理论系统，结果原以为学习一两天就能学完的基础知识，却学了将近一个月，才学到一些皮毛。&lt;/p&gt;
+
+&lt;p&gt;之前整理了一些学习笔记，这篇将涉及一些OpenSSL中乱七八糟的一些知识。&lt;/p&gt;
+
+&lt;h2&gt;常见的信息摘要算法&lt;/h2&gt;
+
+&lt;p&gt;在OpenSSL中提供的信息摘要算法有很多，有SHA1、SHA、MD5、DSS和RIPEMD160这样几种。这些指令既可以通过单独的同名指令进行使用，也可以在dgst指令中用参数指定方式使用。  &lt;/p&gt;
+
+&lt;p&gt;摘要算法是对一段数据进行特征提取的方法，理论上讲，一个摘要算法的输出长度一般是固定的，当输入的数据发生很小的改变时，输出的摘要结果变化应该很明显。同时从摘要算法的结果要很难反推出原数据。  &lt;/p&gt;
+
+&lt;p&gt;数字签名则是采用非对称加密的方法，对一段数据进行私钥加密，数据验签时，首先用公钥解密出数据再和被验签数据进行比对，如果相同，则验签成功，否则验签失败。摘要算法和数字签名结合在一起可以解决大量数据的验签问题，即对摘要算法的结果进行验签，以保证原数据的合法性。  &lt;/p&gt;
+
+&lt;p&gt;下面分别针对不同的摘要算法提几个使用实例：&lt;/p&gt;
+
+&lt;h3&gt;MD5&lt;/h3&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;rootkiter@PC:~$ echo &amp;quot;Hello World&amp;quot; &amp;gt; bedgst.txt&lt;br&gt;
+rootkiter@PC:~$ openssl md5 -c -hex bedgst.txt&lt;br&gt;
+MD5(bedgst.txt)= e5:9f:f9:79:41:04:4f:85:df:52:97:e1:c3:02:d2:60&lt;br&gt;
+rootkiter@PC:~$ openssl dgst -md5 -c -hex bedgst.txt&lt;br&gt;
+MD5(bedgst.txt)= e5:9f:f9:79:41:04:4f:85:df:52:97:e1:c3:02:d2:60  &lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://rootkiter.com/images/2015_09_19_01_46/1.png&quot; alt=&quot;rootkiter.com&quot;&gt; &lt;/p&gt;
+
+&lt;h3&gt;SHA1&lt;/h3&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;rootkiter@PC:~$ echo &amp;quot;Hello World&amp;quot; &amp;gt; bedgst.txt&lt;br&gt;
+rootkiter@PC:~$ openssl sha1 -c -hex bedgst.txt&lt;br&gt;
+SHA1(bedgst.txt)= 64:8a:6a:6f:ff:fd:aa:0b:ad:b2:3b:8b:af:90:b6:16:8d:d1:6b:3a&lt;br&gt;
+rootkiter@PC:~$ openssl dgst -sha1 -c -hex bedgst.txt&lt;br&gt;
+SHA1(bedgst.txt)= 64:8a:6a:6f:ff:fd:aa:0b:ad:b2:3b:8b:af:90:b6:16:8d:d1:6b:3a  &lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://rootkiter.com/images/2015_09_19_01_46/2.png&quot; alt=&quot;rootkiter.com&quot;&gt; &lt;/p&gt;
+
+&lt;h3&gt;DSS1&lt;/h3&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;rootkiter@PC:~$ echo &amp;quot;Hello World&amp;quot; &amp;gt; bedgst.txt&lt;br&gt;
+rootkiter@PC:~$ openssl dss1 -c -hex bedgst.txt&lt;br&gt;
+DSA(bedgst.txt)= 64:8a:6a:6f:ff:fd:aa:0b:ad:b2:3b:8b:af:90:b6:16:8d:d1:6b:3a&lt;br&gt;
+rootkiter@PC:~$ openssl dgst -dss1 -c -hex bedgst.txt&lt;br&gt;
+DSA(bedgst.txt)= 64:8a:6a:6f:ff:fd:aa:0b:ad:b2:3b:8b:af:90:b6:16:8d:d1:6b:3a   &lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://rootkiter.com/images/2015_09_19_01_46/3.png&quot; alt=&quot;rootkiter.com&quot;&gt; &lt;/p&gt;
+
+&lt;h2&gt;OpenSSL指令整体结构&lt;/h2&gt;
+
+&lt;p&gt;OpenSSL提供了非常庞大的算法库，然而又很少有资料介绍OpenSSL每条指令功能，和所属体系，导致初次接触无从下手，这里就把所有的指令进行一个基本分类，以帮助使用OpenSSL时，快速找到对应的指令，找到之后就可以通过-h参数依次确定指令的参数内容了。&lt;/p&gt;
+
+&lt;h3&gt;对称算法加解密相关&lt;/h3&gt;
+
+&lt;p&gt;更多详细内容，可参阅《OPENSSL 与网络信息安全-基础、结构和指令》的第128页。&lt;/p&gt;
+
+&lt;table&gt;&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&quot;text-align: left&quot;&gt;指令&lt;/th&gt;
+&lt;th style=&quot;text-align: left&quot;&gt;功能介绍&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;enc&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;对称加密算法的统一入口指令，可通过进一步配置参数选择加密算法，如 -des&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;aes*&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;使用aes算法对文件进行加解密操作，-e参数为加密，-d参数为解密&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;bf*&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;bf算法对文件进行加解密操作，-e参数为加密， -d参数为解密&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;camellia*&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;使用camellia算法对文件进行加解密操作， -e参数为加密，-d参数为解密&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;cast*&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;使用cast算法对文件进行加解密操作， -e参数为加密，-d参数为解密&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;des*&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;使用des算法对文件进行加解密操作， -e参数为加密，-d参数为解密&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;des-ede-*&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;使用3des算法对文件进行加解密操作， -e参数为加密，-d参数为解密，需要注意的是ede算法的输入中k1 和 k3 相同。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;des-ede3-*&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;使用3des算法对文件进行加解密操作， -e参数为加密，-d参数为解密，需要注意的是ede3相关算法的输入中有三个不同的密码。所以强度会高于des-ede-*&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;des3&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;使用des3算法对文件进行加解密操作， -e参数为加密，-d参数为解密，从字面理解应该是3次的des加密。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;rc2*&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;使用rc算法对文件进行加解密操作， -e参数为加密，-d参数为解密&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;seed*&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;使用seed算法对文件进行加解密操作， -e参数为加密，-d参数为解密&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;base64&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;使用base64对文件进行转码，-e参数为编码，-d参数为解码，但该算法不是对称加密算法，而是编码指令。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;&lt;/table&gt;
+
+&lt;h3&gt;信息摘要算法&lt;/h3&gt;
+
+&lt;p&gt;更多详细内容，可参阅《OPENSSL 与网络信息安全-基础、结构和指令》的第164页。&lt;/p&gt;
+
+&lt;table&gt;&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&quot;text-align: left&quot;&gt;指令&lt;/th&gt;
+&lt;th style=&quot;text-align: left&quot;&gt;功能介绍&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;dgst&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;信息摘要算法指令的统一入口，可通过参数进一步指定被选择的摘要算法，如 -md5 。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;md4&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;使用md4摘要算法对文件进行摘要计算。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;md5&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;使用md5摘要算法对文件进行摘要计算。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;rmd160&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;使用rmd160摘要算法对文件进行摘要计算。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;sha&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;使用sha摘要算法对文件进行摘要计算。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;sha1&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;使用sha1摘要算法对文件进行摘要计算。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;&lt;/table&gt;
+
+&lt;h3&gt;非对称算法相关指令&lt;/h3&gt;
+
+&lt;p&gt;更多详细内容，可参阅《OPENSSL 与网络信息安全-基础、结构和指令》的第136页。&lt;/p&gt;
+
+&lt;table&gt;&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&quot;text-align: left&quot;&gt;算法名称&lt;/th&gt;
+&lt;th style=&quot;text-align: left&quot;&gt;指令&lt;/th&gt;
+&lt;th style=&quot;text-align: left&quot;&gt;功能介绍&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;DSA&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;dsaparam&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;用于生成dsa密钥参数的指令。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;*&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;gendsa&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;用于生成dsa密钥对的指令。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;*&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;dsa&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;dsa密钥文件维护的指令，一般包括（加密存储、更换保护密码、更换加密算法、编码转换、阅读内容等操作）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;RSA&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;genrsa&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;用于生成dsa密钥的指令&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;*&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;rsa&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;rsa密钥文件维护的指令，一般包括（加密存储、更换保护密码、更换加密算法、编码转换、阅读内容等操作）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;*&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;rsautl&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;使用rsa密钥对文件进行加解密操作。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;DH&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;gendh&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;生成dh密钥&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;*&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;dh&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;对dh密钥文件格式进行编辑的指令，一般包括（编码转换、阅读内容、检查安全性、输出C格式代码等操作）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;*&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;dhparam&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;dh算法的入口指令，包含dh和gendh的所有功能。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;&lt;/table&gt;
+
+&lt;h2&gt;证书操作相关指令&lt;/h2&gt;
+
+&lt;p&gt;更多详细内容，可参阅《OPENSSL 与网络信息安全-基础、结构和指令》的第167页。&lt;/p&gt;
+
+&lt;table&gt;&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&quot;text-align: left&quot;&gt;所属证书操作过程&lt;/th&gt;
+&lt;th style=&quot;text-align: left&quot;&gt;操作指令&lt;/th&gt;
+&lt;th style=&quot;text-align: left&quot;&gt;功能介绍&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;生成证书请求&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;req&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;生成证书请求指令，同时可以查看证书文件内容。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;CA 机构的操作&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;ca&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;CA机构的维护指令，包括证书签发，证书吊销，生成新吊销列表，为其他CA签发证书等操作。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;*&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;*&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;-revoke&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;*&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;*&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;-gencrl&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;证书验证过程&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;x509&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;证书格式维护指令（证书内容查看，编码格式转换，根据已有证书生成新的证书请求等）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;*&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;crl&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;crl文件维护指令（crl文件内容查看，编码格式转换等操作）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;*&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;verify&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;根据已有的CA证书，校验当前证书是否合法。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;*&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;ocsp&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;创建一个在线的证书状态查询服务，或在已有的证书查询服务上查询一个证书状态。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;&lt;/table&gt;
+
+&lt;h3&gt;文件格式转化指令&lt;/h3&gt;
+
+&lt;p&gt;通常情况的文件编码都可以使用分类中的指令进行转化（比如X509、rsa、dsa指令等），然而总有些证书使用场景（软件版本太老，只能识别个别的证书文件）是无法直接转化的，于是OpenSSL提供了更多的转化指令以适应不同的场景。&lt;/p&gt;
+
+&lt;table&gt;&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&quot;text-align: left&quot;&gt;操作指令&lt;/th&gt;
+&lt;th style=&quot;text-align: left&quot;&gt;功能介绍&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;crl2pkcs7&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;可将多个证书以及crl文件封装在相同的PKCS#7标准的文件中（当不想封装crl文件时，可通过 -nocrl 选项指定）。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;pkcs7&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;证书编码转换（PEM-&amp;gt;DER），输出文件中个整数内容&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;证书编码转换（PEM-&amp;gt;DER），输出文件中个整数内容&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;对私钥的格式进行转化：1.生产一种非标准格式的RSA私钥，以兼容一些软件；2.生产一种非标准格式的DSA密钥，此时的DSA参数会内嵌至PrivateKey结构中。3.生产一种兼容Netscape私钥数据库格式的DSA密钥。4.将已有密钥转化为pkcs8文件格式的密钥，同时可选择加密保存方式。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;pkcs12&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;将多个证书及crl文件封装为一个PKCS#12标准的文件中，并支持对PKCS#12文件内容的查询和编辑，可针对其中封装的某一证书进行针对性操作（更换加密算法、更换密码等）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;&lt;/table&gt;
+
+&lt;p&gt;更多详细内容，可参阅《OPENSSL 与网络信息安全-基础、结构和指令》的第230/213/217页。&lt;/p&gt;
+
+&lt;h3&gt;其他指令&lt;/h3&gt;
+
+&lt;table&gt;&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&quot;text-align: left&quot;&gt;指令&lt;/th&gt;
+&lt;th style=&quot;text-align: left&quot;&gt;指令功能&lt;/th&gt;
+&lt;th style=&quot;text-align: left&quot;&gt;备注&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;asn1parse&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;是一种用来诊断ASN.1结构的工具，也能用于从ASN1.1数据中提取数据。&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;http://blog.csdn.net/as3luyuan123/article/details/13339803&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;ciphers&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;可用于查看OpenSSL支持的ciphers，或指定一个ssl的算法版本。&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;$ openssl ciphers -v&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;cms&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;该命令处理S/MIME v3.1邮件。可以用它对S/MIME消息进行加密、解密、签名、验证签名、压缩以及解压缩等操作。&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;http://blog.csdn.net/as3luyuan123/article/details/13612917&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;ec&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;椭圆曲线密钥处理工具。&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;http://blog.csdn.net/as3luyuan123/article/details/14138983&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;ecparam&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;椭圆曲线密钥参数生成及操作。&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;http://blog.csdn.net/as3luyuan123/article/details/14406429&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;engine&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;查询OpenSSL支持的engine设备列表。&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;帮助指令：&lt;br/&gt;$ openssl engine -h&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;errstr&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;本命令用于查询错误代码。&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;http://blog.csdn.net/as3luyuan123/article/details/14413745&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;genpkey&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;用于产生各种密钥（RSA、DSA、DH、EC等）的私钥值。&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;http://blog.csdn.net/as3luyuan123/article/details/14498339&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;nseq&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;本命令用于多个证书与netscape证书序列间相互转化。&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;http://blog.csdn.net/as3luyuan123/article/details/14901077&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;passwd&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;passwd命令计算一个密钥的哈希值或者计算列表中的每个密钥的hash值。&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;http://blog.csdn.net/as3luyuan123/article/details/14917959&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;pkey&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;pkeyparam&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;公共密钥算法参数处理工具。它能够处理公钥或私钥文件。它能够转换组件信息并将它们打印出来。&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;http://blog.csdn.net/as3luyuan123/article/details/16330979&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;pkeyutl&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;本命令能够测试所支持的密钥算法的性能。&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;http://blog.csdn.net/as3luyuan123/article/details/16331003&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;prime&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;产生并检查一个数是否为素数。&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;http://blog.csdn.net/as3luyuan123/article/details/16331073&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;rand&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;用来产生伪随机字节。&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;http://blog.csdn.net/as3luyuan123/article/details/16811693&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;s_client&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;s&lt;em&gt;client为一个SSL/TLS客户端程序，与s&lt;/em&gt;server对应，它不仅能与s_server进行通信，也能与任何使用ssl协议的其他服务程序进行通信。&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;http://blog.csdn.net/as3luyuan123/article/details/16812071&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;s_server&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;s_server是openssl提供的一个SSL服务程序。使用此程序前，需要生成各种证书。本命令可以用来测试ssl客户端，比如各种浏览器的https协议支持。&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;http://blog.csdn.net/as3luyuan123/article/details/16850727&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;s_time&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;s_time是openss提供的SSL/TLS性能测试工具，用于测试SSL/TSL服务。&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;http://blog.csdn.net/as3luyuan123/article/details/16850825&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;sess_id&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;本指令是处理SSL_SESSION结构的，可以打印出其中的细节。这也是一个调试工具。&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;http://blog.csdn.net/as3luyuan123/article/details/16850893&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;smime&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;S/MIME工具，用于处理S/MIME邮件，它能加密、解密、签名和验证S/MIME消息。&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;http://blog.csdn.net/as3luyuan123/article/details/16850953&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;speed&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;speed命令用于测试库的性能。&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;http://blog.csdn.net/as3luyuan123/article/details/16851125&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;spkac&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;SPKAC打印和产生工具。它能够处理Netscape格式的签名公钥。它可以打印它们的上下文，验证签名值和根据提供的私钥产生自己的SPKACs。&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;http://blog.csdn.net/as3luyuan123/article/details/16851173&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;srp&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;Xxxxx 这个指令我一顿乱翻也不知道是干什么用的。。。貌似是个叫TLS-SRP的算法可惜呀。没看到指令样例和文档。&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;ts&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;时间戳处理工具&lt;/td&gt;
+&lt;td style=&quot;text-align: left&quot;&gt;http://blog.csdn.net/as3luyuan123/article/details/16867849&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;&lt;/table&gt;
+
+&lt;h2&gt;总结&lt;/h2&gt;
+
+&lt;p&gt;这篇学习笔记记录了OpenSSL中的信息摘要算法和OpenSSL工具的指令整体脚骨，以及背景知识。  &lt;/p&gt;
+
+&lt;p&gt;在第三章节大量引用VitalityShow的博客内容，是因为google结果只有他配有中文解释。感谢他的无私奉献吧。&lt;/p&gt;
+</content>
+</entry>
 
 <entry>
 	<title>OpenSSL中的对称算法（四）</title>
