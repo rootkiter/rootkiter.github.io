@@ -212,3 +212,15 @@ cmd {
     font-size: 80%;
     color: #777777;
 }
+
+.tag {
+    margin-left: 10%;
+    font-style: "New York", monospace;
+    font-size: 80%;
+    color: #AAAAAA;
+}
+
+.tag .alink a{
+    color: #A0410D;
+    text-decoration: none;
+} 
