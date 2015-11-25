@@ -23,3 +23,10 @@ TAGS : [
 <div class="post">
 {{ content }}
 </div>
+<tag class="tag">
+TAGS : [ 
+{% for tag in page.tags %}
+       <a href="/goto_tags.html#{{ tag }}">{{ tag }}</a>
+{% endfor %}
+]
+</tag>
