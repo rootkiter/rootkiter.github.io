@@ -1,0 +1,1581 @@
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<title>CIL指令表格</title>
+	</head>
+	<body>
+		原文链接：
+			<a href="http://www.cnblogs.com/liusuqi/p/3222183.html">《CIL中间语言浅谈》</a>
+		
+		<div id="cnblogs_post_body"><ul>
+<li><span><strong>CIL中间语言</strong></span></li>
+</ul>
+<p><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;通用中间语言（Common Intermediate 
+Language，简称CIL）（曾经被称为微软中间语言或MSIL)是一种属于通用语言架构和.NET框架的低阶（lowest-level）的人类可
+读的编程语言。目标为.NET 
+框架的语言被编译成CIL，然后汇编成字节码。CIL类似一个面向对象的汇编语言，并且它是完全基于堆栈的。它运行在虚拟机上，其主要的语言有C#、
+Visual Basic .NET、C++/CLI以及 J#。由于C#和通用语言架构的标准化，字节码现在已经官方地成为了CIL。</span></p>
+<ul>
+<li><span><strong>JIT即时编译</strong></span></li>
+</ul>
+<p><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;即时编译（JIT）是指字节码在CPU执行时被立即转换成机器码。转换
+是在程序执行的过程中逐渐进行的。即时编译技术提供了特定环境下的优化、运行时类型安全以及汇编验证。为此，即时编译器检查程序集元数据中是否有非法访问
+和句柄的冲突。</span></p>
+<ul>
+<li><span><strong>NGEN</strong></span></li>
+</ul>
+<p><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;编译本机映像生成器 (Ngen.exe) 
+是一个提高托管应用程序性能的工具。Ngen.exe 
+创建本机映像（包含经编译的特定于处理器的机器代码的文件），并将它们安装到本地计算机上的本机映像缓存中。运行库可从缓存中使用本机映像，而不是使用实
+时编译器编译原始程序集。</span></p>
+<div>
+<ul>
+<li><span><strong>CIL指令</strong></span></li>
+</ul>
+<div><span>&nbsp; &nbsp; 
+&nbsp;CIL指令是用于描述.NET程序集总体结构的标记，并且通知CIL编译器如何定义在程序集中用到的命名空间、类、成员的。它以（.）一个点
+号开头，例如：.namespace、.class、.property、.method等构成。</span></div>
+<ul>
+<li style="list-style-type: none; display: inline;">
+<ul>
+<li><span>newobj</span></li>
+</ul>
+</li>
+</ul>
+<div><span>&nbsp; &nbsp; &nbsp;该指令通知CLR执行以下任务：</span></div>
+<div><span>&nbsp; &nbsp; &nbsp;（1）计算分配对象所需要的总内存数</span></div>
+</div>
+<div><span>&nbsp; &nbsp; &nbsp;（2）检查托管堆，确保有足够的空间存放对象，如果空间足够则调用构造函数，最终将新对象的引用返回给调用者</span></div>
+<div><span>&nbsp; &nbsp; &nbsp;（3）最后，在返回引用前，移动下一个对象的指针，指向托管堆的下一个可用的位置</span></div>
+<div>
+<ul>
+<li style="list-style-type: none; display: inline;">
+<ul>
+<li><span>ldnull</span></li>
+</ul>
+</li>
+</ul>
+<div><span>&nbsp; &nbsp; &nbsp;在虚拟执行栈中产生一个null值，之后使用stloc.o操作码设置对象为null引用。</span></div>
+</div>
+<div>
+<ul>
+<li><span><strong>CIL特性</strong></span></li>
+</ul>
+<div><span>&nbsp; &nbsp; 
+&nbsp;CIL特性是由于CIL指令并不能完全说明.NET成员和类的情况下，针对CIL指令进行补充说明成员或者类的特性的。比如一个类 
+可能是公共的，集成的。它就需要用public特性、extends特性或者implements特性对类的.class指令进行修饰的补充说明。</span></div>
+</div>
+<div>
+<ul>
+<li><span><strong>CIL操作码</strong></span></li>
+</ul>
+<div><span>&nbsp; &nbsp; 
+&nbsp;CIL操作码是对于类或者方法的内部逻辑进行描述和操作的代码，例如Add(将两个值相加并将结果推送到计算堆栈上)、 
+Ldarg(将参数（由指定索引值引用）加载到堆栈上)Ldloc.0(将索引 0 
+处的局部变量加载到计算堆栈上)等其主要分为以下五大类操作：（数据）的压栈(ld)、弹出(st)、运算、转移、其他。</span></div>
+</div>
+<div>
+<ul>
+<li><span><strong>CIL操作码速记表</strong></span></li>
+</ul>
+<div>
+<table style="margin: 0px auto 10px; width: 101%; border-collapse: collapse; color: #555555; font-size: 12px; padding: 0px;" border="1" cellpadding="1" cellspacing="0">
+<tbody style="margin: 0px; padding: 0px;">
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" colspan="4" align="center" height="13" width="25%"><span>主要操作</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" colspan="3" align="center" height="13" width="25%"><span>操作数范围/条件</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" colspan="3" align="center" height="13" width="25%"><span>操作数类型</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" colspan="3" align="center" height="13" width="25%"><span>操作数</span></td>
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="13" width="4%"><span>缩写</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="13" width="7%"><span>全称</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" colspan="2" align="center" height="13" width="14%"><span>含义</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="13" width="4%"><span>缩写</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="13" width="7%"><span>全称</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="13" width="14%"><span>含义</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="13" width="4%"><span>缩写</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="13" width="7%"><span>全称</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="13" width="14%"><span>含义</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="13" width="4%"><span>缩写</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="13" width="7%"><span>全称</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="13" width="14%"><span>含义</span></td>
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="19" align="center" height="13" width="4%"><span>ld</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="19" align="center" height="13" width="7%"><span>load</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="19" colspan="2" align="center" height="13" width="14%"><span>将操作数压到堆栈当中，相当于：</span><br style="margin: 0px; padding: 0px;"><span>push ax</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="6" align="center" height="4" width="4%"><span>arg</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="6" align="center" height="4" width="7%"><span>argument</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="6" align="center" height="4" width="14%"><span>参数</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="5" align="center" height="2" width="4%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="5" align="center" height="2" width="7%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="5" align="center" height="2" width="14%"><span>操作数中的数值</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="4%"><span>.0</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="7%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="14%"><span>第零个参数 *</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="4%"><span>.1</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="7%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="14%"><span>第一个参数</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="0" width="4%"><span>.2</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="0" width="7%"><span>?　</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="0" width="14%"><span>第二个参数</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="0" width="4%"><span>.3</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="0" width="7%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="0" width="14%"><span>第三个参数</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="0" width="4%"><span>.s xx</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="0" width="7%"><span>(short)</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="0" width="14%"><span>参数xx</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="4%"><span>a</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="7%"><span>address</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="14%"><span>操作数的地址</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" colspan="3" align="center" height="1" width="25%"><span>只有 .s xx，参见ldarg.s</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="3" width="4%"><span>loc</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="3" width="7%"><span>local</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="3" width="14%"><span>局部变量</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" colspan="6" align="center" height="3" width="50%"><span>参见ldarg</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="3" width="4%"><span>fld</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="3" width="7%"><span>field</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="3" width="14%"><span>字段（类的全局变量）</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" colspan="3" align="center" height="3" width="25%"><span>参见ldarg</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="3" width="4%"><span>xx</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="3" width="7%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="3" width="14%"><span>xx字段，eg:</span><br style="margin: 0px; padding: 0px;"><span>ldfld xx</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="10" align="center" height="2" width="4%"><span>c</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="10" align="center" height="2" width="7%"><span>const</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="10" align="center" height="2" width="14%"><span>常量</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="7" align="center" height="1" width="4%"><span>.i4</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="7" align="center" height="1" width="7%"><span>int 4 bytes</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="7" align="center" height="1" width="14%"><span>C#里面的int，其他的类型例如short需要通过conv转换</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="4%"><span>.m1</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="7%"><span>minus 1</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="14%"><span>-1</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="0" width="4%"><span>.0</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="0" width="7%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="0" width="14%"><span>0</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="0" width="4%"><span>.1</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="0" width="7%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="0" width="14%"><span>1</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" colspan="3" align="center" height="0" width="25%"><span>　……</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="0" width="4%"><span>.8</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="0" width="7%"><span>　</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="0" width="14%"><span>8</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="0" width="4%"><span>.s</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="0" width="7%"><span>(short)</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="0" width="14%"><span>后面跟一个字节以内的整型数值（有符号的）</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="0" width="4%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="0" width="7%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="0" width="14%"><span>后面跟四个字节的整型数值</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="4%"><span>.i8</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="7%"><span>int 8 bytes</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="14%"><span>C#里面的long</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="4%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="7%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="14%"><span>后面跟八个字节的整型数值</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="0" width="4%"><span>.r4</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="0" width="7%"><span>real 4 bytes</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="0" width="14%"><span>C#里面的float</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="0" width="4%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="0" width="7%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="0" width="14%"><span>后面跟四个字节的浮点数值</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="0" width="4%"><span>.r8</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="0" width="7%"><span>real 8 bytes</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="0" width="14%"><span>C#里面的double</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="0" width="4%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="0" width="7%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="0" width="14%"><span>后面跟八个字节的浮点数值</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="2" width="4%"><span>null</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="2" width="7%"><span>null</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="2" width="14%"><span>空值（也就是0）</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="2" width="4%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="2" width="7%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="2" width="14%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="2" width="4%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="2" width="7%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="2" width="14%"><span>?</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="13" width="4%"><span>st</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="13" width="7%"><span>store</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" colspan="2" align="center" height="13" width="14%"><span>将堆栈内容弹出到操作数中，相当于：</span><br style="margin: 0px; padding: 0px;"><span>pop ax</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" colspan="9" align="center" height="13" width="75%"><span>参见ld **</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="8" align="center" height="13" width="4%"><span>conv</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="8" align="center" height="13" width="7%"><span>convert</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="8" colspan="2" align="center" height="13" width="14%"><span>数值类型转换，仅仅用纯粹的数值类型间的转换，例如int/float等</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="8" align="center" height="13" width="4%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="8" align="center" height="13" width="7%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="8" align="center" height="13" width="14%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="2" width="4%"><span>.i1</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="2" width="7%"><span>int 1 bytes</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="2" width="14%"><span>C#里面的sbyte</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="8" align="center" height="13" width="4%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="8" align="center" height="13" width="7%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="8" align="center" height="13" width="14%"><span>?</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="2" width="4%"><span>.i2</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="2" width="7%"><span>int 2 bytes</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="2" width="14%"><span>C#里面的short</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="2" width="4%"><span>.i4</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="2" width="7%"><span>int 4 bytes</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="2" width="14%"><span>C#里面的int</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="2" width="4%"><span>.i8</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="2" width="7%"><span>int 8 bytes</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="2" width="14%"><span>C#里面的long</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="2" width="4%"><span>.r4</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="2" width="7%"><span>real 4 bytes</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="2" width="14%"><span>C#里面的float</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="4%"><span>.r8</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="7%"><span>real 8 bytes</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="14%"><span>C#里面的double</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="4%"><span>.u4</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="7%"><span>uint 4 bytes</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="14%"><span>C#里面的uint</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="4%"><span>.u8</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="7%"><span>uint 8 bytes</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="14%"><span>C#里面的ulong</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="10" align="center" height="13" width="4%"><span>b/br</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="10" align="center" height="13" width="7%"><span>branch</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="10" align="center" height="13" width="12%"><span>条件和无条件跳转，相当于：</span><br style="margin: 0px; padding: 0px;"><span>jmp/jxx label_jump</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="4" align="center" height="6" width="3%"><span>br</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="2" align="center" height="2" width="4%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="2" align="center" height="2" width="7%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="2" align="center" height="2" width="14%"><span>无条件跳转</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="2" align="center" height="2" width="4%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="2" align="center" height="2" width="7%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="2" align="center" height="2" width="14%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="4%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="7%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="14%"><span>后面跟四个字节的偏移量（有符号）</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="4%"><span>.s</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="7%"><span>(short)</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="14%"><span>后面跟一个字节的偏移量（有符号）</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="2" width="4%"><span>false</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="2" width="7%"><span>false</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="2" width="14%"><span>值为零的时候跳转</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="2" width="4%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="2" width="7%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="2" width="14%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="8" colspan="3" align="center" height="11" width="25%"><span>参见br</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="2" width="4%"><span>true</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="2" width="7%"><span>true</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="2" width="14%"><span>值不为零的时候跳转</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="2" width="4%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="2" width="7%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="2" width="14%"><span>?</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="6" align="center" height="7" width="3%"><span>b</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="2" width="4%"><span>eq</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="2" width="7%"><span>equal to</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="2" width="14%"><span>相等</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="2" width="4%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="2" width="7%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="2" width="14%"><span>?</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="4%"><span>ne</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="7%"><span>not equal to</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="14%"><span>不相等</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="5" align="center" height="5" width="4%"><span>un</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="5" align="center" height="5" width="7%"><span>unsigned or unordered</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="5" align="center" height="5" width="14%"><span>无氟好的（对于整数）或者无序的（对于浮点）</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="4%"><span>gt</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="7%"><span>greater than</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="14%"><span>大于</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="4%"><span>lt</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="7%"><span>less than</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="14%"><span>小于</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="4%"><span>ge</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="7%"><span>greater than or equal to</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="14%"><span>大于等于</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="4%"><span>le</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="7%"><span>less than or equal to</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="1" width="14%"><span>小于等于</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="2" align="center" height="13" width="4%"><span>call</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="2" align="center" height="13" width="7%"><span>call</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="2" colspan="2" align="center" height="13" width="14%"><span>调用</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="7" width="4%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="7" width="7%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="7" width="14%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="7" width="4%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="7" width="7%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="7" width="14%"><span>（非虚函数）</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" rowspan="2" colspan="3" align="center" height="14" width="25%"><span>?</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="6" width="4%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="6" width="7%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="6" width="14%"><span>?</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="7" width="4%"><span>virt</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="7" width="7%"><span>virtual</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" height="7" width="14%"><span>虚函数</span></td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+<div>
+<ul>
+<li><span><strong>CIL操作码大全速查</strong></span></li>
+
+</ul>
+<div>
+<table style="text-align: left; margin: 0px auto 10px; width: 1029px; border-collapse: collapse; color: #555555; font-size: 12px; padding: 0px;" border="0" cellpadding="0" cellspacing="0">
+<tbody style="margin: 0px; padding: 0px;">
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" width="114"><span>名称</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" align="center" width="913"><span>说明</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Add</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将两个值相加并将结果推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Add.Ovf</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将两个整数相加，执行溢出检查，并且将结果推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Add.Ovf.Un</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将两个无符号整数值相加，执行溢出检查，并且将结果推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>And</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>计算两个值的按位“与”并将结果推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Arglist</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>返回指向当前方法的参数列表的非托管指针。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Beq</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>如果两个值相等，则将控制转移到目标指令。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Beq.S</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>如果两个值相等，则将控制转移到目标指令（短格式）。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Bge</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>如果第一个值大于或等于第二个值，则将控制转移到目标指令。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Bge.S</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>如果第一个值大于或等于第二个值，则将控制转移到目标指令（短格式）。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Bge.Un</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>当比较无符号整数值或不可排序的浮点型值时，如果第一个值大于第二个值，则将控制转移到目标指令。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Bge.Un.S</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>当比较无符号整数值或不可排序的浮点型值时，如果第一个值大于第二个值，则将控制转移到目标指令（短格式）。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Bgt</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>如果第一个值大于第二个值，则将控制转移到目标指令。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Bgt.S</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>如果第一个值大于第二个值，则将控制转移到目标指令（短格式）。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Bgt.Un</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>当比较无符号整数值或不可排序的浮点型值时，如果第一个值大于第二个值，则将控制转移到目标指令。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Bgt.Un.S</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>当比较无符号整数值或不可排序的浮点型值时，如果第一个值大于第二个值，则将控制转移到目标指令（短格式）。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ble</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>如果第一个值小于或等于第二个值，则将控制转移到目标指令。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ble.S</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>如果第一个值小于或等于第二个值，则将控制转移到目标指令（短格式）。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ble.Un</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>当比较无符号整数值或不可排序的浮点型值时，如果第一个值小于或等于第二个值，则将控制转移到目标指令。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ble.Un.S</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>当比较无符号整数值或不可排序的浮点值时，如果第一个值小于或等于第二个值，则将控制权转移到目标指令（短格式）。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Blt</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>如果第一个值小于第二个值，则将控制转移到目标指令。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Blt.S</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>如果第一个值小于第二个值，则将控制转移到目标指令（短格式）。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Blt.Un</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>当比较无符号整数值或不可排序的浮点型值时，如果第一个值小于第二个值，则将控制转移到目标指令。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Blt.Un.S</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>当比较无符号整数值或不可排序的浮点型值时，如果第一个值小于第二个值，则将控制转移到目标指令（短格式）。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Bne.Un</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>当两个无符号整数值或不可排序的浮点型值不相等时，将控制转移到目标指令。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Bne.Un.S</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>当两个无符号整数值或不可排序的浮点型值不相等时，将控制转移到目标指令（短格式）。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Box</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将值类转换为对象引用（O 类型）。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Br</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>无条件地将控制转移到目标指令。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Br.S</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>无条件地将控制转移到目标指令（短格式）。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Break</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>向公共语言结构 (CLI) 发出信号以通知调试器已撞上了一个断点。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Brfalse</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>如果 value 为 false、空引用（Visual Basic 中的 Nothing）或零，则将控制转移到目标指令。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Brfalse.S</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>如果 value 为 false、空引用或零，则将控制转移到目标指令。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Brtrue</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>如果 value 为 true、非空或非零，则将控制转移到目标指令。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Brtrue.S</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>如果 value 为 true、非空或非零，则将控制转移到目标指令（短格式）。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Call</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>调用由传递的方法说明符指示的方法。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Calli</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>通过调用约定描述的参数调用在计算堆栈上指示的方法（作为指向入口点的指针）。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Callvirt</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>对对象调用后期绑定方法，并且将返回值推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Castclass</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>尝试将引用传递的对象转换为指定的类。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ceq</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>比较两个值。如果这两个值相等，则将整数值 1 (int32) 推送到计算堆栈上；否则，将 0 (int32) 推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Cgt</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>比较两个值。如果第一个值大于第二个值，则将整数值 1 (int32) 推送到计算堆栈上；反之，将 0 (int32) 推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Cgt.Un</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>比较两个无符号的或不可排序的值。如果第一个值大于第二个值，则将整数值 1 (int32) 推送到计算堆栈上；反之，将 0 (int32) 推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ckfinite</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>如果值不是有限数，则引发 ArithmeticException。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Clt</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>比较两个值。如果第一个值小于第二个值，则将整数值 1 (int32) 推送到计算堆栈上；反之，将 0 (int32) 推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Clt.Un</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>比较无符号的或不可排序的值 value1 和 value2。如果 value1 小于 value2，则将整数值 1 (int32 ) 推送到计算堆栈上；反之，将 0 ( int32 ) 推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Constrained</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>约束要对其进行虚方法调用的类型。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Conv.I</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于计算堆栈顶部的值转换为 native int。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Conv.I1</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于计算堆栈顶部的值转换为 int8，然后将其扩展（填充）为 int32。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Conv.I2</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于计算堆栈顶部的值转换为 int16，然后将其扩展（填充）为 int32。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Conv.I4</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于计算堆栈顶部的值转换为 int32。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Conv.I8</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于计算堆栈顶部的值转换为 int64。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Conv.Ovf.I</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于计算堆栈顶部的有符号值转换为有符号 native int，并在溢出时引发 OverflowException。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Conv.Ovf.I.Un</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于计算堆栈顶部的无符号值转换为有符号 native int，并在溢出时引发 OverflowException。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Conv.Ovf.I1</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于计算堆栈顶部的有符号值转换为有符号 int8 并将其扩展为 int32，并在溢出时引发 OverflowException。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Conv.Ovf.I1.Un</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于计算堆栈顶部的无符号值转换为有符号 int8 并将其扩展为 int32，并在溢出时引发 OverflowException。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Conv.Ovf.I2</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于计算堆栈顶部的有符号值转换为有符号 int16 并将其扩展为 int32，并在溢出时引发 OverflowException。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Conv.Ovf.I2.Un</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于计算堆栈顶部的无符号值转换为有符号 int16 并将其扩展为 int32，并在溢出时引发 OverflowException。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Conv.Ovf.I4</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于计算堆栈顶部的有符号值转换为有符号 int32，并在溢出时引发 OverflowException。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Conv.Ovf.I4.Un</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于计算堆栈顶部的无符号值转换为有符号 int32，并在溢出时引发 OverflowException。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Conv.Ovf.I8</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于计算堆栈顶部的有符号值转换为有符号 int64，并在溢出时引发 OverflowException。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Conv.Ovf.I8.Un</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于计算堆栈顶部的无符号值转换为有符号 int64，并在溢出时引发 OverflowException。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Conv.Ovf.U</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于计算堆栈顶部的有符号值转换为 unsigned native int，并在溢出时引发 OverflowException。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Conv.Ovf.U.Un</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于计算堆栈顶部的无符号值转换为 unsigned native int，并在溢出时引发 OverflowException。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Conv.Ovf.U1</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于计算堆栈顶部的有符号值转换为 unsigned int8 并将其扩展为 int32，并在溢出时引发 OverflowException。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Conv.Ovf.U1.Un</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于计算堆栈顶部的无符号值转换为 unsigned int8 并将其扩展为 int32，并在溢出时引发 OverflowException。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Conv.Ovf.U2</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于计算堆栈顶部的有符号值转换为 unsigned int16 并将其扩展为 int32，并在溢出时引发 OverflowException。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Conv.Ovf.U2.Un</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于计算堆栈顶部的无符号值转换为 unsigned int16 并将其扩展为 int32，并在溢出时引发 OverflowException。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Conv.Ovf.U4</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于计算堆栈顶部的有符号值转换为 unsigned int32，并在溢出时引发 OverflowException。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Conv.Ovf.U4.Un</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于计算堆栈顶部的无符号值转换为 unsigned int32，并在溢出时引发 OverflowException。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Conv.Ovf.U8</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于计算堆栈顶部的有符号值转换为 unsigned int64，并在溢出时引发 OverflowException。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Conv.Ovf.U8.Un</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于计算堆栈顶部的无符号值转换为 unsigned int64，并在溢出时引发 OverflowException。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Conv.R.Un</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于计算堆栈顶部的无符号整数值转换为 float32。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Conv.R4</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于计算堆栈顶部的值转换为 float32。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Conv.R8</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于计算堆栈顶部的值转换为 float64。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Conv.U</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于计算堆栈顶部的值转换为 unsigned native int，然后将其扩展为 native int。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Conv.U1</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于计算堆栈顶部的值转换为 unsigned int8，然后将其扩展为 int32。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Conv.U2</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于计算堆栈顶部的值转换为 unsigned int16，然后将其扩展为 int32。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Conv.U4</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于计算堆栈顶部的值转换为 unsigned int32，然后将其扩展为 int32。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Conv.U8</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于计算堆栈顶部的值转换为 unsigned int64，然后将其扩展为 int64。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Cpblk</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将指定数目的字节从源地址复制到目标地址。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Cpobj</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于对象（&amp;、* 或 native int 类型）地址的值类型复制到目标对象（&amp;、* 或 native int 类型）的地址。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Div</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将两个值相除并将结果作为浮点（F 类型）或商（int32 类型）推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Div.Un</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>两个无符号整数值相除并将结果 ( int32 ) 推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Dup</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>复制计算堆栈上当前最顶端的值，然后将副本推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Endfilter</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将控制从异常的 filter 子句转移回公共语言结构 (CLI) 异常处理程序。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Endfinally</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将控制从异常块的 fault 或 finally 子句转移回公共语言结构 (CLI) 异常处理程序。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Initblk</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于特定地址的内存的指定块初始化为给定大小和初始值。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Initobj</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于指定地址的值类型的每个字段初始化为空引用或适当的基元类型的 0。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Isinst</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>测试对象引用（O 类型）是否为特定类的实例。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Jmp</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>退出当前方法并跳至指定方法。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldarg</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将参数（由指定索引值引用）加载到堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldarg.0</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将索引为 0 的参数加载到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldarg.1</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将索引为 1 的参数加载到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldarg.2</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将索引为 2 的参数加载到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldarg.3</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将索引为 3 的参数加载到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldarg.S</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将参数（由指定的短格式索引引用）加载到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldarga</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将参数地址加载到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldarga.S</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>以短格式将参数地址加载到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldc.I4</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将所提供的 int32 类型的值作为 int32 推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldc.I4.0</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将整数值 0 作为 int32 推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldc.I4.1</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将整数值 1 作为 int32 推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldc.I4.2</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将整数值 2 作为 int32 推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldc.I4.3</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将整数值 3 作为 int32 推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldc.I4.4</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将整数值 4 作为 int32 推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldc.I4.5</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将整数值 5 作为 int32 推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldc.I4.6</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将整数值 6 作为 int32 推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldc.I4.7</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将整数值 7 作为 int32 推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldc.I4.8</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将整数值 8 作为 int32 推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldc.I4.M1</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将整数值 -1 作为 int32 推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldc.I4.S</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将提供的 int8 值作为 int32 推送到计算堆栈上（短格式）。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldc.I8</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将所提供的 int64 类型的值作为 int64 推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldc.R4</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将所提供的 float32 类型的值作为 F (float) 类型推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldc.R8</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将所提供的 float64 类型的值作为 F (float) 类型推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldelem</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>按照指令中指定的类型，将指定数组索引中的元素加载到计算堆栈的顶部。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldelem.I</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于指定数组索引处的 native int 类型的元素作为 native int 加载到计算堆栈的顶部。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldelem.I1</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于指定数组索引处的 int8 类型的元素作为 int32 加载到计算堆栈的顶部。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldelem.I2</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于指定数组索引处的 int16 类型的元素作为 int32 加载到计算堆栈的顶部。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldelem.I4</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于指定数组索引处的 int32 类型的元素作为 int32 加载到计算堆栈的顶部。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldelem.I8</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于指定数组索引处的 int64 类型的元素作为 int64 加载到计算堆栈的顶部。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldelem.R4</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于指定数组索引处的 float32 类型的元素作为 F 类型（浮点型）加载到计算堆栈的顶部。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldelem.R8</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于指定数组索引处的 float64 类型的元素作为 F 类型（浮点型）加载到计算堆栈的顶部。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldelem.Ref</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于指定数组索引处的包含对象引用的元素作为 O 类型（对象引用）加载到计算堆栈的顶部。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldelem.U1</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于指定数组索引处的 unsigned int8 类型的元素作为 int32 加载到计算堆栈的顶部。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldelem.U2</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于指定数组索引处的 unsigned int16 类型的元素作为 int32 加载到计算堆栈的顶部。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldelem.U4</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于指定数组索引处的 unsigned int32 类型的元素作为 int32 加载到计算堆栈的顶部。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldelema</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于指定数组索引的数组元素的地址作为 &amp; 类型（托管指针）加载到计算堆栈的顶部。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldfld</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>查找对象中其引用当前位于计算堆栈的字段的值。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldflda</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>查找对象中其引用当前位于计算堆栈的字段的地址。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldftn</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将指向实现特定方法的本机代码的非托管指针（native int 类型）推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldind.I</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将 native int 类型的值作为 native int 间接加载到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldind.I1</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将 int8 类型的值作为 int32 间接加载到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldind.I2</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将 int16 类型的值作为 int32 间接加载到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldind.I4</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将 int32 类型的值作为 int32 间接加载到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldind.I8</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将 int64 类型的值作为 int64 间接加载到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldind.R4</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将 float32 类型的值作为 F (float) 类型间接加载到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldind.R8</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将 float64 类型的值作为 F (float) 类型间接加载到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldind.Ref</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将对象引用作为 O（对象引用）类型间接加载到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldind.U1</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将 unsigned int8 类型的值作为 int32 间接加载到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldind.U2</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将 unsigned int16 类型的值作为 int32 间接加载到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldind.U4</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将 unsigned int32 类型的值作为 int32 间接加载到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldlen</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将从零开始的、一维数组的元素的数目推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldloc</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将指定索引处的局部变量加载到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldloc.0</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将索引 0 处的局部变量加载到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldloc.1</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将索引 1 处的局部变量加载到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldloc.2</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将索引 2 处的局部变量加载到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldloc.3</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将索引 3 处的局部变量加载到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldloc.S</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将特定索引处的局部变量加载到计算堆栈上（短格式）。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldloca</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于特定索引处的局部变量的地址加载到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldloca.S</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于特定索引处的局部变量的地址加载到计算堆栈上（短格式）。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldnull</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将空引用（O 类型）推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldobj</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将地址指向的值类型对象复制到计算堆栈的顶部。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldsfld</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将静态字段的值推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldsflda</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将静态字段的地址推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldstr</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>推送对元数据中存储的字符串的新对象引用。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldtoken</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将元数据标记转换为其运行时表示形式，并将其推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ldvirtftn</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将指向实现与指定对象关联的特定虚方法的本机代码的非托管指针（native int 类型）推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Leave</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>退出受保护的代码区域，无条件将控制转移到特定目标指令。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Leave.S</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>退出受保护的代码区域，无条件将控制转移到目标指令（缩写形式）。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Localloc</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>从本地动态内存池分配特定数目的字节并将第一个分配的字节的地址（瞬态指针，* 类型）推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Mkrefany</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将对特定类型实例的类型化引用推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Mul</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将两个值相乘并将结果推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Mul.Ovf</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将两个整数值相乘，执行溢出检查，并将结果推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Mul.Ovf.Un</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将两个无符号整数值相乘，执行溢出检查，并将结果推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Neg</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>对一个值执行求反并将结果推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Newarr</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将对新的从零开始的一维数组（其元素属于特定类型）的对象引用推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Newobj</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>创建一个值类型的新对象或新实例，并将对象引用（O 类型）推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Nop</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>如果修补操作码，则填充空间。尽管可能消耗处理周期，但未执行任何有意义的操作。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Not</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>计算堆栈顶部整数值的按位求补并将结果作为相同的类型推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Or</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>计算位于堆栈顶部的两个整数值的按位求补并将结果推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Pop</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>移除当前位于计算堆栈顶部的值。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Prefix1</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>基础结构。此指令为保留指令。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Prefix2</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>基础结构。此指令为保留指令。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Prefix3</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>基础结构。此指令为保留指令。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Prefix4</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>基础结构。此指令为保留指令。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Prefix5</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>基础结构。此指令为保留指令。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Prefix6</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>基础结构。此指令为保留指令。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Prefix7</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>基础结构。此指令为保留指令。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Prefixref</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>基础结构。此指令为保留指令。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Readonly</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>指定后面的数组地址操作在运行时不执行类型检查，并且返回可变性受限的托管指针。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Refanytype</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>检索嵌入在类型化引用内的类型标记。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Refanyval</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>检索嵌入在类型化引用内的地址（&amp; 类型）。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Rem</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将两个值相除并将余数推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Rem.Un</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将两个无符号值相除并将余数推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Ret</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>从当前方法返回，并将返回值（如果存在）从调用方的计算堆栈推送到被调用方的计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Rethrow</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>再次引发当前异常。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Shl</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将整数值左移（用零填充）指定的位数，并将结果推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Shr</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将整数值右移（保留符号）指定的位数，并将结果推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Shr.Un</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将无符号整数值右移（用零填充）指定的位数，并将结果推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Sizeof</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将提供的值类型的大小（以字节为单位）推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Starg</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于计算堆栈顶部的值存储到位于指定索引的参数槽中。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Starg.S</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将位于计算堆栈顶部的值存储在参数槽中的指定索引处（短格式）。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Stelem</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>用计算堆栈中的值替换给定索引处的数组元素，其类型在指令中指定。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Stelem.I</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>用计算堆栈上的 native int 值替换给定索引处的数组元素。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Stelem.I1</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>用计算堆栈上的 int8 值替换给定索引处的数组元素。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Stelem.I2</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>用计算堆栈上的 int16 值替换给定索引处的数组元素。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Stelem.I4</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>用计算堆栈上的 int32 值替换给定索引处的数组元素。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Stelem.I8</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>用计算堆栈上的 int64 值替换给定索引处的数组元素。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Stelem.R4</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>用计算堆栈上的 float32 值替换给定索引处的数组元素。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Stelem.R8</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>用计算堆栈上的 float64 值替换给定索引处的数组元素。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Stelem.Ref</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>用计算堆栈上的对象 ref 值（O 类型）替换给定索引处的数组元素。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Stfld</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>用新值替换在对象引用或指针的字段中存储的值。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Stind.I</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>在所提供的地址存储 native int 类型的值。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Stind.I1</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>在所提供的地址存储 int8 类型的值。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Stind.I2</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>在所提供的地址存储 int16 类型的值。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Stind.I4</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>在所提供的地址存储 int32 类型的值。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Stind.I8</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>在所提供的地址存储 int64 类型的值。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Stind.R4</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>在所提供的地址存储 float32 类型的值。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Stind.R8</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>在所提供的地址存储 float64 类型的值。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Stind.Ref</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>存储所提供地址处的对象引用值。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Stloc</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>从计算堆栈的顶部弹出当前值并将其存储到指定索引处的局部变量列表中。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Stloc.0</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>从计算堆栈的顶部弹出当前值并将其存储到索引 0 处的局部变量列表中。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Stloc.1</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>从计算堆栈的顶部弹出当前值并将其存储到索引 1 处的局部变量列表中。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Stloc.2</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>从计算堆栈的顶部弹出当前值并将其存储到索引 2 处的局部变量列表中。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Stloc.3</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>从计算堆栈的顶部弹出当前值并将其存储到索引 3 处的局部变量列表中。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Stloc.S</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>从计算堆栈的顶部弹出当前值并将其存储在局部变量列表中的 index 处（短格式）。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Stobj</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将指定类型的值从计算堆栈复制到所提供的内存地址中。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Stsfld</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>用来自计算堆栈的值替换静态字段的值。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Sub</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>从其他值中减去一个值并将结果推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Sub.Ovf</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>从另一值中减去一个整数值，执行溢出检查，并且将结果推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Sub.Ovf.Un</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>从另一值中减去一个无符号整数值，执行溢出检查，并且将结果推送到计算堆栈上。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Switch</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>实现跳转表。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Tailcall</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>执行后缀的方法调用指令，以便在执行实际调用指令前移除当前方法的堆栈帧。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Throw</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>引发当前位于计算堆栈上的异常对象。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Unaligned</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>指示当前位于计算堆栈上的地址可能没有与紧接的 ldind、stind、ldfld、stfld、ldobj、stobj、initblk 或 cpblk 指令的自然大小对齐。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Unbox</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将值类型的已装箱的表示形式转换为其未装箱的形式。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Unbox.Any</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>将指令中指定类型的已装箱的表示形式转换成未装箱形式。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Volatile</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>指定当前位于计算堆栈顶部的地址可以是易失的，并且读取该位置的结果不能被缓存，或者对该地址的多个存储区不能被取消。</span></td>
+
+</tr>
+<tr style="margin: 0px; padding: 0px;">
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;"><span>Xor</span></td>
+<td style="padding-bottom: 5px; background-color: white; margin: 0px; padding-left: 10px; padding-right: 10px; word-break: break-all; padding-top: 5px; border-image: initial; border: #dddddd 1px solid;" width="913"><span>计算位于计算堆栈顶部的两个值的按位异或，并且将结果推送到计算堆栈上。</span></td>
+
+</tr>
+
+</tbody>
+
+</table>
+<p style="margin: 0px; color: #555555; padding: 0px;"><span>&nbsp;</span></p>
+
+</div>
+
+</div></div></body></html>
