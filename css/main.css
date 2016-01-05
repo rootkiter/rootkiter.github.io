@@ -224,3 +224,9 @@ cmd {
     color: #A0410D;
     text-decoration: none;
 } 
+
+.cimg {
+    float: right ;
+    background: #FFFFFF; 
+    width: 10%;
+}

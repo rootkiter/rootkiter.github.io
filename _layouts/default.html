@@ -24,10 +24,29 @@ var _hmt = _hmt || [];
 
     </head>
     <body>
-
+            <div style="float:right;width:50%">
+                <div style="float:right">
+                    <a style="float:right" class="mytalk" href="{{ post.url }}/old_talks.html"> {% include talks.txt %} </a>
+                    <div style="float:right;width:100%">
+                        <div style="float:right;width:100%">
+                            <img class="cimg" src="/image/link.png"/>
+                            <a style="float:right" href="http://{{ site.domain }}/friends/"> Friends </a>
+                        </div><br />
+                        <div style="float:right;width:100%">
+                            <img class="cimg" src="/image/logo.png"/>
+                            <a style="float:right" href="http://{{ site.domain }}/EarthWorm"> EarthWorm </a>
+                        </div><br />
+                        <div style="float:right;width:100%">
+                            <img class="cimg" src="/image/rss.png"/>
+                            <a style="float:right" href="http://{{ site.domain }}/atom.xml"> RSS </a>
+                        </div>
+                    </div>
+                </div><br />
+            </div>
         <div class="site">
           <div class="header">
             <h1 class="title"><a href="/">{{ site.name }}</a></h1>
+
           </div>
 
           {{ content }}
