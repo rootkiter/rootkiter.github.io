@@ -29,24 +29,26 @@ var _hmt = _hmt || [];
                     <a style="float:right" class="mytalk" href="{{ post.url }}/old_talks.html"> {% include talks.txt %} </a>
                     <div style="float:right;width:100%">
                         <div style="float:right;width:100%">
-                            <img class="cimg" src="/image/link.png"/>
-                            <a style="float:right" href="http://{{ site.domain }}/friends/"> Friends </a>
+                            <img class="cimg" src="/image/logo.png"/>
+                            <a class="rotateID" style="float:right;" href="http://{{ site.domain }}/EarthWorm"> EarthWorm </a>
                         </div><br />
                         <div style="float:right;width:100%">
-                            <img class="cimg" src="/image/logo.png"/>
-                            <a style="float:right" href="http://{{ site.domain }}/EarthWorm"> EarthWorm </a>
+                            <img class="cimg" src="/image/link.png"/>
+                            <a class="rotateID" style="float:right;" href="http://{{ site.domain }}/friends/"> Friends </a>
                         </div><br />
                         <div style="float:right;width:100%">
                             <img class="cimg" src="/image/rss.png"/>
-                            <a style="float:right" href="http://{{ site.domain }}/atom.xml"> RSS </a>
+                            <a class="rotateID" style="float:right;" href="http://{{ site.domain }}/atom.xml"> RSS </a>
                         </div>
+
                     </div>
                 </div><br />
             </div>
         <div class="site">
           <div class="header">
-            <h1 class="title"><a href="/">{{ site.name }}</a></h1>
-
+            <div class="rotateID">
+                <h1 class="title"><a href="/">{{ site.name }}</a></h1>
+            </div>
           </div>
 
           {{ content }}
@@ -54,16 +56,14 @@ var _hmt = _hmt || [];
           <div class="footer">
             <div class="contact">
               <p>
-                链接 1：<br />
-                链接 2：<br />
-                链接 3：<br />
+                Email   ：<br />
+                Power   ：<br />
               </p>
             </div>
             <div class="contact">
               <p>
-                <a href="http://{{ site.domain }}/atom.xml"> RSS 源 </a><br />
-                <a href="http://{{ site.domain }}/EarthWorm"> EarthWorm 主页</a><br />
-                <a href="http://{{ site.domain }}/friends/"> My Friends </a><br />
+                <a> rootkiter@rootkiter.com </a><br />
+                <a> GitHub + Jekyll + Markdown</a><br />
               </p>
             </div>
           </div>

@@ -230,3 +230,19 @@ cmd {
     background: #FFFFFF; 
     width: 10%;
 }
+
+.rotateID {
+    display: inline-block;
+    transition : 0.2s linear ;
+    transition-property:
+    -o-transition: 0.2s linear;
+    -ms-transition: 0.2s linear;
+    -moz-transition: 0.2s linear;
+    -webkit-transition: 0.2s linear;
+}
+
+.rotateID:hover {
+    transform: rotate(360deg) scale(2);
+    -ms-transform: rotate(360deg) scale(2);
+    -webkit-transform: rotate(360deg) scale(2);
+}

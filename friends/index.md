@@ -6,7 +6,6 @@ time:   18:36:00
 
 ---
 
-<br />
 
 <h1> My Friends </h1>
 
