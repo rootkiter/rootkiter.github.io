@@ -1,7 +1,7 @@
 markdown: rdiscount
 author: RootKiter
 name: RootKiter
-markdown: redcarpet
+markdown: kramdown
 redcarpet:
     extensions: ["tables"]
 pygments: true
