@@ -19,7 +19,8 @@ tags : [ exploit-rop , 技术相关, 汇编+bin ]
 7. 调试完成  
   
 
-###一、确定目标：
+###一、确定目标  
+
 无论做什么都需要有明确的目标：
 
 1. 已知一信息泄漏漏洞（MS13-037）可泄漏 ntdll 的基地址 @ntdll_base;
@@ -34,6 +35,7 @@ tags : [ exploit-rop , 技术相关, 汇编+bin ]
 此时通过RETN指令调用Zw*函数后才能将shellcode所在区域开DEP保护。所以我们的目标就是构造这样一片的堆栈结构。
 
 ###二、针对目标实现步骤，确定需要的ROP样式
+
 观察目标堆栈结构可以发现，构造这样的堆栈存在以下几点困难：
 
 <code>
@@ -44,80 +46,97 @@ tags : [ exploit-rop , 技术相关, 汇编+bin ]
 于是，这种栈状态存在7个双字需要在ROP中动态设置(参照上图带红点的位置)。这可能会用到以下种类的ROP代码：
 
 <code>
-1.MOV [ reg ], reg   
-//布置堆栈，操作内存，当然需要写内存指令了  
-2.ADD（SUB） reg,reg     
-//计算shellcode -0c、shellcode-04这种地址的值  
-//计算MOV [reg],reg 指令中  [reg] 的值  
-3.MOV  reg，ESP    
-//这条指令是最重要的，没有它，根本无法动态定位shellcode地址  
-4.NOT reg         
-//这条指令可有可没有，用来计算0x00000040 和 0x00000400 这种值，如果没有的话，通过Add（SUB） 指令也能实现  
-5.POP reg			 
-//这条指令可用于向寄存器赋值，是寄存器计算前的必要指令。  
+1. MOV [ reg ], reg    
+//布置堆栈，操作内存，当然需要写内存指令了<br>  
+2. ADD（SUB） reg,reg    
+//计算shellcode -0c、shellcode-04这种地址的值  <br>    
+//计算MOV [reg],reg 指令中  [reg] 的值    <br>  
+3. MOV  reg，ESP      
+//这条指令是最重要的，没有它，根本无法动态定位shellcode地址  <br>    
+4. NOT reg            
+//这条指令可有可没有，用来计算0x00000040 和 0x00000400 这种值，如果没有的话，通过Add（SUB） 指令也能实现    <br>  
+5. POP reg			  x
+//这条指令可用于向寄存器赋值，是寄存器计算前的必要指令。    
 </code>
 
 在这些种指令中，实际查找时会发现除第五条指令外，其他格式的指令均难以寻找。我也是找了一个星期才凑全这5种指令格式。
 
 ###三、搜索模块中可用代码片段
+
 搜索过程中搜到了很多和最终构造无关但可能有奇效的指令，详情可参考[第二篇笔记](/2015/04/23/GOLD_IN_THE_NTDLL.html "NTDLL空间")。  
-1. MOV [ reg ], reg  
+1. MOV [ reg ], reg    
 ![图片丢失，请联系作者](http://rootkiter.com/images/2015_04_24_20_33/2_3_1.png)  
 需要 12个字节的垃圾填充。  
-2. SUB reg,reg<br>
+2. SUB reg,reg<br>  
 ![图片丢失，请联系作者](http://rootkiter.com/images/2015_04_24_20_33/2_3_2.png)  
-需要 8个字节的垃圾填充。  
-3. MOV reg,ESP  
+需要 8个字节的垃圾填充。    
+3. MOV reg,ESP    
 ![图片丢失，请联系作者](http://rootkiter.com/images/2015_04_24_20_33/2_3_3.png)  
-无需字节填充，但需要在pushad发生前构造各相关寄存器值。  
-4. NOT reg  
+无需字节填充，但需要在pushad发生前构造各相关寄存器值。    
+4. NOT reg    
 ![图片丢失，请联系作者](http://rootkiter.com/images/2015_04_24_20_33/2_3_4.png)  
 需要16字节垃圾填充  
-5. POP reg  
+5. POP reg    
 ![图片丢失，请联系作者](http://rootkiter.com/images/2015_04_24_20_33/2_3_5.png)  
 ![图片丢失，请联系作者](http://rootkiter.com/images/2015_04_24_20_33/2_3_6.png)  
 ![图片丢失，请联系作者](http://rootkiter.com/images/2015_04_24_20_33/2_3_7.png)  
 ![图片丢失，请联系作者](http://rootkiter.com/images/2015_04_24_20_33/2_3_8.png)  
 
 ###四、封装代码片段至模块
+
 为了后期使用的方便，最好能够将个代码片段封装成ROP片段，最终ROP_chain构造时直接拷贝粘贴即可。各个指令片段封装格式如下所示：
 
-<code>
-MOV [ ecx ], eax   
-![图片丢失，请联系作者](http://rootkiter.com/images/2015_04_24_20_33/2_4_1.png)  
-SUB  eax,edx    
-![图片丢失，请联系作者](http://rootkiter.com/images/2015_04_24_20_33/2_4_2.png)  
-MOV  ecx，ESP    
-![图片丢失，请联系作者](http://rootkiter.com/images/2015_04_24_20_33/2_4_3.png)  
-MOV  eax, ESP    
-![图片丢失，请联系作者](http://rootkiter.com/images/2015_04_24_20_33/2_4_4.png)  
-NOT eax          
-![图片丢失，请联系作者](http://rootkiter.com/images/2015_04_24_20_33/2_4_5.png)  
-POP ecx        
-![图片丢失，请联系作者](http://rootkiter.com/images/2015_04_24_20_33/2_4_6.png)  
-POP edx         
+
+*MOV [ ecx ], eax*  
+![图片丢失，请联系作者](http://rootkiter.com/images/2015_04_24_20_33/2_4_1.png)
+
+*SUB  eax,edx*    
+![图片丢失，请联系作者](http://rootkiter.com/images/2015_04_24_20_33/2_4_2.png)
+
+*MOV  ecx，ESP*    
+![图片丢失，请联系作者](http://rootkiter.com/images/2015_04_24_20_33/2_4_3.png)
+
+*MOV  eax, ESP*    
+![图片丢失，请联系作者](http://rootkiter.com/images/2015_04_24_20_33/2_4_4.png)
+
+*NOT eax*          
+![图片丢失，请联系作者](http://rootkiter.com/images/2015_04_24_20_33/2_4_5.png)
+
+*POP ecx*        
+![图片丢失，请联系作者](http://rootkiter.com/images/2015_04_24_20_33/2_4_6.png)
+
+*POP edx*         
 ![图片丢失，请联系作者](http://rootkiter.com/images/2015_04_24_20_33/2_4_8.png)  
-</code>
+
 
 ###五、书写简单的ROP伪指令
 
 ![图片丢失，请联系作者](http://rootkiter.com/images/2015_04_24_20_33/2_5_1.png)  
 
 这段ROP片段 ＋ Zw* ＋ “调用栈结构” + Shellcode，就可以成功关闭DEP并运行后侧的 shellcode 了。 
+
 然而在这段伪指令中发现，每次写地址需要计算两次，如果都用SUB实现，将会经常备份数据，因为eax只有一个，组织代码将会相当复杂，如果能找到其他的加法指令就会好多了。
 带着这个问题，我在内存中又简单的搜索了一下，顺利找到了以下代码：
+
 ![图片丢失，请联系作者](http://rootkiter.com/images/2015_04_24_20_33/2_5_2.png)  
+
 这处代码原本是INC ECX \  RETN 如果连续使用4次，正好能够完成ADD ecx，4的功能。至此“万事具备，只欠拼接”。
 
 ###六、组装代码片段
+
 这个没什么好说的了，就是参照伪代码，把封装好的代码片段组合到一起，如下图所示：
 ![图片丢失，请联系作者](http://rootkiter.com/images/2015_04_24_20_33/2_6_1.png)  
+
 ###七、调试完成
+
 在metasploit中启动运行，用IE8+Win7访问，查看是否能够成功执行shellcode，如果访问失败，可以通过设置c3断点，或在ROP中设置0x41414141进行中断，另外SUB指令执行时的EDX值，既可以在构造完成后集中计算，也可以单步跟踪时手动调节。  
+
 ![图片丢失，请联系作者](http://rootkiter.com/images/2015_04_24_20_33/2_7_1.png)  
+
 ![图片丢失，请联系作者](http://rootkiter.com/images/2015_04_24_20_33/2_7_2.png)  
 
 # 结尾：
+
 本篇笔记记录了一个相对复杂的ROP构造过程。
 
 ROP构造是一个奇妙的过程，它和程序设计有着很多相似之处，都是需要先明确目标，然后选择伪代码描述，最终用代码组织完成。然而和普通程序设计不同的是，ROP的语法块需要在内存中去寻找，并自己定义，只有找全了各种功能的代码片段，才能完成最终的ROP_chain编写。
