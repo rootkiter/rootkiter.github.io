@@ -12,3 +12,5 @@ time:   18:36:00
 [wooyaa](http://wooyaa.me)
 
 [ 大憨的XXX ](http://kechuandai.net/)
+
+[ ends.cc ](http://ends.cc)
