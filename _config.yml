@@ -4,7 +4,6 @@ name: RootKiter
 markdown: kramdown
 redcarpet:
     extensions: ["tables"]
-highlighter: true
 email: 2559964169@qq.com
 domain: rootkiter.com
 title: rootkiter
