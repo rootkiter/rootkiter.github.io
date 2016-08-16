@@ -3,6 +3,7 @@ layout: default
 title:  "想过说过"
 date:   2016-03-25
 time:   18:36:00
+
 ---
 
 hack for fun 和 hack for money 是两种不同的状态。
