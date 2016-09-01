@@ -20,9 +20,9 @@ tags : [ 技术相关 ]
 
 #### 对应代码
 
-'''
+<code>
 itemlist=["item1","item2"]mchoose= Choose(itemlist,"choose an item",1)mchoose.width=20itemid=mchoose.choose()print "itemid :",itemidprint "itemvalue:",itemlist[itemid-1]
-'''
+</code>
 
 ### 嵌入式选择框
 
@@ -34,9 +34,9 @@ itemlist=["item1","item2"]mchoose= Choose(itemlist,"choose an item",1)mchoose
 
 #### 对应代码
 
-'''
+<code>
 itemlist=["item1","item2"]mchoose= Choose(itemlist,"choose an item",0)mchoose.width=20itemid=mchoose.choose()print "itemid :",itemidprint "itemvalue:",itemlist[itemid-1]
-'''
+</code>
 
 ### 自定义选择框在嵌入式选择框中，输出结果为默认格式，且窗口为异步交互，开发者完全无法进行选择结果的捕获，此时如果开发者想要捕获选择结果，则需要通过类继承的方式实现。
 #### 执行效果
@@ -46,9 +46,9 @@ itemlist=["item1","item2"]mchoose= Choose(itemlist,"choose an item",0)mchoose
 
 #### 对应代码
 
-'''
+<code>
 class MyChoose(Choose):      def __init__(self,mlist,title,flag):          Choose.__init__(self,mlist,title,flag)          self.mlist=mlist          self.width=20      def enter(self,n):          print "Item ID : ",n          print "Item Value: ",self.mlist[n-1]  itemlist=["item1","item2"]  mchoose= MyChoose(itemlist,"choose an item",0)  itemid=mchoose.choose()  
-'''
+</code>
 
 ### 嵌入式多列选择框
 
@@ -61,9 +61,9 @@ class MyChoose(Choose):      def __init__(self,mlist,title,flag):          Cho
 
 #### 对应代码
 
-'''
+<code>
 class MyChoose2(Choose2):      def __init__(self, title,header,items):          Choose2.__init__(self, title, header)          self.n = 0          self.icon = 41          self.items = items      def OnClose(self):          print "closed ", self.title      def OnSelectLine(self, n):          print str(self.items[n-1])      def OnGetLine(self, n):          return self.items[n]      def OnGetSize(self):          return len(self.items)  header=[ ["header1", 10 | Choose2.CHCOL_HEX], ["header2", 30 | Choose2.CHCOL_PLAIN] ]  items =[["item2","hit item2"],["item1","hit item1"]]  c = MyChoose2("My Item Choose list",header,items)  print c.Show()  
-'''
+</code>
 
 ### 弹出式多列选择框主体代码同“嵌入式多列选择框”相同。仅有Show函数调用时要指定一个参数。#### 执行效果
 
@@ -72,8 +72,8 @@ class MyChoose2(Choose2):      def __init__(self, title,header,items):        
 
 #### 对应代码
 
-'''
+<code>
 class MyChoose2(Choose2):      def __init__(self, title,header,items):          Choose2.__init__(self, title, header)          self.n = 0          self.icon = 41          self.items = items      def OnClose(self):          print "closed ", self.title      def OnSelectLine(self, n):          print str(self.items[n-1])      def OnGetLine(self, n):          return self.items[n]      def OnGetSize(self):          return len(self.items)  header=[ ["header1", 10 | Choose2.CHCOL_HEX], ["header2", 30 | Choose2.CHCOL_PLAIN] ]  items =[["item2","hit item2"],["item1","hit item1"]]  c = MyChoose2("My Item Choose list",header,items)  itemid=c.Show(True)  print "itemID   :",itemid  print "itemValue:",items[itemid]  
-'''
+</code>
 
 
