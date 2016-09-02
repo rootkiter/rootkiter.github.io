@@ -3,7 +3,7 @@ layout: post
 title:  IDAPython的列表选择器
 date:   2016-09-01
 time:   23:17:00
-tags : [ 技术相关 ]
+tags : [ 技术相关,IDAPython插件,Python编程 ]
 
 ---
 
