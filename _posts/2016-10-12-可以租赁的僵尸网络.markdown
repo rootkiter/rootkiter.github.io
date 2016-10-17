@@ -17,7 +17,7 @@ tags : [ 技术相关,僵尸网络,逆向分析 ]
 ### 租赁服务
 其中，sub_402ED0函数为租赁服务提供函数，其上线地址为：hr-sky.com:7878。在该函数的case 9 分支中提供了租赁功能，这段功能逻辑中，配置好被租用的上线地址，以及租用时间后即可启动sub_4034E0对应的服务指令，如下所示：![](http://rootkiter.com/images/2016_10_17_21_15/3.png)### 指令集比对
 租赁服务提供方：拥有的控制权限较为复杂（sub_402ED0）![](http://rootkiter.com/images/2016_10_17_21_15/4.png)租赁服务使用方：拥有的控制权限较少（sub_4034E0），且当租赁时间到期后，该控制线程会被动关闭。![](http://rootkiter.com/images/2016_10_17_21_15/5.png)## 功能复现
-在[“CC模拟器”](https://github.com/rootkiter/cc_simulator)的帮助下，可以完美复现以上租赁过程，对应该样本的配置文件为[l1304v1.py](http://rootkiter.com/files/l1304.py)。
+在[“CC模拟器”](https://github.com/rootkiter/cc_simulator)的帮助下，可以完美复现以上租赁过程，对应该样本的配置文件为[l1304v1.py](http://rootkiter.com/files/l1304v1.py)。
 1. 在可控主机上运行CC模拟器，模拟租赁提供方，并等待样本服务端回连。  
 ```$ python simulator.py l1304v1 7878
 ```    2. 在虚拟机中，通过修改host文件，接管hr-sky.com的解析地址。  3. 在虚拟机中启动样本，“CC模拟器”成功收取上线包，并弹出控制台。  ![](http://rootkiter.com/images/2016_10_17_21_15/6.png)4. 在一个新的端口上启动模拟器，来模拟租赁使用方。
