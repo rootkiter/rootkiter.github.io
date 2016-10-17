@@ -3,7 +3,7 @@ layout: post
 title:  OpenSSL中的CA周边（三）
 date:   2015-08-29
 time:   23:09:00
-tags : [ OpenSSL , 数字签名 , CA , RSA＋DSA＋DH ]
+tags : [ 技术相关,OpenSSL , 数字签名 , CA , RSA＋DSA＋DH ]
 
 ---
 
@@ -39,6 +39,7 @@ $ openssl rsa -in demoCA/private/cakey.pem -passin pass:12345678 -text –noout
 CA签发证书前，要对客户的证书请求进行验证（除了对文件的内容进行验证以外，更多的其实是申请流程的认证，提交各种不同种类的证明材料），当验证无误后才会进行证书的颁发。所以证书请求一般由客户方提出，下面分别介绍下不同种类的证书请求生成方法.
 
 ### 生成RSA证书请求
+
 #### 直接生成
 
 在创建rsa密钥的同时生成证书请求，指令格式如下：  
@@ -70,7 +71,9 @@ $ openssl req -in req.pem -text -noout
 ![rootkiter.com](http://rootkiter.com/images/2015_08_30_00_02/3.png) 
 
 ### 生成DSA证书请求
+
 #### 直接生成
+
 由于dsa密钥的生成需要有一个dsa参数文件， dsa参数文件的生成可以使用以下命令：  
 <cmd>
 $ openssl dsaparam -out dsaparam.pem 1024
@@ -104,7 +107,9 @@ $ openssl req -in req.pem -text -noout
 ![rootkiter.com](http://rootkiter.com/images/2015_08_30_00_02/5.png) 
 
 ## CA操作
+
 ### 签发一个证书
+
 CA收到证书请求后，会对客户提供的各种证明资料进行审核，审核通过后会进行证书颁发工作，证书的颁发指令格式如下所示：  
 <cmd>
 rootkiter@PC:~/CA$ openssl ca -in ~/RSA/req.pem -out ~/RSA/cert.cer -notext

@@ -15,18 +15,21 @@ tags : [ 技术相关 ]
 
 ### 思考后的解决方案  
 ####  1. 锚标签
-浏览器实现了一个页面内快速跳转的方法，通过配置某些标签的 name 属性，即可在页面中进行插桩，此时，在浏览器地址栏使用 “#” 字符，即可快速跳到相应的标签。相关的知识细节可以参考这两篇文章《[HTML <a> 标签的 name 属性](http://www.w3school.com.cn/tags/att_a_name.asp)》和《[锚标签和href属性](http://blog.csdn.net/qq1712088151/article/details/7402019)》。
+
+浏览器实现了一个页面内快速跳转的方法，通过配置某些标签的 name 属性，即可在页面中进行插桩，此时，在浏览器地址栏使用 “#” 字符，即可快速跳到相应的标签。相关的知识细节可以参考这两篇文章
+《[HTML \<a\> 标签的 name 属性](http://www.w3school.com.cn/tags/att_a_name.asp)》和
+《[锚标签和href属性](http://blog.csdn.net/qq1712088151/article/details/7402019)》。
 
 
 #### 2. Jekyll 实现
 Jekyll的文章可以支持tags来给文章打标签。一篇文章可以有具多个标签，格式如下：  
-<code>
-\---  
-layout: xxxxx  
-title : xxxxxxxxxx  
-tags  : [ tag1 , tag2 ]  
-\---  
-</code>
+
+> \---  
+> layout: xxxxx  
+> title : xxxxxxxxxx  
+> tags  : [ tag1 , tag2 ]  
+> \---  
+> 
 
 由于 Jekyll 的特性，我们可以通过 site.tags 来访问这些标签，这也是一种常见的Jekyll文章索引方法，关于这一特性的具体细节可以参考《[Jekyll 扩展的 Liquid 设计](http://havee.me/internet/2013-11/jekyll-liquid-designers.html)》，随后我在主页下方添加了如下代码：  
 ![rootkiter.com](http://rootkiter.com/images/2015_07_14_21_13/4.png)  

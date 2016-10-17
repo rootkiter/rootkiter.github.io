@@ -3,7 +3,7 @@ layout: post
 title:  OpenSSL中的其他内容（五）
 date:   2015-09-16
 time:   01:58:00
-tags : [ OpenSSL , 信息摘要 , 证书 , OpenSSL中的其他 , MD5＋SHA1+DSS1 ]
+tags : [ 技术相关,OpenSSL , 信息摘要 , 证书 , OpenSSL中的其他 , MD5＋SHA1+DSS1 ]
 
 ---
 

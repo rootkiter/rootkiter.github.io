@@ -3,7 +3,7 @@ layout: post
 title:  从百度证书开始(一)
 date:   2015-08-25
 time:   21:34:00
-tags : [ OpenSSL , 证书 , CA , x509 ]
+tags : [ 技术相关,OpenSSL , 证书 , CA , x509 ]
 
 ---
 

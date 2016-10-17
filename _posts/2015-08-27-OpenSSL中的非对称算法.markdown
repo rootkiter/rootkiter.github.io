@@ -3,7 +3,7 @@ layout: post
 title:  OpenSSL中的非对称算法（二）
 date:   2015-08-27
 time:   23:27:00
-tags : [ OpenSSL , 数字签名 , 密钥协商 , RSA＋DSA＋DH ]
+tags : [ 技术相关,OpenSSL , 数字签名 , 密钥协商 , RSA＋DSA＋DH ]
 
 ---
 

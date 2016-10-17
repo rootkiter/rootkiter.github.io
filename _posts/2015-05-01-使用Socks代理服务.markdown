@@ -58,10 +58,13 @@ ProxyCap是一个可以设置全局代理的工具，它可以将主机大部分
 在实际使用中，ssh工具可以创建socks代理，然而总有一些工具只支持http代理，这时需要将socks代理转化为http代理方可。此处可以用 Privoxy 工具达到这一效果。
 
 1.安装并运行Privoxy，通过 Options -> Edit Main Configuration 打开该工具的配置文件。随意哪里插入如下两行：  
-<code>
+```
 listen-address  127.0.0.1:8118  
+```  
+```
 forward-socks5   /               127.0.0.1:1080  .  
-</code>
+```  
+
 *PS ：forward 行尾有个点字符，缺失这个字符有时会导致代理失败。*
 
 这两行的意思是，将本地的 1080 端口监听的socks5协议转化为 8118端口的http代理协议。

