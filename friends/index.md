@@ -14,3 +14,5 @@ time:   18:36:00
 [ 大憨的XXX ](http://kechuandai.net/)
 
 [ ends.cc ](http://ends.cc)
+
+[ goabout2 ](http://www.cnblogs.com/goabout2/)
