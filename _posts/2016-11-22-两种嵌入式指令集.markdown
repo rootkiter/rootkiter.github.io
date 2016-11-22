@@ -20,6 +20,10 @@ tags : [ 技术相关, Mirai , Iot安全 , 嵌入式汇编 , MIPS , SuperH ]
 
 《[SuperH 学习笔记](http://rootkiter.com/2016/11/21/SuperH学习笔记.html)》
 
+配合之前写过的ARM相关的学习笔记，目前这里已经涵盖了3个嵌入式CPU资料了:
+
+《[ARM相关的学习笔记](http://rootkiter.com/goto_tags.html#ARM)》
+
 ### MIPS
 
 该指令集在ARM普及前，在芯片领域具有相当大的影响力，甚至驰名中外的“龙芯”就是基于MIPS开发设计的，所以相关资料非常多，其中还有非常多的中文资料，学习成本相对较低。
