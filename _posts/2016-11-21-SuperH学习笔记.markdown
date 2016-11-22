@@ -15,8 +15,6 @@ tags : [ 技术相关, Mirai , Iot安全 , 嵌入式汇编 , SuperH ]
 
 《[SH-4 CPU Core Architecture](www.st.com/resource/en/user_manual/cd00147165.pdf)》
 
-Key: SH-4 Instruction
-
 ### 基础内容
 
 SH4 是 SuperH 系列CPU之中的一种指令集，该体系指令由日立公司最早开发。虽然在SuperH家族中，指令版本众多，但在SH1，SH2，SH3，SH4这一系列指令扩展过程中，始终保证了二进制级别的兼容的特性。

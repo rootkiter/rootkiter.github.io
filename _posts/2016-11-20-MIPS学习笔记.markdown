@@ -7,9 +7,9 @@ tags : [ 技术相关, Mirai , Iot安全 , 嵌入式汇编 , MIPS ]
 
 ---
 
-## MISP指令  
+## MISP指令 
 
-内容参考：
+内容参考:
 
 《[MIPS Architecture and Assembly Language Overview](http://logos.cs.uic.edu/366/notes/mips%20quick%20tutorial.htm#RegisterDescription)》
 
@@ -40,6 +40,7 @@ tags : [ 技术相关, Mirai , Iot安全 , 嵌入式汇编 , MIPS ]
 **32个通用寄存器**
 
 MIPS规定了32个通用寄存器，分别对应为编号0到编号31，每个寄存器还配有一个别名，俗称“助记符”。对应表格如下：
+
 | 寄存器号|助记符|描述原文|译文|
 |:---|:---|:---|:---|
 |0| zero | the value 0 |该寄存器的值永为0|
@@ -102,9 +103,9 @@ MIPS定义了两个特殊的寄存器（Lo和Hi）用于保存乘法和除法的
 | or $d, $s, $t | 100101 |  $d =$s\|$t| 按位或 |
 | sll $d, $t, h | 000000 | $d =$t << h| 逻辑左移 |
 | sllv $d, $t, $s | 000100| $d=$t << $s| 逻辑左移 |
-| slt $d,$s,$t | 101010 | if($s<$t) $d=1 ; else $d=0| 有符号比较 |
-| sltu $d, $s, $t | 101011 | if($s<$t) $d=1 ; else $d=0| 无符号比较 |
-| sra $d, $t, h | 000011 | $d=$t >> h | 算数右移 |
+| slt $d,$s,$t | 101010 | if($s\<$t) $d=1 ; else $d=0| 有符号比较 |
+| sltu $d, $s, $t | 101011 | if($s\<$t) $d=1 ; else $d=0| 无符号比较 |
+| sra $d, $t, h | 000011 | $d=$t \>\> h | 算数右移 |
 | srav $d,$s,$t | 000111 | $d=$s<<$t  | 算数右移 |
 | srl $d, $t, h | 000010 | $d=$t >> h | 逻辑右移 |
 | srlv $d,$t,$s | 000110 | $d=$t >> $s| 逻辑右移 |
