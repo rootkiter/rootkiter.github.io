@@ -3,7 +3,7 @@ layout: post
 title:  MIPS学习笔记
 date:   2016-11-20
 time:   22:52:00
-tags : [ 技术相关, Mirai , Iot安全 , 嵌入式汇编 , MIPS ]
+tags : [ 技术相关, Mirai ,汇编+bin, Iot安全 , 嵌入式汇编 , MIPS ]
 
 ---
 

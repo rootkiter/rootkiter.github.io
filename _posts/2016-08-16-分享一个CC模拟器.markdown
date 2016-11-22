@@ -27,6 +27,6 @@ tags : [ 技术相关 ]
 ### 地址
 python实现的，已经托管到github上了，感兴趣的去下载吧。仅用于模型验证，如果想要用于实战，还有很多细节需要注意。
 
-https://github.com/rootkiter/cc_simulator
+https://github.com/rootkiter/cc\_simulator
 
 
