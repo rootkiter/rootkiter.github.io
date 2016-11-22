@@ -1,0 +1,168 @@
+--- 
+layout: post
+title:  MIPS学习笔记
+date:   2016-11-20
+time:   22:52:00
+tags : [ 技术相关, Mirai , Iot安全 , 嵌入式汇编 , MIPS ]
+
+---
+
+## MISP指令  
+
+内容参考：
+
+《[MIPS Architecture and Assembly Language Overview](http://logos.cs.uic.edu/366/notes/mips%20quick%20tutorial.htm#RegisterDescription)》
+
+《[MIPS Instruction Reference](http://www.mrc.uidaho.edu/mrc/people/jff/digital/MIPSir.html)》
+
+《[MIPS Instructions](http://web.cse.ohio-state.edu/~crawfis/cse675-02/Slides/MIPS%20Instruction%20Set.pdf)》
+
+### 基础内容
+
+#### 数据类型和常量
+
+**数据类型**
+
+1. MIPS是定长指令系统，所有指令长度均为 32 bit 位。
+2. 1 byte = 8 bits ; 1 halfword = 2 bytes ; 1 word = 4 bytes 。
+3. 每个字符，用 1 byte 表示。
+4. 一个整数，用 1 word（4 bytes）来表示。
+5. mipsel 和 mips 是完全相同的指令集，区别只在于指令字节序不同。mips指令从左到右解析，而mipsel指令从右到左解析。
+
+**常量**
+
+1. *数字常量*   直接键入数字 ，e.g. 4
+2. *字符常量*   单引号括起   ，e.g.'b'
+3. *字符串常量* 双引号括起   ，e.g."Hello World"
+
+#### 寄存器  
+
+**32个通用寄存器**
+
+MIPS规定了32个通用寄存器，分别对应为编号0到编号31，每个寄存器还配有一个别名，俗称“助记符”。对应表格如下：
+| 寄存器号|助记符|描述原文|译文|
+|:---|:---|:---|:---|
+|0| zero | the value 0 |该寄存器的值永为0|
+|1| $at|(assembler temporary) reserved by the assembler | 汇编器的保留变量|
+|2-3| $v0,$v1 | (values) from expression evaluation and function results| 表达式求值结果，或函数调用的返回结果|
+|4-7| $a0-$a3| (arguments) First four parameters for subroutine.Not preserved across procedure calls| 子函数调用时的前4个参数 |
+|8-15| $t0-$t7| (temporaries) Caller saved if needed. Subroutines can use w/out saving.Not preserved across procedure calls | 临时寄存器，供调用过程中使用。|
+|16-23| $s0-$s7|(saved values) - Caller saved.A subroutine using one of these must save original and restore it before exiting.Preserved across procedure calls.| 函数调用时，调用方将当前寄存器状态依次保存起来，子函数退出时，依赖这些值进行寄存器还原。|
+|24-25| $t8-$t9 | (temporaries) Caller saved if needed. Subroutines can use w/out saving.These are in addition to $t0 - $t7 above.Not preserved across procedure calls.|临时寄存器，对$t0-$t7寄存器的补充。|
+|26-27| $k0-$k1| reserved for use by the interrupt/trap handler|中断信号的保留寄存器|
+|28| $gp | global pointer.Points to the middle of the 64K block of memory in the static data segment.|全局指针，指向静态数据区，方便全局变量的存取|
+|29| $sp | stack pointer.Points to last location on the stack.|堆栈指针，指向当前的堆顶|
+|30| $/s8/$fp| saved value / frame pointer.Preserved across procedure calls|第9个s寄存器，或帧指针。|
+|31| $ra| return address| 子函数返回地址|
+
+**特殊寄存器**
+
+MIPS定义了两个特殊的寄存器（Lo和Hi）用于保存乘法和除法的结果。
+这两个寄存器无法直接使用，只能通过两个独立的指令访问(mfhi--从Hi取值 , mflo--从Lo取值）
+
+#### 栈生长方向
+
+堆栈从高地址向低地址生长。
+
+#### 指令表格
+
+**R类型指令**
+
+在所有被操作参数均为寄存器时，使用的指令类型。编码格式如下所示：
+
+| OpCode | Reg s | Reg t | reg d | shift(shamt) | function |
+|:---|:---|:---|:---|:---|:---|
+|6 bits| 5 bits | 5 bits | 5 bits | 5 bits | 6 bits |
+
+> 在R型指令中，OpCode 永为0 ，指令的区分以 function 字段为主。  
+
+> "Reg s/ Reg t / Reg d " 三个字段为寄存器编号，可参考寄存器表格进行对应。
+
+> shift字段在移位操作时，会用到，其他情况永远为0 
+
+常见 R 型指令，及含义，见下表:
+
+| 指令格式 | Function |  具体操作 | 附加描述 |
+|:---|:---|:---|:---|
+| add $d,$s,$t  | 100000 |  $d = $s + $ t  | 32位,加，有符号，可以捕获到溢出状态 |
+| addu $d,$s,$t | 100001 |  $t = $s + $t   | 32位，加，无符号，不捕获溢出|
+| and $d, $s, $t| 100100 |  $d = $s & $t   | 按位与 |
+| break         | 001101 |  ???  | ??? |
+| div  $s, $t   | 011010 |　$Lo= $s/$t ; $Hi = $s%$t| 除法操作，有符号 |
+| divu $s, $t   | 011011 |  $Lo= $s/$t ; $Hi = $s%$t | 除法操作，无符号|
+| jalr $d,$s    | 001001 |  $d=PC+4 ;PC=$s | 跳转并备份返回地址 |
+| jr $s         | 001000 |  jump $s |　跳转指令，目标地址在 $s 寄存器中 |
+| mfhi $d       | 010000 |  $d = $Hi | 从特殊寄存器取值到 $s |
+| mflo $d       | 010010 |  $d = $Lo | 从特殊寄存器取值到 $s |
+| mthi $d       |        |  $Hi = $d | 为特殊寄存器赋值 |
+| mtlo $d       |        |  $Lo = $d | 为特殊寄存器赋值 |
+| mult $s, $t   | 011000 |  $Lo=$s*$t| 乘法指令，有符号|
+| multu $s,$t   | 011001 |  $Lo=$s*$t| 乘法指令，无符号|
+| nor $d,$s,$t  | 100111 |  ??? | ???|
+| or $d, $s, $t | 100101 |  $d =$s\|$t| 按位或 |
+| sll $d, $t, h | 000000 | $d =$t << h| 逻辑左移 |
+| sllv $d, $t, $s | 000100| $d=$t << $s| 逻辑左移 |
+| slt $d,$s,$t | 101010 | if($s<$t) $d=1 ; else $d=0| 有符号比较 |
+| sltu $d, $s, $t | 101011 | if($s<$t) $d=1 ; else $d=0| 无符号比较 |
+| sra $d, $t, h | 000011 | $d=$t >> h | 算数右移 |
+| srav $d,$s,$t | 000111 | $d=$s<<$t  | 算数右移 |
+| srl $d, $t, h | 000010 | $d=$t >> h | 逻辑右移 |
+| srlv $d,$t,$s | 000110 | $d=$t >> $s| 逻辑右移 |
+| sub $d,$s,$t  | 100010 | $d=$s-$t   | 减法运算 |
+| subu $d,$s,$t | 100011 | $d=$s-$t   | 减法，无符号 |
+| syscall       | 001100 | | 生成一个软件中断 |
+| xor $d, $s, $t| 100110 | $d=$s^$t   |  异或运算 |
+
+**I类型指令**
+
+当操作数中有立即数时使用，立即数最高16位，编码格式如下：
+
+| OpCode | Reg s | Reg t | imm |
+|:---|:---|:---|:---|
+|6 bits| 5 bits | 5 bits | 16 bits |
+
+常见 I 型指令，及含义，如下表所示：
+
+| 指令格式 | OpCode |  具体操作 | 附加描述 |
+|:---|:---|:---|:---|
+| addi $t,$s,imm| 001000 |  $t = $s + imm  | 32位,加，有符号，16位立即数，捕获溢出 |
+| addiu $t,$s,imm |001001|  $t = $s + imm  | 32位,加，无符号，16位立即数，不捕获溢出|
+| andi $t,$s,imm | 001100|  $t = $s & imm  | 按位与 |
+| beq $s,$t,offset| 000100 | if($s==$t) jump (offset << 2) | 相等则跳转 |
+| bgez $s,offset | 000001 | if($s>=0) jump(offset << 2) | 不小于（大于等于）0 则跳转|
+| bgtz $s,offset | 000111 | if($s> 0) jump(offset << 2) | 大于0 则跳转 | 
+| blez $s,offset | 000110 | if($s<=0) jump(offset << 2) | 不大于（小于等于) 0 则跳转|
+| bltz $s,offset | 000001 | if($s< 0) jump(offset << 2) | 小于0 则跳转 |
+| bne $s,$t, offset | 000101| if($s != $t) jump(offset << 2)| 不相等则跳转 |
+| lb $t,offset($s) | 100000 | $t=MEM[$s+offset] | 从内存地址读取一个字节 |
+| lbu $t,offset($s)| 100100 | ??? | ??? |
+| lh $t,offset($s) | 100001 | ??? | ??? |
+| lhu $t,offset($s) | 100101 | ??? | ??? |
+| lui $t,imm | 001111 | $t=(imm << 16) | 将立即数左移16位，低16位补零 |
+| lw $t,offset($s) | 100011 | $t=MEM[$s+offset] | 从内存读取一个字 |
+| lwc1 $t,offset($s)| 110001 | ??? | ??? |
+| ori $t,$s,imm | 001101 | $t = $s \| imm |  带立即数的或
+| sb $t,offset($s)| 101000 | MEM[$s+offset]=(0xff & $t) | 将一个字节拷到内存 |
+| slti $t,$s,imm | 001010 | if($s < imm) $t=1;else $t=0 | 有符号比较 |
+| sltiu $t,$s,imm | 001011| if($s < imm) $t=1;else $t=0 | 无符号比较 |
+| sh $t,offset($s)| 101001| ??? | ??? |
+| sw $t,offset($s)| 101011| MEM[$s+offset] = $t | 将一个字拷到内存 |
+| swc1 $t,offset($s)| 111001 | ??? | ??? |
+| xori $t, $s, imm| 001110| $t=$s^imm | 带立即数的 异或 |
+ 
+**J类型指令**
+
+J-type是“跳转类型(jump type)”的缩写，有些类似于X86系指令的call指令，编码格式如下:
+
+| OpCode | Pseudo-Address |
+|:---|:---|
+|6 bits| 26 bits |
+
+常见 J 型指令，及含义，如下表所示：
+
+| 指令格式 | OpCode |  具体操作 | 附加描述 |
+|:---|:---|:---|:---|
+| j target | 000010 | PC = nPC; nPC = (PC & 0xf0000000) \| (target << 2); | 跳到一个计算过的地址，并执行| 
+| jal target | 000011 | $31 = PC + 8 (or nPC + 4); PC = nPC; nPC = (PC & 0xf0000000) \| (target << 2); | 跳到一个计算过的地址，并把返回地址放在 $31 寄存器中 |
+
+

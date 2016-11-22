@@ -1,0 +1,215 @@
+--- 
+layout: post
+title:  SuperH学习笔记
+date:   2016-11-21
+time:   22:52:00
+tags : [ 技术相关, Mirai , Iot安全 , 嵌入式汇编 , SuperH ]
+
+---
+
+## SuperH指令  
+
+参考内容：
+
+《[Renesas SH Instruction Set Summary](http://www.shared-ptr.com/sh_insns.html)》
+
+《[SH-4 CPU Core Architecture](www.st.com/resource/en/user_manual/cd00147165.pdf)》
+
+Key: SH-4 Instruction
+
+### 基础内容
+
+SH4 是 SuperH 系列CPU之中的一种指令集，该体系指令由日立公司最早开发。虽然在SuperH家族中，指令版本众多，但在SH1，SH2，SH3，SH4这一系列指令扩展过程中，始终保证了二进制级别的兼容的特性。
+
+#### 数据类型和常量
+
+**数据类型**
+
+1. SH4 指令是 16bit 定长指令，与 Thumb 指令集类似，比 MIPS，ARM 还要精简一半。
+2. SH4 的数据格式有“字节”，“字”，“长字”三种。
+3. 1字节=8 bit，1字=2字节，1长字=2字。
+4. 受指令长度限制，单条指令中无法表达32位数字，当有需求时，会以多种间接寻址的方式出现。
+5. 同MIPS体系类似，SuperH系列指令也具有大端小端之分，这主要看CPU对两种体系的支持情况。
+
+#### 寄存器  
+
+1. 16个32bit通用寄存器（此外还有8个隐藏的32位通用寄存器）
+2. 7个32bit控制寄存器
+3. 4个32bit系统寄存器
+
+**通用寄存器**
+
+| 寄存器名 | 描述 |
+|:---|:---|
+|R0\_BANK0-R7\_BANK0 | 通用寄存器，SR.RB=0，也可表示为 r0-r7 |
+|R0\_BANK1-R7\_BANK1 | 隐藏寄存器，SR.RB=1，用户态无法访问   |
+|r8-r15 | 通用寄存器 |
+
+SH4 共有24个通用寄存器，分为三类，第一类是8个用户可直接使用的通用寄存器，编号为:R0\_BANK0-R7\_BANK0，在程序中一般用 r0-r7 来表示，相对应的有8个用户无法直接访问的寄存器，编号为：R0\_BANK1-R7\_BANK1，当执行出现异常时，这八个寄存器分别保存第一类寄存器的值状态。剩余的8个寄存器为r8-r15。
+
+
+**系统寄存器**
+
+| 寄存器名 | 初始值 | 描述 |
+|:---|:---|:---|
+|MACH | Undefined | 乘加寄存器高位 |
+|MACL | Undefined | 乘加寄存器低位 |
+|PR | Undefined | 当使用了 BSR,BSRF,JSR 等程序控制指令时，该寄存器保存返回地址。|
+|PC | 0xA0000000 | 程序计数器，指向将要执行的指令地址 |
+
+**控制寄存器**
+
+| 寄存器名 | 初始值 | 访问保护 | 描述 |
+|:---|:---|:---|:---|
+|SR| Undefine | Yes | 状态寄存器 |
+|SSR| Undefine| Yes | 出现异常时，保存 SR 寄存器的值 |
+|SPC| Undefine| Yes | 出现异常时，保存 PC 寄存器的值 |
+|GBR| Undefine| No  | 间接寻址寄存器，配合寄存器内的值，进行寻址 |
+|VBR| Undefine| Yes | 向量基址寄存器，表示一场向量区域的基地址 |
+|SGR| Undefine| Yes | 出现异常时，保存 r15 寄存器的值 |
+|DBR| Undefine| Yes | 当处于调试模式时，用该寄存器替代VBR |
+
+#### 指令列表
+
+SH4 包括协处理器指令一共200多条，全部整理出来不现实，这里只选取一部分记录一下，遇到陌生指令可以去参考《[SH-4 CPU Core Architecture](www.st.com/resource/en/user_manual/cd00147165.pdf)》这个文档。
+
+**四则运算**
+
+| 指令 | 伪指令 | 含义描述 |
+|:---|:---|:---|
+| ADD Rm,Rn| Rn=Rm+Rn | 加指令 |
+| ADD #imm,Rn | Rn=Rn+#imm | 加指令，imm最大表示8位二进制数 |
+| ADDC Rm,Rn| Rn=Rm+Rn+Tbit | 带进位的加法指令，结果超过32位表示范围后设置 T-bit |
+| ADDV Rm,Rn| Rn=Rm+Rn  | 带溢出的加法，溢出后设置 T-bit为1 |
+| AND Rm,Rn | Rn=Rm&Rn | 与操作 |
+| AND #imm,R0| R0=#imm & R0 | 与操作，imm最大表示8位二进制数|
+| AND.B #imm,@(R0,GBR) | @(R0,GBR)=@(R0,GBR)&#imm | 与操作，GBR间接寻址 |
+| BF label | if(T_bit==0) jump label;else: jump(+4) | 以T-bit为条件，进行程序控制 |
+| BF/S label | if(T_bit==0)  jump label;else: jump(+4) | 和BF指令相似，但该指令为延迟跳转指令 |
+| BRA label |　jump label ;  | 无条件延时跳转指令，最大地址 -4096 到 +4096 |
+| BSR func | jump func ; | 向子程序转移指令，延迟指令   |
+| BSRF Rm | jump Rm | 向子程序转移指令，延迟指令 |
+| BT label | if(T_bit==1) jump label | 条件转移指令，无延迟 |
+| BT/S label |   if(T_bit==1) jump label | 条件转移指令，延时指令 |
+| CLRMAC | MACH = 0 ; MACL =0 | MAC寄存器清零指令 |
+| CLRT   | T_bit = 0  | T标志位清零 |
+| CLRS   | S_bit = 0  | S标志位清零 |
+| DIV0S Rm,Rn | Rn[MSB] -> Q ;Rm[MSB] -> M ; M^Q -> T | 带符号除法初始化 |
+| DIV0U  | 0 ->　M/Q/T  | 无符号除法的初始化 |
+| DIV1 Rm,Rn |  Rn÷Rm  |　除法 |
+| DMULS.L Rm,Rn | Rm*Rn | 带符号的双精度乘法 |
+| DMULU.L Rm,Rn | Rm*Rn | 无符号的双精度乘法 | 
+| DT Rn | Rn=Rn-1 ;if(Rn==0) T=1 | 递减测试 |
+| EXTS.B Rm,Rn | Rm 按字节符号扩展到 Rn | 按字节符号扩展 |
+| EXTS.W Rm,Rn | Rm 按字  符号扩展到 Rn | 按字  符号扩展 |
+| EXTU.B Rm,Rn | Rm 按字节零扩展到 Rn | 按字节零扩展 |
+| EXTU.W Rm,Rn | Rm 按字  零扩展到 Rn | 按字  零扩展 |
+| JMP @Rm | jump Rm | 无条件跳转，延迟指令 |
+| JSR @Rm | call Rm | 子函数调用，返回地址保存在 PR 寄存器，延迟指令 |
+| LDC Rm,GBR | Rm-> SR |  寄存器加载指令， 中断禁止 |
+| LDC    Rm,SR   | Rm->SR |    寄存器加载指令， 中断禁止 |
+| LDC    Rm,VBR     | Rm->VBR  |   寄存器加载指令， 中断禁止 |
+| LDC    Rm,MOD     | Rm->MOD |   寄存器加载指令， 中断禁止 |
+| LDC    Rm,RE	|   Rm->RE |   寄存器加载指令， 中断禁止 |
+| LDC    Rm,RS	|   Rm->RS  |   寄存器加载指令， 中断禁止 |
+| LDC.L  @Rm+,SR	| [Rm]->SR |  寄存器加载指令， 中断禁止 |
+| LDC.L  @Rm+,GBR	| [Rm]->GBR |   寄存器加载指令， 中断禁止 |
+| LDC.L  @Rm+,VBR	| [Rm]->VBR |   寄存器加载指令， 中断禁止 |
+| LDC.L  @Rm+,MOD	| [Rm]->MOD |   寄存器加载指令， 中断禁止 |
+| LDC.L  @Rm+,RE	| [Rm]->RE |   寄存器加载指令， 中断禁止 |
+| LDC.L  @Rm+,RS	| [Rm]->RS |   寄存器加载指令， 中断禁止 |
+| LDRE @(disp,PC)   | disp*2+PC -> RE | 向重复结束寄存器加载 | 
+| LDRS @(disp,PC)   | disp*2+PC -> RS | 向重复起始寄存器加载 |
+| LDS    Rm,MACH |     Rm->MACH               |  向系统寄存器加载，中断禁止指令  |
+| LDS    Rm,MACL |     Rm->MACL               |  向系统寄存器加载，中断禁止指令   |
+| LDS    Rm,PR |       Rm->PR                 |  向系统寄存器加载，中断禁止指令   |
+| LDS    Rm,DSR |      Rm->DSR                |  向系统寄存器加载，中断禁止指令   |
+| LDS    Rm,A0 |       Rm->A0                 |  向系统寄存器加载，中断禁止指令   |
+| LDS    Rm,X0 |       Rm->X0                 |  向系统寄存器加载，中断禁止指令   |
+| LDS    Rm,X1 |       Rm->X1                 |  向系统寄存器加载，中断禁止指令   |
+| LDS    Rm,Y0 |       Rm->Y0                 |  向系统寄存器加载，中断禁止指令   |
+| LDS    Rm,Y1 |       Rm->Y1                 |  向系统寄存器加载，中断禁止指令   |
+| LDS.L  @Rm+,MACH |   (Rm)->MACH ; Rm+4->Rm  |  向系统寄存器加载，中断禁止指令   |
+| LDS.L  @Rm+,MACL |   (Rm)->MACL ; Rm+4->Rm  |  向系统寄存器加载，中断禁止指令   |
+| LDS.L  @Rm+,PR |     (Rm)->PR -> Rm+4->Rm   |  向系统寄存器加载，中断禁止指令   |
+| LDS.L  @Rm+,DSR |    (Rm)->DSR ; Rm+4->Rm   |  向系统寄存器加载，中断禁止指令   |
+| LDS.L  @Rm+,A0 |     (Rm)->A0 ; Rm+4->Rm    |  向系统寄存器加载，中断禁止指令   |
+| LDS.L  @Rm+,X0 |     (Rm)->X0 ; Rm+4->Rm    |  向系统寄存器加载，中断禁止指令   |
+| LDS.L  @Rm+,X1 |     (Rm)->X1 ; Rm+4->Rm    |  向系统寄存器加载，中断禁止指令   |
+| LDS.L  @Rm+,Y0 |     (Rm)->Y0 ; Rm+4->Rm    |  向系统寄存器加载，中断禁止指令   |
+| LDS.L  @Rm+,Y1 |     (Rm)->Y1 ; Rm+4->Rm    |  向系统寄存器加载，中断禁止指令   |
+| MAC.L @Rm+,@Rn+ | (Rn)\*(Rm)+MAC -> MAC | 乘法累加,32位\*32位->64位，带符号 |
+| MAC.W @Rm+,@Rn+ | (Rn)\*(Rm)+MAC -> MAC | 乘法累加,16位\*16位->32位，带符号 |
+| MOV    Rm,Rn      |   Rm->Rn                           | 数据传送 |
+| MOV.B  Rm,@Rn     |   Rm->(Rn)                         | 数据传送 |
+| MOV.W  Rm,@Rn     |   Rm->(Rn)                         | 数据传送 |
+| MOV.L  Rm,@Rn     |   Rm->(Rn)                         | 数据传送 |
+| MOV.B  @Rm,Rn     |   (Rm)->符号扩展->Rn               | 数据传送 |
+| MOV.W  @Rm,Rn     |   (Rm)->符号扩展->Rn               | 数据传送 |
+| MOV.L  @Rm,Rn     |   (Rm)->Rn                         | 数据传送 |
+| MOV.B  Rm,@-Rn    |   Rn-1->Rn ;  Rm->(Rn)             | 数据传送 |
+| MOV.W  Rm,@-Rn    |   Rn-2->Rn ;  Rm->(Rn)             | 数据传送 |
+| MOV.L  Rm,@-Rn    |   Rn-4->Rn ;  Rm->(Rn)             | 数据传送 |
+| MOV.B  @Rm+,Rn    |   (Rm)->符号扩展->Rn ;  Rm+1->Rm   | 数据传送 |
+| MOV.W  @Rm+,Rn    |   (Rm)->符号扩展->Rn ;  Rm+2->Rm   | 数据传送 |
+| MOV.L  @Rm+,Rn    |   (Rm)->Rn ;  Rm+4->Rm             | 数据传送 |
+| MOV.B  Rm,@(R0,Rn)|   Rm->(R0+Rn)                      | 数据传送 |
+| MOV.W  Rm,@(R0,Rn)|   Rm->(R0+Rn)                      | 数据传送 |
+| MOV.L  Rm,@(R0,Rn)|   Rm->(R0+Rn)                      | 数据传送 |
+| MOV.B  @(R0,Rm),Rn|   (R0+Rm) ->符号扩展->Rn           | 数据传送 |
+| MOV.W  @(R0,Rm),Rn|   (R0+Rm)->符号扩展->Rn            | 数据传送 |
+| MOV.L  @(R0,Rm),Rn|   (R0+Rm)->Rn                      | 数据传送 |
+| MOV #imm,Rn |  #imm-> 符号扩展 -> Rn | 8位二进制数 |
+| MOV.W @(disp,PC),Rn | (disp*2+PC) -> 符号扩展 -> Rn | 立即数传送 |
+| MOV.L @(disp,PC),Rn | (disp*4+PC) -> Rn | 立即数传送 |
+| MOV.B   @(disp,GBR),R0 |   (disp+GBR)->符号扩展->R0      |外围模块数据的传送|
+| MOV.W   @(disp,GBR),R0 |   (disp*2+GBR)->符号扩展->R0    |外围模块数据的传送|
+| MOV.L   @(disp,GBR),R0 |   (disp*4+GBR)->R0              |外围模块数据的传送|
+| MOV.B   R0,@(disp,GBR) |   R0->(disp+GBR)                |外围模块数据的传送|
+| MOV.W   R0,@(disp,GBR) |   R0->(disp*2+GBR)              |外围模块数据的传送|
+| MOV.L   R0,@(disp,GBR) |   R0->(disp*4+GBR)              |外围模块数据的传送|
+| MOV.B R0,@(disp,Rn) | R0->(disp+Rn)              |结构体数据的传送 |
+| MOV.W R0,@(disp,Rn) | R0->(disp*2+Rn)            |结构体数据的传送 |
+| MOV.L Rm,@(disp,Rn) | Rm->(disp*4+Rn)            |结构体数据的传送 |
+| MOV.B @(disp,Rm),R0 | (disp+Rm)->符号扩展->R0    |结构体数据的传送 |
+| MOV.W @(disp,Rm),R0 | (disp*2+Rm)->符号扩展->R0  |结构体数据的传送 |
+| MOV.L @(disp,Rm),Rn | (disp*4+Rm)->Rn            |结构体数据的传送 |
+| MOVA @(disp,PC),R0  | disp*4+PC -> R0            | 有效地址传送 |
+| MOVT Rn             | T -> Rn                    | T位的传送 | 
+| MUL.L Rm,Rn         | Rn*Rm -> MACL              | 双精度乘法运算 ,结果低32位放到 MACL，MACH内容不变 |
+| MULS.W Rm,Rn        | Rn*Rm -> MACL              | 有符号的长发运算，16位运算，结果低32位放到 MACL，MACH 内容不变 |
+| MULU.W Rm,Rn        | Rn*Rm -> MACL              | 16位乘法运算，结果低32位保存至MACL |
+| NEG Rm,Rn           | 0-Rm -> Rn          | 符号取反 |
+| NEGC Rm,Rn          | 0-Rm-T -> Rn ，借位-> T | 带借位的符号取反 |
+| NOP                 | nop              | 空操作 |
+| NOT Rm,Rn           | ~Rm -> Rn  | 位取反 |
+| OR Rm,Rn            | Rn \| Rm -> Rn | 或运算 |
+| OR #imm,R0          | R0 \| #imm -> R0 | 或运算 |
+| OR.B #imm,@(R0,GBR) | (R0+GBR) \| #imm -> (R0+GBR) | 或运算 |
+| ROTCL Rn |         T <\- Rn <\- T |  带 T 位向左循环 1 位 |
+| ROTCR Rn |         T -> Rn -> T   | 带T位向右循环1位 |
+| ROTL Rn |     T <\- Rn <\-MSB | 向左循环 1 位 |
+| ROTR Rn |     LSB -> Rn -> T  | 向右循环 1 位 |
+| RTE |   堆栈区 -> PC/SR  | 异常处理返回 , 延迟转移 | 
+| RTS |　PR -> PC  | 从 子程序 过程返回 |
+| SETRC Rm | Rm[11:0] -> RC、重复控制标志 -> RF1、RF0 | RC 计数器的设定及重复控制标志的设定 |
+| SETRC #imm | imm->RC(SR[23:16]) zeros -> SR[27:24] 重复控制标志-> RF1 /RF0 | RC 计数器的设定及重复控制标志的设定 |
+
+**比较指令**
+
+| 指令 | 伪指令 | 含义描述 |
+|:---|:---|:---|
+|CMP/EQ  Rm,Rn | if(Rn==Rm) T=1 | 寄存器比较 |
+|CMP/GE  Rm,Rn | if(Rn>=Rm) T=1 | 有符号 |
+|CMP/GT  Rm,Rn | if(Rn> Rm) T=1 | 有符号 |
+|CMP/HI  Rm,Rn | if(Rn> Rm) T=1 | 无符号 |
+|CMP/HS  Rm,Rn | if(Rn>=Rm) T=1 | 无符号 |
+|CMP/PL  Rn    | if(Rn > 0) T=1 | |
+|CMP/PZ  Rn    | if(Rn>=0 ) T=1 | |
+|CMP/STR Rm,Rn | 任意字节相等 T=1 | 任意字节？比较 |
+|CMP/EQ  #imm,R0| if(R0==#imm) T=1 | 相等比较，最高8位二进制数 |
+
+
+### 结尾
+
+这SH指令实在是忒多了，真心整理不动了。。
