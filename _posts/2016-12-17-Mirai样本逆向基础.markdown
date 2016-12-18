@@ -1,0 +1,96 @@
+--- 
+layout: post
+title:  无符号表样本逆向中系统调用的识别方法
+date:   2016-12-18
+time:   18:36:00
+tags : [ 技术相关, 汇编+bin,逆向工程, Iot安全 , 嵌入式汇编 ]
+
+---
+
+### 无符号表情况下的逆向
+
+LINUX平台下的恶意程序，可以通过strip程序进行精简，精简过的可执行文件会变小，同时又丝毫不影响执行效率。但这种情况会给程序逆向带来困扰。由于没有符号表的支持，所有函数在IDA中都会被显示为sub_xxx的形式，这会给逆向工程带来麻烦。
+
+这里简单记录一下各常见平台下的系统调用识别方法。
+
+
+### 常见平台的系统调用识别方法
+
+无论哪个平台的系统调用都有两个关键点，一个是调用指令，另一个是调用号。
+
+系统调用的具体功能由系统调用号制定，调用号和功能的对应关系要参考相关头文件。
+
+我把目前所有能找到的系统调用有关的头文件，都放在了[github 上的Reverse-bins项目](https://github.com/rootkiter/Reverse-bins/tree/master/syscall_header)中，供查阅。
+
+#### X86
+
+
+|调用指令 |  INT 80h |
+|寄存器  | eax |
+|参考表  | [x86系统调用表](https://github.com/rootkiter/Reverse-bins/blob/master/syscall_header/i586_unistd_32.h) |
+
+
+![x86](http://rootkiter.com/images/2016_12_18_18_03/1.png)
+
+#### ARM
+
+ARM 下的系统调用，有两种，一种是带参数的，另一种是指令调用时参数指定，分别如下:
+
+**寄存器指定**
+
+|调用指令 |  SVC 0 |
+|寄存器  | r7 |
+|参考表  | [ARM系统调用表](https://github.com/rootkiter/Reverse-bins/blob/master/syscall_header/armv5l_unistd.h) |
+
+
+![ARM2](http://rootkiter.com/images/2016_12_18_18_03/3.png)
+
+**指令内指定** 
+
+|调用指令 |  SVC 0xXXXXX |
+|寄存器  |  |
+|参考表  | [ARM系统调用表](https://github.com/rootkiter/Reverse-bins/blob/master/syscall_header/armv5l_unistd.h) |
+
+![ARM1](http://rootkiter.com/images/2016_12_18_18_03/2.png)
+
+#### MIPS
+
+|调用指令 |  syscall 0 |
+|寄存器  | $v0 |
+|参考表  | [MIPS系统调用表](https://github.com/rootkiter/Reverse-bins/blob/master/syscall_header/mips_unistd.h) |
+
+
+![MIPS](http://rootkiter.com/images/2016_12_18_18_03/4.png)
+
+#### PPC
+
+|调用指令 |  sc |
+|寄存器  | r0 |
+|参考表  | [PPC系统调用表](https://github.com/rootkiter/Reverse-bins/blob/master/syscall_header/powerpc-440fp_unistd.h) |
+
+
+![PPC](http://rootkiter.com/images/2016_12_18_18_03/5.png)
+
+#### SH4
+
+|调用指令 |  trapa #h’10 |
+|寄存器  | r3 |
+|参考表  | [SH4系统调用表](https://github.com/rootkiter/Reverse-bins/blob/master/syscall_header/sh4_unistd_32.h) |
+
+
+![SH4](http://rootkiter.com/images/2016_12_18_18_03/6.png)
+
+#### SPC
+
+|调用指令 |  ta 0x10 |
+|寄存器  | %g1 |
+|参考表  | [SPC系统调用表](https://github.com/rootkiter/Reverse-bins/blob/master/syscall_header/sparc_unistd.h) |
+
+
+![SPC](http://rootkiter.com/images/2016_12_18_18_03/7.png)
+
+### 结
+
+这里记录了无符号表时，系统调用函数的识别方法，可用于LINUX下逆向参考。
+
+这种对照关系也可以在IDA脚本进行实现，以节省逆向时间，在分析MIRAI样本的工作中，大概能节约30%的分析时间。
