@@ -3,7 +3,7 @@ layout: post
 title:  Python元类(小李很悲剧)
 date:   2017-02-25
 time:   20:06:00
-tags : [ 技术相关, Python , metaclass , 编程 , 元类 ]
+tags : [ 技术相关, Python编程 , metaclass , 元编程 , 元类 ]
 
 ---
 
