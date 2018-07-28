@@ -10,10 +10,10 @@ tags : [ 技术相关 , android-smali ]
 # 起因
 这两天在分析一个apk样本，在分析中遇到了一个硬编码密文字符串的情况。
 下图就是样本中的一个硬编码密文：  
-![rootkiter.com](http://rootkiter.com/images/2015_05_08_20_00/2_1.png) 
+![rootkiter.com](/images/2015_05_08_20_00/2_1.png) 
 
 其对应的解码函数为：  
-![rootkiter.com](http://rootkiter.com/images/2015_05_08_20_00/2_2.png)  
+![rootkiter.com](/images/2015_05_08_20_00/2_2.png)  
 
 要想确定上面的硬编码字符串经isInstallation这个函数还原后的原始结果，有三种思路：  
 
@@ -26,40 +26,40 @@ tags : [ 技术相关 , android-smali ]
 # 操作步骤
 
 首先按照isInstallation的定义格式（这里方法定义为公有或者私有不用较真，能调用就行），写一个段java框架代码，如下所示：  
-![rootkiter.com](http://rootkiter.com/images/2015_05_08_20_00/2_3.png) 
+![rootkiter.com](/images/2015_05_08_20_00/2_3.png) 
 
 保存运行，试一下这段代码是否有错误：
-![rootkiter.com](http://rootkiter.com/images/2015_05_08_20_00/2_4.png)  
+![rootkiter.com](/images/2015_05_08_20_00/2_4.png)  
 
 将字节码文件（.class）转化成dex文件，命令为：  
 <cmd>
 $ dx --dex --output=classes.dex HelloWorld.class
 </cmd>
-![rootkiter.com](http://rootkiter.com/images/2015_05_08_20_00/2_5.png)  
+![rootkiter.com](/images/2015_05_08_20_00/2_5.png)  
 
 再将dex文件反编译成 smali文件，命令为：  
 <cmd>
 $ java -jar baksmali.jar -o aaa/ classes.dex
 </cmd>
-![rootkiter.com](http://rootkiter.com/images/2015_05_08_20_00/2_6.png)  
+![rootkiter.com](/images/2015_05_08_20_00/2_6.png)  
 
 去样本中将isInstallation反编译的代码结果覆盖到 aaa/HelloWorld.smali 的相应代码中：
 
-![rootkiter.com](http://rootkiter.com/images/2015_05_08_20_00/2_7.png)  
+![rootkiter.com](/images/2015_05_08_20_00/2_7.png)  
 
 保存退出后，将这个smali代码编译为dex文件,命令为：  
 <cmd>
 $ java -jar smali.jar -o classes.dex  aaa/HelloWorld.smali
 </cmd>  
-![rootkiter.com](http://rootkiter.com/images/2015_05_08_20_00/2_8.png)  
+![rootkiter.com](/images/2015_05_08_20_00/2_8.png)  
 
 此时将生成的dex文件上传到手机等待调用。  
-![rootkiter.com](http://rootkiter.com/images/2015_05_08_20_00/2_9.png)  
+![rootkiter.com](/images/2015_05_08_20_00/2_9.png)  
 最后将要解密的字符串传到这个程序中就能解密对应字符串了，命令如下所示：  
 <cmd>
 \# dalvikvm -cp /data/local/HelloWorld.zip HelloWorld Q=6/pbCypY64tfHs8UFBpZfETzsr
 </cmd>
-![rootkiter.com](http://rootkiter.com/images/2015_05_08_20_00/2_10.png)  
+![rootkiter.com](/images/2015_05_08_20_00/2_10.png)  
 
 这时输出的 “contact_id = ” 就是 ”Q=6/pbCypY64tfHs8UFBpZfETzsr” 这个字符串解密的结果了。
 

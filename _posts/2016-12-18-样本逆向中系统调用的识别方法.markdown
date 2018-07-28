@@ -28,7 +28,7 @@ LINUX平台下的程序，可以通过strip程序进行精简，精简过的可�
 |寄存器  | eax |
 |参考表  | [x86系统调用表](https://github.com/rootkiter/Reverse-bins/blob/master/syscall_header/i586_unistd_32.h) |
 
-![x86](http://rootkiter.com/images/2016_12_18_18_03/1.png)
+![x86](/images/2016_12_18_18_03/1.png)
 
 #### ARM
 
@@ -41,7 +41,7 @@ ARM 下的系统调用，有两种，一种是带参数的，另一种是指令�
 |参考表  | [ARM系统调用表](https://github.com/rootkiter/Reverse-bins/blob/master/syscall_header/armv5l_unistd.h) |
 
 
-![ARM2](http://rootkiter.com/images/2016_12_18_18_03/3.png)
+![ARM2](/images/2016_12_18_18_03/3.png)
 
 **指令内指定** 
 
@@ -49,7 +49,7 @@ ARM 下的系统调用，有两种，一种是带参数的，另一种是指令�
 |寄存器  |  |
 |参考表  | [ARM系统调用表](https://github.com/rootkiter/Reverse-bins/blob/master/syscall_header/armv5l_unistd.h) |
 
-![ARM1](http://rootkiter.com/images/2016_12_18_18_03/2.png)
+![ARM1](/images/2016_12_18_18_03/2.png)
 
 #### MIPS
 
@@ -58,7 +58,7 @@ ARM 下的系统调用，有两种，一种是带参数的，另一种是指令�
 |参考表  | [MIPS系统调用表](https://github.com/rootkiter/Reverse-bins/blob/master/syscall_header/mips_unistd.h) |
 
 
-![MIPS](http://rootkiter.com/images/2016_12_18_18_03/4.png)
+![MIPS](/images/2016_12_18_18_03/4.png)
 
 #### PPC
 
@@ -67,7 +67,7 @@ ARM 下的系统调用，有两种，一种是带参数的，另一种是指令�
 |参考表  | [PPC系统调用表](https://github.com/rootkiter/Reverse-bins/blob/master/syscall_header/powerpc-440fp_unistd.h) |
 
 
-![PPC](http://rootkiter.com/images/2016_12_18_18_03/5.png)
+![PPC](/images/2016_12_18_18_03/5.png)
 
 #### SH4
 
@@ -76,7 +76,7 @@ ARM 下的系统调用，有两种，一种是带参数的，另一种是指令�
 |参考表  | [SH4系统调用表](https://github.com/rootkiter/Reverse-bins/blob/master/syscall_header/sh4_unistd_32.h) |
 
 
-![SH4](http://rootkiter.com/images/2016_12_18_18_03/6.png)
+![SH4](/images/2016_12_18_18_03/6.png)
 
 #### SPC
 
@@ -85,7 +85,7 @@ ARM 下的系统调用，有两种，一种是带参数的，另一种是指令�
 |参考表  | [SPC系统调用表](https://github.com/rootkiter/Reverse-bins/blob/master/syscall_header/sparc_unistd.h) |
 
 
-![SPC](http://rootkiter.com/images/2016_12_18_18_03/7.png)
+![SPC](/images/2016_12_18_18_03/7.png)
 
 ### 结
 

@@ -70,7 +70,7 @@ tags : [ 技术相关,OpenSSL , 数字签名 , 密钥协商 , RSA＋DSA＋DH ]
 
 个人曾经一直觉得，“数字签名”这个名词听起来很有文艺范，它要解决的问题又很不好理解，所以一直觉得那是个特神奇的领域，绝对是“高端大气上档次”。后来发现，这玩意想要解决的，竟然是一个显而易见的哲学问题：“请快速证明，我就是我自己”。    
 
-![rootkiter.com](http://rootkiter.com/images/2015_08_27_20_20/1.png)  
+![rootkiter.com](/images/2015_08_27_20_20/1.png)  
 
 为了更好的，理解这个哲学问题，我决定先编一个故事。   
 
@@ -81,7 +81,7 @@ tags : [ 技术相关,OpenSSL , 数字签名 , 密钥协商 , RSA＋DSA＋DH ]
 但有些时候问题确实很麻烦，比如你们俩的聊天内容总会被第三方读到（比如你家里的间谍“路由器先生”，或者他家里的间谍“交换机先生”，甚至你们聊天的会话也可能会被黑客放置了“窃听器”），这时候你们聊过的内容就不再只有你们两个知道，发现了没，哲学问题从“普通模式”转眼就变成“地狱模式”啦。  
 
 
-![rootkiter.com](http://rootkiter.com/images/2015_08_27_20_20/2.png)  
+![rootkiter.com](/images/2015_08_27_20_20/2.png)  
 
 
 到了这里你可能很快就想到，我有身份证啊，有了身份证，我就能证明这个哲学问题了。恭喜你，你已经打通了任督二脉，没错的，身份证是每个人身份的标识，但是互联网中没有实体身份证，能有的只是一堆数字或者字符。当某一段数字或者字符具有了“身份证”属性后它就成了“数字签名”。  
@@ -94,13 +94,13 @@ tags : [ 技术相关,OpenSSL , 数字签名 , 密钥协商 , RSA＋DSA＋DH ]
 
 虽然你和D的谈话被人看见也没什么（别以为我会相信），但知道有人偷窥这个事之后，心里也总觉得怪怪的。你开始思考是不是把聊天记录做个加密，以免黑客H看到。你朋友D想了想这个提议，同意了，并且夸你聪明。
 
-![rootkiter.com](http://rootkiter.com/images/2015_08_27_20_20/3.png)  
+![rootkiter.com](/images/2015_08_27_20_20/3.png)  
 
 事情进展的顺利，加密算法也选好了，用上了当前性价比很高的3DES加密算法。最后的问题就是约定密钥了，这时你发现问题了，怎么把密钥告诉D而不告诉H呢，要时刻记得H是个变态，他一直研究你们的聊天记录呢。
 
 一旦你在聊天中说出了密钥的内容，他马上就会知道，于是你们只好通过其他途径共享密钥，为了避免黑客H猜解出密码继续翻阅你们的聊天记录，你们每次开始聊天都会进行“共享密钥”的操作，如果每次交换都单独找其他通讯渠道，过于繁琐，也不易操作。
 
-![rootkiter.com](http://rootkiter.com/images/2015_08_27_20_20/4.png)  
+![rootkiter.com](/images/2015_08_27_20_20/4.png)  
 
 于是一大帮数学家想了两种靠谱的思路来解决“密钥约定”的问题。
 
@@ -112,7 +112,7 @@ tags : [ 技术相关,OpenSSL , 数字签名 , 密钥协商 , RSA＋DSA＋DH ]
 2. 将密文（OLLEH）通过开放会话传送给D。
 3. D拿到密文（OLLEH）后，使用自己的私钥D\_priv\_key进行解密还原出密钥明文（HELLO）。
 
-![rootkiter.com](http://rootkiter.com/images/2015_08_27_20_20/5.png) 
+![rootkiter.com](/images/2015_08_27_20_20/5.png) 
 
 此刻密钥约定成功，即使黑客H看到了密文（OLLEH）也没关系，他没有D的私钥，自然无法解出明文的密钥。
 于是你们终于可以放心的用3DES加密算法聊天了。
@@ -124,7 +124,7 @@ tags : [ 技术相关,OpenSSL , 数字签名 , 密钥协商 , RSA＋DSA＋DH ]
 首先呢，通讯双方各想一个密钥（两侧的密钥分别为K1、K2）记在心里，随后各自将这个密钥做一次变形（假设变形方法为E1）成为一个密钥参数(两人生成的参数分别为Z1、Z2)，并把它通知对方，此时双方都能够拿到对方的密钥参数Z，用自己刚才想到的密钥K再做一次变形（假设处理方法为E2）作为最终密钥（K3）。  
 
 
-![rootkiter.com](http://rootkiter.com/images/2015_08_27_20_20/6.png) 
+![rootkiter.com](/images/2015_08_27_20_20/6.png) 
 
 由于K3的确定过程中既有K1参与又有K2参与，所以只要算法E1和E2选择得当，双方是能够可以得到相同K3结果的。  
 在这个密钥约定过程中，黑客H能得到的只有通讯双方相互发送的密钥参数Z，在攻击者不知道任何一方初始密钥（K1和K2）情况下，便无法得到最终密钥K3。  
@@ -154,7 +154,7 @@ $ openssl dsaparam -in dsa512.pem -text –noout
 </cmd>
 
 
-![rootkiter.com](http://rootkiter.com/images/2015_08_27_20_20/7.png) 
+![rootkiter.com](/images/2015_08_27_20_20/7.png) 
 
 这表明密钥参数中包含了3个参数的值，分别为P、Q、G，至于这三个值具体有什么作用，是DSA算法的内容，不在本文讨论范围，只要知道它们是DSA密钥参数就足够了。  
 
@@ -170,7 +170,7 @@ $ openssl dsa -in dsa512\_1.key -text -noout
 </cmd>
 
 
-![rootkiter.com](http://rootkiter.com/images/2015_08_27_20_20/8.png) 
+![rootkiter.com](/images/2015_08_27_20_20/8.png) 
 
 可以看到，新生成的密钥文件比之前的密钥参数文件多了两个字段，分别为priv字段和pub字段，它们分别代表这DSA私钥和公钥的主体。
 
@@ -181,7 +181,7 @@ $ openssl dsa -in dsa512\_2.key -text -noout
 </cmd> 
 
 
-![rootkiter.com](http://rootkiter.com/images/2015_08_27_20_20/9.png) 
+![rootkiter.com](/images/2015_08_27_20_20/9.png) 
 
 看出dsa512\_1.key 和 dsa512\_2.key 这两个文件的不同点了么，他们在使用了完全相同的命令和密钥参数后，却得到了完全不同的密钥对（仔细比对priv和pub的字段结果）。
 
@@ -209,7 +209,7 @@ $ openssl gendh -out db512.pem 512
 $ openssl dh -in db512.pem
 </cmd>
 
-![rootkiter.com](http://rootkiter.com/images/2015_08_27_20_20/10.png) 
+![rootkiter.com](/images/2015_08_27_20_20/10.png) 
 
 这玩意具体什么意思呢，你也别问我，我现在也还没搞懂，等搞懂了再说。 
 
@@ -219,7 +219,7 @@ $ openssl dh -in db512.pem -noout -C
 </cmd>
 
 
-![rootkiter.com](http://rootkiter.com/images/2015_08_27_20_20/11.png) 
+![rootkiter.com](/images/2015_08_27_20_20/11.png) 
 
 
 ### 生成RSA密钥
@@ -234,7 +234,7 @@ $ openssl genrsa -out rsaprivkey.pem 1024
 $ openssl rsa -in rsaprivkey.pem -text -noout 
 </cmd>
 
-![rootkiter.com](http://rootkiter.com/images/2015_08_27_20_20/12.png) 
+![rootkiter.com](/images/2015_08_27_20_20/12.png) 
 
 这一大堆都是什么东西呢，也是别问我，去问那帮搞密码学的数学家吧，他们会告诉你的。
 
@@ -255,7 +255,7 @@ $ openssl dsa -in dsa512\_2.key -out  dsapubkey.pem -pubout
 $ openssl dsa -in dsapubkey.pem -pubin -text -noout
 </cmd>
 
-![rootkiter.com](http://rootkiter.com/images/2015_08_27_20_20/13.png) 
+![rootkiter.com](/images/2015_08_27_20_20/13.png) 
 
 对比“生成DSA密钥”章节的截图可以发现，公钥实际上是密钥文件的一部分。
 
@@ -271,7 +271,7 @@ $ openssl rsa -in pub.pem -pubin -text -noout
 $ openssl rsa -in pub.pem -pubin -text -noout
 </cmd>
 
-![rootkiter.com](http://rootkiter.com/images/2015_08_27_20_20/14.png) 
+![rootkiter.com](/images/2015_08_27_20_20/14.png) 
 
 可以看到，RSA公钥同样只是密钥文件中的一部分，可以去对比下“生成RSA密钥”章节中的截图。
 

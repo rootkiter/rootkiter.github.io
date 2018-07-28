@@ -25,7 +25,7 @@ $ openssl s\_client -connect baidu.com:443
 
 ### 证书链
 s_client这条命令执行完，可以在结果中看到这样一块区域，名字为：Certificate chain。如下图所示：    
-![rootkiter.com](http://rootkiter.com/images/2015_08_25_22_01/1.png)  
+![rootkiter.com](/images/2015_08_25_22_01/1.png)  
 
 可以看到它包含 0/1/2 三段标示，每个标示都指代着一条证书记录。  
 
@@ -62,7 +62,7 @@ $ openssl x509 -in baidu.pem -inform PEM -noout -text
 4.  -text   参数会告诉x509指令将证书的所有信息以可直接阅读的方式输出。    
 
 由于该指令参数需要从一个文件中读取证书内容，所以，首先要把百度的证书保存为一个名为baidu.pem的文件。如下图所示：     
-![rootkiter.com](http://rootkiter.com/images/2015_08_25_22_01/2.png)  
+![rootkiter.com](/images/2015_08_25_22_01/2.png)  
 
 ### 解析证书中的字段
 X509指令执行完毕后，在控制端就可以得到证书的详细内容，下面将对其中部分字段做详细解释。
@@ -79,7 +79,7 @@ Not After : Apr 16 23:59:59 2016 GMT_
 5. Subject字段，指明了本证书的主体描述  
 _Subject: C=CN, ST=beijing, L=beijing, O=BeiJing Baidu Netcom Science Technology Co., Ltd, OU=service operation department, CN=www.baidu.cn_
 6. Subject Public Key Info字段，指明了证书中的公钥详细信息。  
-![rootkiter.com](http://rootkiter.com/images/2015_08_25_22_01/3.png)  
+![rootkiter.com](/images/2015_08_25_22_01/3.png)  
 
 7. X509v3 Subject Alternative Name字段，指明了该证书同样适用的几个域名。  
 _DNS:baidu.cn, DNS:baidu.com, DNS:baidu.com.cn, DNS:w.baidu.com, DNS:ww.baidu.com, DNS:www.baidu.cn, DNS:www.baidu.com.cn, DNS:www.baidu.com.hk, DNS:www.baidu.hk, DNS:www.baidu.net.au, DNS:www.baidu.net.my, DNS:www.baidu.net.ph, DNS:www.baidu.net.pk, DNS:www.baidu.net.tw, DNS:www.baidu.net.vn, DNS:wwww.baidu.com, DNS:wwww.baidu.com.cn_   
@@ -112,7 +112,7 @@ URI:http://se.symcb.com/se.crl_
 _OCSP - URI:http://se.symcd.com
 CA Issuers - URI:http://se.symcb.com/se.crt_
 15. Signature Algorithm，这个字段的内容为CA机构提供的数字签名结果，证书验证者用CA提供的公钥解密这个字段值后，会得以上所有内容的一个摘要信息，通过比对这个摘要信息结果，可以确定证书的合法性。    
-![rootkiter.com](http://rootkiter.com/images/2015_08_25_22_01/4.png)  
+![rootkiter.com](/images/2015_08_25_22_01/4.png)  
 
 ### 证书中关键信息回顾  
 
@@ -170,7 +170,7 @@ $ openssl ocsp -issuer se.pem -cert baidu.pem -url http://se.symcd.com -respout 
 事实上OpenSSL官网给出的ocsp查询指令示例（https://www.openssl.org/docs/apps/ocsp.html）不包含CAfile选项，但本人测试时发现，如果不加该选项，执行结果会报“Response Verify Failure” 这个错误，这表明本地openssl对ocsp的回复合法性存疑，即无法确定回复确实是由赛门铁克公司给出的ocsp结果。只有添加了CAfile参数并将其指定为赛门铁克的公钥证书时才可以认证通过，估计这可能是openssl官网在写样例命令时的一个疏忽吧。  
 这些问题都解决后，命令就可以成功执行了，最后给出的结论为baidu.pem: good 证明百度这个证书没有被吊销过。如下图所示：  
 
-![rootkiter.com](http://rootkiter.com/images/2015_08_25_22_01/5.png)    
+![rootkiter.com](/images/2015_08_25_22_01/5.png)    
 
 事实上吊销凭证的查询还有另一种方式，当我们掌握了被查询证书的序列号后，就可以直接递交序列号来查询，百度证书序列号的查询方法可以用以下命令：  
 <cmd>
@@ -185,7 +185,7 @@ $ openssl ocsp -issuer se.pem -serial 0x376DC0A99A8BC4A5424FCAA8F3CAA903 -url ht
 
 如果证书被吊销过，会显示什么结果呢，我们从刚才看到的crl吊销列表随便找一个被吊销过的证书序列号：0106CCE3880F7C2E74140912A0CC379E，然后查询一下它，就得到如下结果：  
 
-![rootkiter.com](http://rootkiter.com/images/2015_08_25_22_01/6.png)   
+![rootkiter.com](/images/2015_08_25_22_01/6.png)   
 
 从这个查询结果中可以看出该证书于2011年12月12日被吊销，吊销原因为：密匙数据外泄。
 

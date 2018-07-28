@@ -33,22 +33,22 @@ tags : [ 技术相关,OpenSSL , 对称算法 , 分组加密模式 , DES＋3DES ]
 ### ECB
 电子密码本模式（Electronic Codebook Mode）。将被加密数据分段，最后一段不足时按照预定模式（补0或补F）补足。将每一段进行加密，加密后的各个段之间互不影响，将各段按顺序连在一起就是加密结果。每一段参与计算的只有"密钥K"，示意图如下所示：
 
-![rootkiter.com](http://rootkiter.com/images/2015_09_12_00_23/1.png) 
+![rootkiter.com](/images/2015_09_12_00_23/1.png) 
 
 ### CBC
 密文块链接模式（Cipher Block Chaining Mode）。将被加密数据分段，每一段数据先与前一段数据加密后的密文进行按位模加（XOR：异或），如果当前段为首段数据（即不存在前一段数据）则与初始化向量（iv）进行模加。模加结果同"密钥K"共同进行加密计算得到当前段的密文。每一段参与计算的都有"密钥K"以及"前一段密文/初始化向量"。示意图如下所示：
 
-![rootkiter.com](http://rootkiter.com/images/2015_09_12_00_23/2.png) 
+![rootkiter.com](/images/2015_09_12_00_23/2.png) 
 
 ### CFB
 密文反馈模式（Cipher Feedback Mode）。将被加密数据分块（r比特一块），将每一块的加密结果作为下一块的初始化向量IV，将该向量先同 密钥K 做加密计算，计算结果同与下一块的明文进行按位模加（XOR：异或），从而得到当前块的加密结果。下图是一张示意图：
 
-![rootkiter.com](http://rootkiter.com/images/2015_09_12_00_23/3.png) 
+![rootkiter.com](/images/2015_09_12_00_23/3.png) 
 
 ### OFB
 输出反馈模式（Output Feedback Mode）。将被加密数据分块（r比特一块），每一块明文只同向量表的左侧r位进行按位模加（XOR：异或）得到密文。每一块密文不对后续计算造成影响，“密钥K”仅对向量表变形发生作用。这也是OFB模式 相对 CFB模式的区别。下图是一张示意图：
 
-![rootkiter.com](http://rootkiter.com/images/2015_09_12_00_23/4.png) 
+![rootkiter.com](/images/2015_09_12_00_23/4.png) 
 
 ### EDE
 三重分组加密模式（Encrypt-Decrypt-Encrypt）。将一段数据通过 “加密-解密-加密” 进而生成密文。且这种模式所需密钥可以不止一个（二个不同密钥或三个不同密钥），以提高加密强度。常见的两种加密公式如下:
@@ -68,7 +68,7 @@ tags : [ 技术相关,OpenSSL , 对称算法 , 分组加密模式 , DES＋3DES ]
 ## 参数指令体系（对称算法相关）
 OpenSSL支持8种对称加密算法，将这8中对称加密算法同5种加密模式进行糅合，最终形成了OpenSSL中强大的对称加密算法被选选项，下面在命令行下，看一下enc这条指令下支持多少种加密方法，如下图所示：
 
-![rootkiter.com](http://rootkiter.com/images/2015_09_12_00_23/5.png) 
+![rootkiter.com](/images/2015_09_12_00_23/5.png) 
 
 ### 从DES加密开始
 
@@ -85,7 +85,7 @@ rootkiter@PC:~$ openssl des -e -in beenc.txt -out bedec  -pass pass:1234
 
 加密后使用常用的文件查看指令进行查看可以得到密文的一些特征：
 
-![rootkiter.com](http://rootkiter.com/images/2015_09_12_00_23/6.png) 
+![rootkiter.com](/images/2015_09_12_00_23/6.png) 
 
 从cat结果可以看出，加密后的文件，不是可视字符，且以Salted作为文件开头，这意味着密文是加盐的加密结果。而在我们执行的命令中，没有加盐参数，这也表明，加盐操作是默认的。
 解密操作是加密的逆操作，在des指令中有另一个名为d的参数设置，由于加密时密码为1234，所以解密时密码同样为1234，指令格式如下所示：  
@@ -93,14 +93,14 @@ rootkiter@PC:~$ openssl des -e -in beenc.txt -out bedec  -pass pass:1234
 $ openssl des -d -in bedec -out final.txt -pass pass:1234
 </cmd>
 
-![rootkiter.com](http://rootkiter.com/images/2015_09_12_00_23/7.png)
+![rootkiter.com](/images/2015_09_12_00_23/7.png)
 
 可以看到在解密指令中同样没有提到盐值，这证明盐值对于加解密操作是透明的。那么盐值在哪里呢，通过在指令中添加-p参数可以获得加密时的盐值结果：  
 <cmd>
 $ openssl des -e -in beenc.txt -out bedec -pass pass:1234 -p
 </cmd>
 
-![rootkiter.com](http://rootkiter.com/images/2015_09_12_00_23/8.png)
+![rootkiter.com](/images/2015_09_12_00_23/8.png)
 
 从上图可以发现，盐值其实是保存在密文的8-16字节的。这也证明，盐值并不是一个需要保密的值。为什么会这样呢，这是盐值本身的特性决定的。盐值是一个随机数，他会对每次加密后的结果产生影响，导致相同密文下每两次加密产生的密文均不同，这可以在一定程度下对抗彩虹表的分析。   
 
@@ -140,10 +140,10 @@ OpenSSL的输入输出参数种类很多，下面分别介绍。
 1. 直接由参数指定输入，比如-K/-iv 这种，再配置命令参数时直接输入即可。
 2. 从文件输入输出，比如in/out 这两个参数，就可以用来控制程序的输入输出路径。
 3. 控制台交互输入，在调用指令时由于没有指定输入密码，以及初始密钥等参数，指令就会在执行过程中提示用户输入口令，如下图所示：  
-![rootkiter.com](http://rootkiter.com/images/2015_09_12_00_23/9.png) 
+![rootkiter.com](/images/2015_09_12_00_23/9.png) 
 
 4. 编码后输出，有时我们希望out选项输出的文件为可读字符内容，即可用cat直接查看的结果，这时就要用到-base64/a 选项，下图是个示例：  
-![rootkiter.com](http://rootkiter.com/images/2015_09_12_00_23/10.png) 
+![rootkiter.com](/images/2015_09_12_00_23/10.png) 
 
 5. pass选项可以支持5中密码输入方式，他们分别为：
 

@@ -8,7 +8,7 @@ tags : [ ARM , 汇编+bin ,技术相关,嵌入式汇编 , Iot安全 ]
 ---
 
 ## 写在开头  
-很久之前写了一些围绕ANDROID和ARM的学习笔记，前段时间已经整理过[一篇](http://rootkiter.com/2015/07/04/ARM下的ShellCode.html)，这是另一篇。这里记录了一些围绕着ARM指令系统的知识。
+很久之前写了一些围绕ANDROID和ARM的学习笔记，前段时间已经整理过[一篇](/2015/07/04/ARM下的ShellCode.html)，这是另一篇。这里记录了一些围绕着ARM指令系统的知识。
 
 ARM指令系统是由ARM公司定义的一类芯片的指令规则，这种芯片普遍应用于各种便携式设备，以及智能终端中，具有低功耗，便于开发等特点。 
 
@@ -21,7 +21,7 @@ ARM指令系统是由ARM公司定义的一类芯片的指令规则，这种芯�
 
 ### Arm指令格式介绍  
 前面提到：ARM 指令是定长指令，长度为4个字节（32位二进制位），这样做的好处之一是便于CPU寻址，而另一个好处就是在指令定义时，可以人为固定一些特殊的标志位，用于确定指令的执行规则。ARM指令的一般编码形式如下：
-![rootkiter.com](http://rootkiter.com/images/2015_08_05_22_34/1.jpg)  
+![rootkiter.com](/images/2015_08_05_22_34/1.jpg)  
 
 <code>
 其中：  
@@ -48,7 +48,7 @@ ARM指令系统是由ARM公司定义的一类芯片的指令规则，这种芯�
 
 #### 条件码以及助记符的对应关系  
 通过cond片段的条件码，可以对CPSR寄存器进行相应的访问，为了便于记忆，特规定了一些助记符，它们之间的对应关系可以参照下图：
-![rootkiter.com](http://rootkiter.com/images/2015_08_05_22_34/2.png)  
+![rootkiter.com](/images/2015_08_05_22_34/2.png)  
 
 #### 如何使用cond片段
 到目前为止，ARM指令系统基本已经熟悉了，可以进行一些破解的思索了，从crackme的游戏规则可以知道：crackme其实就是让一段指令片段在“执行”同“不执行”之间转换，从而达到破解的目的。  
@@ -64,11 +64,11 @@ ARM指令系统是由ARM公司定义的一类芯片的指令规则，这种芯�
 既然已经定义为“傻瓜式”的crackme了，那就自然要有一个傻瓜式的规则，提示用户输入一个字符，如果输入的是‘a’则提示crack成功，否则提示失败。
 具体的C实现代码如下所示：
 
-![rootkiter.com](http://rootkiter.com/images/2015_08_05_22_34/3.png)  
+![rootkiter.com](/images/2015_08_05_22_34/3.png)  
 代码编写完毕利用交叉编译器生成arm平台对应的二进制可执行文件。
 运行结果如下图所示：
 
-![rootkiter.com](http://rootkiter.com/images/2015_08_05_22_34/4.jpg)  
+![rootkiter.com](/images/2015_08_05_22_34/4.jpg)  
 
 效果还不错，现在不输入‘a’是不会提示OK的了。下面的目标就是：输入除‘a’以外的其他key都会提示“OK：You crack me now !”
 
@@ -76,25 +76,25 @@ ARM指令系统是由ARM公司定义的一类芯片的指令规则，这种芯�
 #### 破解准备
 Crack必须的工具有两个，一款好用的调试器，和一个16进制文件编辑器，由于crackme并不复杂，IDA 61 +  C32Asm足以。
 首先用IDA61打开crackme，并进行简单的分析，如下图所示：
-![rootkiter.com](http://rootkiter.com/images/2015_08_05_22_34/5.jpg)  
+![rootkiter.com](/images/2015_08_05_22_34/5.jpg)  
 
 简单看一下都是比较基础的ARM指令，没有什么难度，关键跳转一目了然：“BNE loc_8228”，只需要将BNE改为BEQ，或者B，即可跳转到输出“OK”的分支。既然如此马上动手。
 
 #### 找到cond片段
 通过IDA的HEX标签查看可以得知：BNE所对应的指令片段为：02 00 00 1A，如下图所示：
-![rootkiter.com](http://rootkiter.com/images/2015_08_05_22_34/6.jpg)  
+![rootkiter.com](/images/2015_08_05_22_34/6.jpg)  
 由于ARM指令在文件中为字节倒序排列，所以其中1A 的1  便是cond片段的值，将其修改为：0A 即可将BNE指令变为BEQ，貌似IDA不支持修改源文件，那么就在C32Asm中修改吧。
 
 #### 用C32Asm进行代码变更
 通过C32Asm的16进制查找功能定位到该序列处，并将1A修改为0A（BNE-> BEQ）然后保存修改结果。
 
-![rootkiter.com](http://rootkiter.com/images/2015_08_05_22_34/7.jpg)   
+![rootkiter.com](/images/2015_08_05_22_34/7.jpg)   
 最后用IDA载入查看修改后的程序流程：
 
-![rootkiter.com](http://rootkiter.com/images/2015_08_05_22_34/8.jpg)  
+![rootkiter.com](/images/2015_08_05_22_34/8.jpg)  
 可以发现，该指令已经变为预期的BEQ指令。
 具体arm平台测试结果如下图所示：
-![rootkiter.com](http://rootkiter.com/images/2015_08_05_22_34/9.jpg)  
+![rootkiter.com](/images/2015_08_05_22_34/9.jpg)  
 
 可以发现，输入‘a’同输入‘b’得到的返回值发生了交换，证明程序的流程被有效的修改了，crack成功，现在就可以根据自己的要求修改指令中的cond片段从而达到crack的目的了。
 

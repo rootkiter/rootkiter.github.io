@@ -16,8 +16,8 @@ tags : [ 技术相关 ,汇编+bin, ShellCode ]
 ## 题目概述
 这里不准备把题目说的太细，就贴两张IDA逆向的结果图。简单描述一下题目的要求。
 
-![rootkiter](http://rootkiter.com/images/2015_11_07_18_29/1.png)
-![rootkiter](http://rootkiter.com/images/2015_11_07_18_29/2.png)
+![rootkiter](/images/2015_11_07_18_29/1.png)
+![rootkiter](/images/2015_11_07_18_29/2.png)
 
 从这两张图可以提取出以下几个关键条件。
 > 1. 用户输入的内容要在内存中进行一次异或解码;   
@@ -55,7 +55,7 @@ tags : [ 技术相关 ,汇编+bin, ShellCode ]
 
 使用 ALPHA3 工具之前，需要将 ShellCode 以二进制形式写到一个文件中，效果如下所示：
 
-![rootkiter](http://rootkiter.com/images/2015_11_07_18_29/3.png)
+![rootkiter](/images/2015_11_07_18_29/3.png)
 
 然后就可以使用如下指令进行 ShellCode 编码了，我编码的目标为“X86 平台下、大写字符”，ShellCode开始执行那一刻，EAX寄存器保存了ShellCode的基地址。
 所以指令如下所示：
@@ -65,7 +65,7 @@ tags : [ 技术相关 ,汇编+bin, ShellCode ]
 </cmd>
 
 
-![rootkiter](http://rootkiter.com/images/2015_11_07_18_29/4.png)
+![rootkiter](/images/2015_11_07_18_29/4.png)
 
 得到的结果如下：  
 <code>
@@ -76,7 +76,7 @@ PYVTX10X41PZ41H4A4I1TA71TADVTZ32PZNBFZDQC02DQD0D13DJE1D485C3E1YKM6L7L0
 ## 字符型 ShellCode 样例
 这里有两段从他人博客找到的 ShellCode 样例：
 
-[http://rootkiter.com/files/shellcode.txt](http://rootkiter.com/files/shellcode.txt)
+[/files/shellcode.txt](/files/shellcode.txt)
 
 
 ## 结个尾

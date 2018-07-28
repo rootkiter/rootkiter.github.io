@@ -16,56 +16,56 @@ tags : [ 技术相关 , 3D打印 ]
 它长这样：
 
 
-![rootkiter.com](http://rootkiter.com/images/2015_06_14_00_00/quanji.png)
+![rootkiter.com](/images/2015_06_14_00_00/quanji.png)
 
 ## 3D打印介绍
 
 这台打印机有5个步进电机。下侧打印床可以前后移动，作为Y轴；打印头可以横向（左右）移动作为X轴；两侧的定向杆可以让打印头上下方向移动作为Z轴，每侧有一个步进电机；最后一个步进电机位于打印头上方的黑盒子中，用于控制材料流出速度（PLA材料融化后，会从打印头流出，步进电机可以控制入料的速度）。
 
 
-![rootkiter.com](http://rootkiter.com/images/2015_06_14_00_00/jichudianji.png)
+![rootkiter.com](/images/2015_06_14_00_00/jichudianji.png)
 
 下侧的打印床是一块方形平台，原本是金属平板，不过由于打印过程中和塑料的收缩系数差距较大（热胀冷缩的面积变化不同），所以会出现打印过程中物体在打印台上滑动的情况，为了让打印过程中，产品始终能粘在打印台上，可以做两种操作：1.贴一层抗热膜，平衡两者的系数；2.加热打印床，以免接触面过凉导致打印件脱落。
 
-![rootkiter.com](http://rootkiter.com/images/2015_06_14_00_00/jiaodai.png)
+![rootkiter.com](/images/2015_06_14_00_00/jiaodai.png)
 
 在打印机中有3处“限位开关”，分别位于 X／Y／Z 轴的尽头处，这是防止运动过程中偏离打印机能承受的最大范围，导致打印机毁坏。我现在也把限位开关定义为打印头的原点坐标（0，0，0）。这样做的好处是不用总去计算起始坐标的偏移量。
 
 
-![rootkiter.com](http://rootkiter.com/images/2015_06_14_00_00/xianweikaiguan.png)
+![rootkiter.com](/images/2015_06_14_00_00/xianweikaiguan.png)
 
 正式打印前，需要把打印床调平，这里所说的调平不是相对地平线调平，而是相对打印头的打印平面调平，最早不懂的时候我是肉眼调平，结果发现肉眼真的很不靠谱，在同事的指点下，我开始垫一张纸来调平（紧的时候纸会有摩擦力，有缝隙时则没有摩擦力），精度真心高了很多。
 
 
-![rootkiter.com](http://rootkiter.com/images/2015_06_14_00_00/tiaoping.png)
+![rootkiter.com](/images/2015_06_14_00_00/tiaoping.png)
 
 准备就绪后，就可以开始打印了，这台打印机配套的控制软件叫做 Repetier 。本人用了一段时间下来，觉得它还是挺好用的。打印的模型描述文件为 stl 文件。Repetier可以把这种模型文件按层切片并转换为gcode代码。其中每一层就是一个打印面；不同的层就是不同的高度，也对应着打印机中的 Z 轴。切片层越薄打印的产品就越光滑，和显示屏的像素原理类似。这台打印机目前支持的层高范围为 0.1－0.4mm 。下图是层高 0.2 的大白，可以看到还是有些层次感的。如果选择 0.1mm的层高其实会好很多，但打印时间会翻倍。这个0.2的大白，我可是打了 8 个多小时呢。
 
 
-![rootkiter.com](http://rootkiter.com/images/2015_06_14_00_00/dabai.png)
+![rootkiter.com](/images/2015_06_14_00_00/dabai.png)
 
 3D打印的观赏品一半都只注重外形，对于其内部的填充，一般不是特别看重，所以切片的时候可以选择空心填充，以缩短打印耗时。Repetier自带的切片软件叫做 Slic3r 。我只用过它的两种填充，这两种填充打出来的大白外观差距不大，但用时却差了一倍以上，后者只需打印4个小时左右，就完成了。
 
-![rootkiter.com](http://rootkiter.com/images/2015_06_14_00_00/qiepian1.png)
+![rootkiter.com](/images/2015_06_14_00_00/qiepian1.png)
 
-![rootkiter.com](http://rootkiter.com/images/2015_06_14_00_00/qiepian2.png)
+![rootkiter.com](/images/2015_06_14_00_00/qiepian2.png)
 
 打印机调好后，最让人伤神的就是模型文件了。俺不是美工出身，也没学过制图，所以模型文件是极度欠缺的。结果就是有了打印机都不知道该打点什么。在网上搜了好几天才搜到几张比较喜欢的模型图。打了一些物件，毕竟不是自己画的，打出来也不是特兴奋。
 
 
-![rootkiter.com](http://rootkiter.com/images/2015_06_14_00_00/beiz.png)
+![rootkiter.com](/images/2015_06_14_00_00/beiz.png)
 
 
-![rootkiter.com](http://rootkiter.com/images/2015_06_14_00_00/hama.png)
+![rootkiter.com](/images/2015_06_14_00_00/hama.png)
 
 
-![rootkiter.com](http://rootkiter.com/images/2015_06_14_00_00/zixingche.png)
+![rootkiter.com](/images/2015_06_14_00_00/zixingche.png)
 
 为了能够让自己真的兴奋起来，我又学了几天3D制图，网上一般都推荐 3DMax／Maya 这种专业的制图软件，但都太吃计算机性能（显卡／CPU／内存什么的），找了好几天才找到一个叫 “123D Design” 的软件。这个软件很好学，网上也有[很详细的文章](http://www.tuicool.com/articles/yiimquB)，照着操作一次就基本会用了。目前虽然还用的不太熟练，不过基本能设计些很简单的模型了，这就是我刚打出来的一个钥匙配件喽，自我感觉很良好，哈哈。
 
-![rootkiter.com](http://rootkiter.com/images/2015_06_14_00_00/yaoshikou1.png)
+![rootkiter.com](/images/2015_06_14_00_00/yaoshikou1.png)
 
-![rootkiter.com](http://rootkiter.com/images/2015_06_14_00_00/yaoshikou.png)
+![rootkiter.com](/images/2015_06_14_00_00/yaoshikou.png)
 
 ## 结尾
 

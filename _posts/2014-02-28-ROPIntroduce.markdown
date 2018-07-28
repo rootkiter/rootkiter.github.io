@@ -20,10 +20,10 @@ DEP 保护是缓冲区溢出攻击出现后，出现的一种防护机制，
 下面的两幅图分别表示了数据区域内“不可执行”和“
 可执行”的状态：
 <img 
-src="http://{{ site.domain }}/image/ropimage/ROP1-1.png" title="ropimage/ROP1-3.png" align="center">
+src="/image/ropimage/ROP1-1.png" title="ropimage/ROP1-3.png" align="center">
 
 <img 
-src="http://{{ site.domain }}/image/ropimage/ROP1-2.png" title="ropimage/ROP1-3.png" align="center">
+src="/image/ropimage/ROP1-2.png" title="ropimage/ROP1-3.png" align="center">
 
 DEP的实现分为两种，一种为软件实现，是由各个操作系统
 编译过程中引入的，在微软中叫SafeSEH。 另一种为硬件
@@ -61,7 +61,7 @@ Hacker中此时出现了一位天才，他开始教育大家，既然数据区
 用函数，并继续下面的执行，示意图如下：
 
 <img 
-src="http://{{ site.domain }}/image/ropimage/ROP1-3.png" title="ropimage/ROP1-3.png" align="center">
+src="/image/ropimage/ROP1-3.png" title="ropimage/ROP1-3.png" align="center">
 
 *另一方面*
 
@@ -70,11 +70,11 @@ src="http://{{ site.domain }}/image/ropimage/ROP1-3.png" title="ropimage/ROP1-3.
 当RETN指令同这些API联系在一起时，就会产生一些奇妙的化学反应，首先看一下原本缓冲区溢出的攻击模式：
 
 <img 
-src="http://{{ site.domain }}/image/ropimage/ROP1-4.png" title="ropimage/ROP1-4.png" align="center">
+src="/image/ropimage/ROP1-4.png" title="ropimage/ROP1-4.png" align="center">
 
 有了DEP后的间接利用攻击的示意图：
 <img 
-src="http://{{ site.domain }}/image/ropimage/ROP1-5.png" title="ropimage/ROP1-5.png" align="center">
+src="/image/ropimage/ROP1-5.png" title="ropimage/ROP1-5.png" align="center">
 
 可以看到在第二种模式下，EIP的控制是通过栈中的地址，以及代码中的RETN指令共同控制的，此时栈中的数据仍然是“数据”，而执行位置却转移到了内存的代码空间，如此下来便巧妙的绕过了DEP保护。
 
@@ -90,11 +90,11 @@ ASLR是一种内存地址随机化技术，它的核心思路是让程序执行�
 WIN7中的实现是每次系统启动，模块地址随机，而启动完成后，到关闭之前，这个地址一般都不会改变。然而WIN8中，每两次程序运行，加载的模块地址都会随机起来。这种随机地址带来的安全效果非常明显，攻击者几乎没有办法利用原有攻击手段完成漏洞利用（地址随机导致无法找到关闭DEP的地址，而无法关闭DEP就无法令数据块中的shellcode得到执行），所以安全人员经常戏称“ASLR+DEP”为“海尔兄弟”，下面是WIN7中启用ASLR后，ntdll在两次电脑开启时的地址：
 
 可以看到这次电脑启动 ntdll.dll模块的位置为 0x77880000
-<img src="http://{{ site.domain }}/image/ropimage/ROP1-6.png" aglin="center">
+<img src="/image/ropimage/ROP1-6.png" aglin="center">
 
 重启计算机后，这个模块的基地址变为0x77620000
 
-<img src="http://{{ site.domain }}/image/ropimage/ROP1-7.png">
+<img src="/image/ropimage/ROP1-7.png">
 
 从以上两幅截图可以看出，地址随机化带来的直观效果就是模块顺序同样发生了改变，这就如同把攻击者放到了一个内存密室中，暗门的位置随时在变化，攻击者想要找到暗门的难度无疑增大了许多。
 
@@ -107,7 +107,7 @@ ASLR机制出现之后，攻击者面临着另一个严俊的挑战（我想管�
 
 下面是metasploit中某个利用模块的ROP片段截图：
 
-<img src="http://{{ site.domain }}/image/ropimage/ROP1-8.png">
+<img src="/image/ropimage/ROP1-8.png">
 
 关于以上图片的更多技术细节，请阅读本文下面的部分获得。
 
@@ -130,29 +130,29 @@ ASLR机制出现之后，攻击者面临着另一个严俊的挑战（我想管�
 
 在ROP章节的末尾我给出了一个ZwProtectVirtualMemory（）ROP的构造截图，图中的代码位于metasploit的MS13_037模块中，本意是借助HeapSpray（风水）技术控制内存，进行利用的，所以在实现过程中shellcode以及参数地址可以完全固定，为了分析的方便，我们直接观察触发后堆栈状态即可。如下图所示：
 
-<img src="http://{{ site.domain }}/image/ropimage/ROP1-9.png">
+<img src="/image/ropimage/ROP1-9.png">
 
 从上图可以看出以下3点：
 
 1.EIP目前指向的地址正好为 [ESP-4] 对应的地址0x778896c9，可以表明此时EIP正在受ESP控制阶段。且当前指令如下图所示：
 
-<img src="http://{{ site.domain }}/image/ropimage/ROP1-10.png">
+<img src="/image/ropimage/ROP1-10.png">
 
 2.所指向的栈内的结构和1.4节给出的截图完全相同，为了方便观察，我将栈内的结构转换一下，方便大家对比：
 
-<img src="http://{{ site.domain }}/image/ropimage/ROP1-11.png">
+<img src="/image/ropimage/ROP1-11.png">
 
 3.0x0c0c0c14是常见的HeapSpray（风水）技术的遗留结果，既HeapSpray发生之前，那个位置为ROP，那个位置为shellcode是完全可控的，此处无需考虑ASLR造成的影响。
 
 通过阅读ntdll_rop 中的注释可以确定栈内各数据的含义，如下图所示：
 
-<img src="http://{{ site.domain }}/image/ropimage/ROP1-12.png">
+<img src="/image/ropimage/ROP1-12.png">
 
 把这张图用自然语言描述出来就是：在当前进程（ProcessHandler= -1）划分0x400大小的内存片段，起始地址为0x0c0c0c40，将这块内存的状态设置为0x000040，原始状态为0x41414141（这就是垃圾字符嘛，请无视），操作完成后跳转到0x0c0c0c40继续执行（1、指向ShellCode）。
 
 相信到达这里就能清楚这条ROP的实际效果了，将shellcode所在的内存区域设置为0x00000040，当我们执行完这条指令后，这段内存会变成如下图所示的状态：
 
-<img src="http://{{ site.domain }}/image/ropimage/ROP1-13.png">
+<img src="/image/ropimage/ROP1-13.png">
 
 <ul>
 <li>利用mona辅助构造ROP</li>
@@ -162,11 +162,11 @@ ASLR机制出现之后，攻击者面临着另一个严俊的挑战（我想管�
 
 通过[ .load pykd.pyd ] [ !py mona rop -m ntdll.dll ]两个命令，可以实现，指定模块的ROP生成，生成时间较长，本次针对ntdll模块的ROP生成共用了近4分钟（没办法，它是虚拟了一个执行环境，然后又由Windbg调用，脚本环境下虚拟执行脚本，能快就怪了），刚开始用时候若不是我去了一趟厕所，我还以为它死掉了呢：
 
-<img src="http://{{ site.domain }}/image/ropimage/ROP1-14.png">
+<img src="/image/ropimage/ROP1-14.png">
 
 生成结果的一个片段如下图所示：
 
-<img src="http://{{ site.domain }}/image/ropimage/ROP1-15.png">
+<img src="/image/ropimage/ROP1-15.png">
 
 Mona 一般会生成两段ROP，分别用3种格式展示：Ruby、Python、Javascript。似乎Mona生成的ROP都是针对VirtualProtect的，而且是从内存序列中提取该函数指针，所以在ASLR模式下并不完全适用，我推荐这个工具的原因是：
 

@@ -34,7 +34,7 @@ tags : [ 技术相关,OpenSSL , 信息摘要 , 证书 , OpenSSL中的其他 , MD
 >rootkiter@PC:~$ openssl dgst -md5 -c -hex bedgst.txt   
 >MD5(bedgst.txt)= e5:9f:f9:79:41:04:4f:85:df:52:97:e1:c3:02:d2:60  
 
-![rootkiter.com](http://rootkiter.com/images/2015_09_19_01_46/1.png) 
+![rootkiter.com](/images/2015_09_19_01_46/1.png) 
 
 ### SHA1
 
@@ -46,7 +46,7 @@ tags : [ 技术相关,OpenSSL , 信息摘要 , 证书 , OpenSSL中的其他 , MD
 >SHA1(bedgst.txt)= 64:8a:6a:6f:ff:fd:aa:0b:ad:b2:3b:8b:af:90:b6:16:8d:d1:6b:3a  
 
 
-![rootkiter.com](http://rootkiter.com/images/2015_09_19_01_46/2.png) 
+![rootkiter.com](/images/2015_09_19_01_46/2.png) 
 
 ### DSS1
 
@@ -58,7 +58,7 @@ tags : [ 技术相关,OpenSSL , 信息摘要 , 证书 , OpenSSL中的其他 , MD
 >DSA(bedgst.txt)= 64:8a:6a:6f:ff:fd:aa:0b:ad:b2:3b:8b:af:90:b6:16:8d:d1:6b:3a   
 
 
-![rootkiter.com](http://rootkiter.com/images/2015_09_19_01_46/3.png) 
+![rootkiter.com](/images/2015_09_19_01_46/3.png) 
 
 ## OpenSSL指令整体结构
 

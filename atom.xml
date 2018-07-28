@@ -4,10 +4,10 @@ layout: nil
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 <title>{{ site.title }}</title>
-<link href="http://{{ site.domain }}/atom.xml" rel="self"/>
-<link href="http://{{ site.domain }}" />
+<link href="/atom.xml" rel="self"/>
+<link href="" />
 <updated>{{site.time | date_to_xmlschema }}</updated>
-<id>http://rootkiter.{{ site.domain }}/</id>
+<id>http://rootkiter.github.io/</id>
 <author>
 <name>{{ site.author }}</name>
 <email>{{ site.email }}</email>
@@ -15,9 +15,9 @@ layout: nil
 {% for post in site.posts limit: 200 %}
 <entry>
 	<title>{{ post.title }}</title>
-        <link href="http://{{ site.domain }}{{ post.url }}"/>
+        <link href="{{ post.url }}"/>
 	<updated>{{post.date | date_to_xmlschema }}</updated>
-	<id>http://rootkiter.{{ site.domain }}{{ post.id }}</id>
+	<id>http://rootkiter.github.io/{{ post.id }}</id>
 	<content type="html">{{ post.content | xml_escape }}</content>
 </entry>
 {% endfor %}
